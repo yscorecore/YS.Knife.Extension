@@ -1,6 +1,7 @@
 <Project>
     <PropertyGroup>
-        <TargetFrameworks>net5</TargetFrameworks>
+        <TargetFrameworks>net6.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <Authors>Pengbo Yang</Authors>
         <Product>YS.Knife</Product>

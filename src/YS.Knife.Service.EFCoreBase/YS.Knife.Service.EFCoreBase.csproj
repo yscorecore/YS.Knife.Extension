@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+      <Using Include="FlyTiger" />
+      <PackageReference Include="FlyTiger" Version="0.0.15" />
+    <PackageReference Include="YS.Knife.Query.EFCore" Version="0.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.EFCore\YS.Knife.EFCore.csproj" />
+    <ProjectReference Include="..\YS.Knife.EntityBase\YS.Knife.EntityBase.csproj" />
+    <ProjectReference Include="..\YS.Knife.Service\YS.Knife.Service.Core.csproj" />
+  </ItemGroup>
+
+</Project>
