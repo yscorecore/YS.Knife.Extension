@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 
-namespace YS.Knife.EntityBase
+namespace YS.Knife.Entity
 {
     public interface IEntityStore<T>
     {

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
-using YS.Knife.EntityBase;
+using YS.Knife.Entity;
 
 namespace Microsoft.EntityFrameworkCore
 {

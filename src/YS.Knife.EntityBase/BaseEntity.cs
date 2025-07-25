@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.EntityBase
+﻿namespace YS.Knife.Entity
 {
     public class BaseEntity<TKey> : IEntity<TKey>
     {

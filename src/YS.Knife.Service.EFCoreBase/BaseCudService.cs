@@ -1,6 +1,6 @@
 ﻿using FlyTiger;
 using Microsoft.EntityFrameworkCore;
-using YS.Knife.EntityBase;
+using YS.Knife.Entity;
 namespace YS.Knife.Service
 {
 

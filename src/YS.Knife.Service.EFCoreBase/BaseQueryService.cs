@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using YS.Knife.EntityBase;
+using YS.Knife.Entity;
 using YS.Knife.Query;
 namespace YS.Knife.Service
 {
