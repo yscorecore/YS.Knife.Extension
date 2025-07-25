@@ -1,5 +1,5 @@
 ﻿
-namespace MetadataDemo
+namespace DataSourceDemo
 {
     public class Program : YS.Knife.Hosting.KnifeWebHost
     {

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.DataSource.Core\YS.Knife.DataSource.Core.csproj" />
+      <PackageReference Include="YS.Knife.Query" Version="0.0.6" />
+      <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+      <PackageReference Include="FlyTiger" Version="0.0.15" />
+  </ItemGroup>
+    <ItemGroup>
+        <Using Include="YS.Knife" />
+        <Using Include="FlyTiger" />
+    </ItemGroup>
+</Project>

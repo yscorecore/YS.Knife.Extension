@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.DataSource.Core\YS.Knife.DataSource.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FlyTiger" Version="0.0.15" />
+    </ItemGroup>
+</Project>
