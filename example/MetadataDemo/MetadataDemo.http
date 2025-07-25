@@ -1,0 +1,12 @@
+@MetadataDemo_HostAddress = http://localhost:5014
+
+GET {{MetadataDemo_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+
+GET {{MetadataDemo_HostAddress}}/api/Metadata/MetadataDemo.WeatherForecast
+Accept: application/json
+
+###

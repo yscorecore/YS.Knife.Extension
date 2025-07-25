@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="FlyTiger" Version="0.0.15" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.Metadata.Core\YS.Knife.Metadata.Core.csproj" />
+    </ItemGroup>
+</Project>
