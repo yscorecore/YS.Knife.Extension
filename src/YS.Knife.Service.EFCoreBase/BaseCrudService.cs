@@ -1,5 +1,5 @@
-﻿using YS.Knife.EntityBase;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using YS.Knife.EntityBase;
 using YS.Knife.Query;
 
 namespace YS.Knife.Service
@@ -23,12 +23,12 @@ namespace YS.Knife.Service
     }
     [AutoConstructor]
     public abstract partial class BaseCrudService<TContext, TEntity, TDto, Tkey>
-        :BaseCrudService<TContext,TEntity,TDto,TDto,TDto,Tkey>
-         where TDto : class,new()
+        : BaseCrudService<TContext, TEntity, TDto, TDto, TDto, Tkey>
+         where TDto : class, new()
          where TEntity : class, IEntity<Tkey>
          where TContext : DbContext
          where Tkey : notnull
-    { 
-    
+    {
+
     }
 }

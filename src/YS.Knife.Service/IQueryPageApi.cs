@@ -7,5 +7,5 @@ namespace YS.Knife.Service
         Task<PagedList<TResDto>> QueryPagedList(LimitQueryInfo req, CancellationToken cancellationToken = default);
     }
 
-   
+
 }

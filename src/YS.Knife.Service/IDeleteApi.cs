@@ -5,5 +5,5 @@
         Task Delete(TKey[] keys, CancellationToken token = default);
     }
 
-   
+
 }

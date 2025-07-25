@@ -19,12 +19,12 @@ namespace System.Linq
         {
             if (query is IOrderedQueryable<T> orderedQuery)
             {
-                return orderedQuery.ThenBy(p=>p.Order);
+                return orderedQuery.ThenBy(p => p.Order);
             }
-            else 
+            else
             {
                 return query.OrderBy(p => p.Order);
-            
+
             }
         }
         public static IOrderedQueryable<T> SortDescByOrder<T>(this IQueryable<T> query)

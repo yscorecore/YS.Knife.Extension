@@ -6,5 +6,5 @@
         Task<TKey[]> Create(TCreateDto[] Dtos, CancellationToken token = default);
     }
 
-   
+
 }
