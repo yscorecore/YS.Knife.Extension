@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace YS.Knife.Metadata.Impl.Mvc
+namespace YS.Knife.Metadata
 {
     public class MetadataOptions
     {

@@ -1,4 +1,5 @@
-﻿
+﻿using YS.Knife.AspnetCore;
+
 namespace DataSourceDemo
 {
     public class Program : YS.Knife.Hosting.KnifeWebHost
@@ -10,5 +11,17 @@ namespace DataSourceDemo
         {
             new Program(args).Run();
         }
+
+        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddMvc().ConfigureApplicationPartManager(manager =>
+            {
+                manager.FeatureProviders.Add(new GenericControllerFeatureProvider());
+            });
+            base.OnConfigureCustomService(builder, serviceCollection);
+        }
+
+
+
     }
 }

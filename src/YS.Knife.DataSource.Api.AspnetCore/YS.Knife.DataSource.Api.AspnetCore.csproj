@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.AspnetCore\YS.Knife.AspnetCore.csproj" />
       <ProjectReference Include="..\YS.Knife.DataSource.Core\YS.Knife.DataSource.Core.csproj" />
     </ItemGroup>
     <ItemGroup>

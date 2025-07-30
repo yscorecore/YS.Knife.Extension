@@ -2,7 +2,7 @@
 
 namespace YS.Knife.DataSource
 {
-    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
     public class DataSourceAttribute : Attribute
     {
         public DataSourceAttribute(string name)
@@ -11,6 +11,7 @@ namespace YS.Knife.DataSource
         }
 
         public string Name { get; }
+        public object[] Arguments { get; set; } = Array.Empty<object>();
         public bool AutoRegisterMeta { get; set; } = true;
     }
 }

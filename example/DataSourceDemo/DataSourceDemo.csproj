@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,12 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+     <PackageReference Include="AspectCore.Abstractions" Version="2.4.0" />
+     <PackageReference Include="AspectCore.Core" Version="2.4.0" />
+     <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.4.0" />
      <PackageReference Include="YS.Knife.Hosting.Web" Version="2.0.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.AspnetCore\YS.Knife.AspnetCore.csproj" />
     <ProjectReference Include="..\..\src\YS.Knife.DataSource.Api.AspnetCore\YS.Knife.DataSource.Api.AspnetCore.csproj" />
     <ProjectReference Include="..\..\src\YS.Knife.DataSource.Impl.Default\YS.Knife.DataSource.Impl.Default.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Metadata.Api\YS.Knife.Metadata.Api.AspnetCore.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Metadata.Impl.Mvc\YS.Knife.Metadata.Impl.Mvc.csproj" />
   </ItemGroup>
 
 </Project>

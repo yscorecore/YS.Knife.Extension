@@ -1,6 +1,7 @@
 ﻿using FlyTiger;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using YS.Knife.DataSource.Api.AspnetCore;
 using YS.Knife.Query;
 
 namespace YS.Knife.DataSource.Management
@@ -8,48 +9,42 @@ namespace YS.Knife.DataSource.Management
     [Route("api/[controller]")]
     [ApiController]
     [AutoConstructor]
-    public partial class DataSourceController : ControllerBase
+    [DataSourceGenericController(typeof(DataSourceController<>))]
+    public partial class DataSourceController<T> : ControllerBase
     {
         private readonly IDataSourceService dataSourceService;
 
         [HttpGet]
-        [Route("list-names")]
-        public Task<List<string>> AllSources()
+        [Route("load-data")]
+        public Task<PagedList<T>> LoadData([FromRoute] string datasourceName, [FromQuery] LimitQueryInfo queryInfo, CancellationToken cancellationToken)
         {
-            return dataSourceService.AllSources();
+            return dataSourceService.LoadData<T>(datasourceName, queryInfo, cancellationToken);
+        }
+        [HttpGet]
+        [Route("agg")]
+        public Task<object> Agg([FromRoute] string datasourceName, [FromQuery] LimitQueryInfo queryInfo, CancellationToken cancellationToken)
+        {
+            return dataSourceService.Agg(datasourceName, queryInfo, cancellationToken);
         }
 
         [HttpGet]
-        [Route("{name}/load-data")]
-        public Task<IPagedList> LoadData([FromRoute] string name, [FromQuery] LimitQueryInfo queryInfo)
+        [Route("list-all")]
+        public Task<List<T>> All([FromRoute] string datasourceName, [FromQuery] QueryInfo queryInfo, CancellationToken cancellationToken)
         {
-            return dataSourceService.LoadData(name, queryInfo);
+            return dataSourceService.All<T>(datasourceName, queryInfo, cancellationToken);
         }
         [HttpGet]
-        [Route("{name}/agg")]
-        public Task<object> Agg([FromRoute] string name, [FromQuery] LimitQueryInfo queryInfo)
+        [Route("count")]
+        public Task<long> Count([FromRoute] string datasourceName, [FromQuery] string filter, CancellationToken cancellationToken)
         {
-            return dataSourceService.Agg(name, queryInfo);
-        }
-
-        [HttpGet]
-        [Route("{name}/list-all")]
-        public Task<object> All([FromRoute] string name, [FromQuery] QueryInfo queryInfo)
-        {
-            return dataSourceService.All(name, queryInfo);
-        }
-        [HttpGet]
-        [Route("{name}/count")]
-        public Task<long> Count([FromRoute] string name, [FromQuery] string filter)
-        {
-            return dataSourceService.Count(name, filter);
+            return dataSourceService.Count(datasourceName, filter, cancellationToken);
         }
 
         [HttpGet]
-        [Route("{name}/find-by-{key}/{value}")]
-        public Task<object> FindBy([FromRoute] string name, [FromRoute] string key, [FromRoute] string value)
+        [Route("find-by-{key}/{value}")]
+        public Task<T> FindBy([FromRoute] string datasourceName, [FromRoute] string key, [FromRoute] string value, CancellationToken cancellationToken)
         {
-            return dataSourceService.FindBy(name, key, value);
+            return dataSourceService.FindBy<T>(datasourceName, key, value, cancellationToken);
         }
     }
 }

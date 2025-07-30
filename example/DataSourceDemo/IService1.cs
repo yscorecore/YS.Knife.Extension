@@ -10,6 +10,13 @@ namespace DataSourceDemo
     {
         [DataSource("service1")]
         public Task<PagedList<Service1Data>> GetDataAsync(LimitQueryInfo query);
+
+        [DataSource("service3")]
+        public Task<PagedList<Service1Data>> GetData3Async(LimitQueryInfo query);
+
+        [DataSource("service4", Arguments = new object[] { "type4" })]
+        [DataSource("service5", Arguments = new object[] { "type5" })]
+        public Task<PagedList<Service1Data>> GetDataByTypeAsync(string type, LimitQueryInfo query);
     }
     public record Service1Data
     {
@@ -85,6 +92,19 @@ namespace DataSourceDemo
             new Service1Data { Id = Guid.NewGuid(), Name = "Item 2", Value = 20 },
             new Service1Data { Id = Guid.NewGuid(), Name = "Item 3", Value = 30 },
         };
+
+        public Task<PagedList<Service1Data>> GetData3Async(LimitQueryInfo query)
+        {
+            var pagedData = _data.AsQueryable().QueryPage(query);
+            return Task.FromResult(pagedData);
+        }
+
+        public Task<PagedList<Service1Data>> GetDataByTypeAsync(string type, LimitQueryInfo query)
+        {
+            var pagedData = _data.Select(p => p with { Name = $"{type}_{p.Name}" }).AsQueryable().QueryPage(query);
+            return Task.FromResult(pagedData);
+        }
+
         public Task<PagedList<Service1Data>> GetDataAsync(LimitQueryInfo query)
         {
             var pagedData = _data.AsQueryable().QueryPage(query);
