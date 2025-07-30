@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.EnumCode.Core\YS.Knife.EnumCode.Core.csproj" />
+  </ItemGroup>
+    <ItemGroup>
+        <Using Include="YS.Knife" />
+        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FlyTiger" Version="*" />
+    </ItemGroup>
+</Project>

@@ -25,6 +25,10 @@
         </AssemblyAttribute>
     </ItemGroup>
     <ItemGroup>
+        <Using Include="FlyTiger" />
+        <PackageReference Include="FlyTiger" Version="*" />
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -37,6 +41,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
+       
         <None Include="..\..\res\icon.png">
             <Pack>True</Pack>
             <PackagePath></PackagePath>

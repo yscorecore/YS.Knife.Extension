@@ -1,0 +1,6 @@
+@EnumCodeDemo_HostAddress = http://localhost:5193
+
+GET {{EnumCodeDemo_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
