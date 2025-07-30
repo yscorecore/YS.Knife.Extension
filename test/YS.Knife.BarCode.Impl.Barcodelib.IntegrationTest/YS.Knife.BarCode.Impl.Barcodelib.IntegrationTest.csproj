@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+
+
+  <ItemGroup>
+      <PackageReference Include="YS.Knife.Hosting" Version="2.0.2" />
+  </ItemGroup>
+
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.BarCode.Impl.BarcodeLib\YS.Knife.BarCode.Impl.BarcodeLib.csproj" />
+  </ItemGroup>
+
+</Project>
