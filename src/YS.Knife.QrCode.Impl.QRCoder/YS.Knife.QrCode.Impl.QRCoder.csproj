@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="QRCoder" Version="1.6.0" />
+        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.QrCode.Core\YS.Knife.QrCode.Core.csproj" />
+    </ItemGroup>
+
+</Project>

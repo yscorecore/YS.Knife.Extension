@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "YS.Knife.QrCode.Impl.QRCoder": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:50617;http://localhost:50618"
+    }
+  }
+}
