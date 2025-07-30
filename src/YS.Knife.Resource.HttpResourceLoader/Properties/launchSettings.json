@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "YS.Knife.Resource.HttpResourceLoader": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:50682;http://localhost:50683"
+    }
+  }
+}
