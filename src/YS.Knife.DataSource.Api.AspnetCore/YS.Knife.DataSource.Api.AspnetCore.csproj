@@ -9,7 +9,5 @@
       <ProjectReference Include="..\YS.Knife.AspnetCore\YS.Knife.AspnetCore.csproj" />
       <ProjectReference Include="..\YS.Knife.DataSource.Core\YS.Knife.DataSource.Core.csproj" />
     </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="FlyTiger" Version="*" />
-    </ItemGroup>
+ 
 </Project>

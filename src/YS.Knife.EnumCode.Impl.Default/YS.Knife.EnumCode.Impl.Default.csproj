@@ -6,7 +6,4 @@
         <Using Include="YS.Knife" />
         <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
     </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="FlyTiger" Version="*" />
-    </ItemGroup>
 </Project>

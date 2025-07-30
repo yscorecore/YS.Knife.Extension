@@ -5,8 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-      <Using Include="FlyTiger" />
-      <PackageReference Include="FlyTiger" Version="*" />
     <PackageReference Include="YS.Knife.Query.EFCore" Version="0.0.7" />
   </ItemGroup>
 

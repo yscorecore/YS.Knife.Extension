@@ -8,9 +8,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="FlyTiger" Version="*" />
-    </ItemGroup>
-    <ItemGroup>
       <ProjectReference Include="..\YS.Knife.Metadata.Core\YS.Knife.Metadata.Core.csproj" />
     </ItemGroup>
 </Project>

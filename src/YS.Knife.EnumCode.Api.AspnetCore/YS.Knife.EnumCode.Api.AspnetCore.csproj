@@ -1,12 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
     <PropertyGroup>
         <OutputType>Library</OutputType>
         <IsPackable>true</IsPackable>
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\YS.Knife.EnumCode.Core\YS.Knife.EnumCode.Core.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="FlyTiger" Version="*" />
     </ItemGroup>
 </Project>

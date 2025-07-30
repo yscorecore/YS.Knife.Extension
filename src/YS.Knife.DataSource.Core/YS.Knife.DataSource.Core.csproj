@@ -5,18 +5,8 @@
       <RootNamespace>YS.Knife.DataSource</RootNamespace>
     </PropertyGroup>
 
-
-    <ItemGroup>
-      <Compile Remove="Metas\**" />
-      <EmbeddedResource Remove="Metas\**" />
-      <None Remove="Metas\**" />
-    </ItemGroup>
-
-
     <ItemGroup>
         <Using Include="YS.Knife" />
-        <Using Include="FlyTiger" />
-        <PackageReference Include="FlyTiger" Version="*" />
         <PackageReference Include="YS.Knife.Query" Version="0.0.6" />
     </ItemGroup>
 </Project>

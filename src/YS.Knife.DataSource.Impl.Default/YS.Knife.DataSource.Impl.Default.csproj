@@ -7,10 +7,8 @@
     <ProjectReference Include="..\YS.Knife.Metadata.Core\YS.Knife.Metadata.Core.csproj" />
       <PackageReference Include="YS.Knife.Query" Version="0.0.6" />
       <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
-      <PackageReference Include="FlyTiger" Version="*" />
   </ItemGroup>
     <ItemGroup>
         <Using Include="YS.Knife" />
-        <Using Include="FlyTiger" />
     </ItemGroup>
 </Project>

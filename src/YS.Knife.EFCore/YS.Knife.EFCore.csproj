@@ -9,8 +9,6 @@
       <ProjectReference Include="..\YS.Knife.EntityBase\YS.Knife.EntityBase.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Using Include="FlyTiger" />
-        <PackageReference Include="FlyTiger" Version="*" />
         <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
     </ItemGroup>
 </Project>
