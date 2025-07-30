@@ -10,6 +10,6 @@
       <ProjectReference Include="..\YS.Knife.DataSource.Core\YS.Knife.DataSource.Core.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="FlyTiger" Version="0.0.15" />
+        <PackageReference Include="FlyTiger" Version="*" />
     </ItemGroup>
 </Project>

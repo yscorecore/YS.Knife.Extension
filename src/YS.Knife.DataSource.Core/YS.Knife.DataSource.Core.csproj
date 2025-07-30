@@ -16,7 +16,7 @@
     <ItemGroup>
         <Using Include="YS.Knife" />
         <Using Include="FlyTiger" />
-        <PackageReference Include="FlyTiger" Version="0.0.15" />
+        <PackageReference Include="FlyTiger" Version="*" />
         <PackageReference Include="YS.Knife.Query" Version="0.0.6" />
     </ItemGroup>
 </Project>
