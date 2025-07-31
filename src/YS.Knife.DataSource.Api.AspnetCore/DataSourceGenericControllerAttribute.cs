@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using YS.Knife.AspnetCore.Mvc;
 namespace YS.Knife.DataSource.Api.AspnetCore
 {
     public class DataSourceGenericControllerAttribute : GenericControllerAttribute, IControllerModelConvention

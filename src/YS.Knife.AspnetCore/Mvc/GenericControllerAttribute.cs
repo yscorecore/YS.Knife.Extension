@@ -3,18 +3,17 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
-namespace YS.Knife
+namespace YS.Knife.AspnetCore.Mvc
 {
     [AttributeUsage(AttributeTargets.Class)]
     public abstract class GenericControllerAttribute : Attribute, IControllerModelConvention
     {
         public GenericControllerAttribute(Type genericControllerType)
         {
-            this.GenericControllerType = genericControllerType;
+            GenericControllerType = genericControllerType;
         }
 
         public Type GenericControllerType { get; }
-
         public virtual void Apply(ControllerModel controller)
         {
             if (!controller.ControllerType.IsGenericType ||
@@ -22,8 +21,7 @@ namespace YS.Knife
             {
                 return;
             }
-
-            string controllerName = ResolveControllerName(controller.ControllerType.GenericTypeArguments);
+            var controllerName = ResolveControllerName(controller.ControllerType.GenericTypeArguments);
             controller.ControllerName = controllerName;
             controller.RouteValues["Controller"] = controllerName;
         }

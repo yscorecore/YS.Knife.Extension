@@ -18,5 +18,6 @@
         public string DisplayFormat { get; set; }
         public bool IsArray { get; set; }
         public string DataTypeName { get; set; }
+        public string EditorSource { get; set; }
     }
 }

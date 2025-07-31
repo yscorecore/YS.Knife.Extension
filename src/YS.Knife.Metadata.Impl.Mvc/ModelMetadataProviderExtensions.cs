@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 
 namespace YS.Knife.Metadata.Impl.Mvc
 {
@@ -19,22 +20,23 @@ namespace YS.Knife.Metadata.Impl.Mvc
             {
                 DisplayName = model.DisplayName ?? type.Name,
                 Description = model.Description,
-                Columns = model.Properties.Select(PropertyToMetadataClolumnInfo).ToList()
+                Columns = model.Properties.Select(p => PropertyToMetadataClolumnInfo(p as DefaultModelMetadata)).ToList()
             };
         }
-        private static MetadataClolumnInfo PropertyToMetadataClolumnInfo(ModelMetadata p)
+        private static MetadataClolumnInfo PropertyToMetadataClolumnInfo(DefaultModelMetadata p)
         {
             var (isArray, typeCode) = GetTypeCode(p.ModelType);
+
             return new MetadataClolumnInfo
             {
                 DisplayName = GetDisplayName(p),
                 PropertyPath = p.PropertyName,
                 ShowForDisplay = p.ShowForDisplay,
                 DisplayFormat = p.DisplayFormatString,
-                // DataTypeName= p.DataTypeName
                 Description = p.Description,
                 IsArray = isArray,
-                DataTypeName = typeCode
+                DataTypeName = typeCode,
+                EditorSource = p.Attributes.Attributes.OfType<EditorSourceAttribute>().Select(p => p.Source).FirstOrDefault()
             };
         }
         private static string GetDisplayName(ModelMetadata metadata)
