@@ -7,10 +7,10 @@ namespace YS.Knife.Import.Abstractions
         Task<ImportToken> BeginImport(Stream data, string fileExt);
         Task<Dictionary<string, List<Dictionary<string, object>>>> ReadData(Guid token, EntityMetadata[] entityMetadata);
         Task<bool> EndImport(Guid token);
-        Task<Dictionary<string, List<ColumnInfo>>> ReadColumn(Guid token);
+        Task<Dictionary<string, List<ColumnInfo>>> ReadColumns(Guid token);
     }
 
-    public class ColumnInfo
+    public record ColumnInfo
     {
         public string ColumnName { get; set; }
     }

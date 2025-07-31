@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using YS.Knife.Import.Abstractions;
 
@@ -26,9 +21,9 @@ namespace YS.Knife.Import.Api.AspnetCore
         }
         [HttpGet]
         [Route("read-column")]
-        public Task<Dictionary<string, List<ColumnInfo>>> ReadColumn(Guid token)
+        public Task<Dictionary<string, List<ColumnInfo>>> ReadColumns(Guid token)
         {
-            return importService.ReadColumn(token);
+            return importService.ReadColumns(token);
         }
         [HttpGet]
         [Route("complete")]

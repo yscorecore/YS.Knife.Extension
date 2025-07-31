@@ -35,7 +35,7 @@ namespace YS.Knife.Export.ClosedXml.IntegrationTest
                 Name = "user",
                 Datas = new List<Dictionary<string, object>>
                 {
-                    new Dictionary<string, object> 
+                    new Dictionary<string, object>
                     {
                         ["name"]="zhangsan",
                         ["age"]=13
@@ -43,7 +43,7 @@ namespace YS.Knife.Export.ClosedXml.IntegrationTest
                 }
             };
         }
-       
+
         [Fact]
         public async Task ShouldBeginExport()
         {
@@ -95,7 +95,7 @@ namespace YS.Knife.Export.ClosedXml.IntegrationTest
             using var stream = await service.EndExport(token.Token);
             var users = MiniExcel.Query<UserInfo>(stream).ToList();
             users.Count.Should().Be(5);
-            
+
         }
 
         protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)

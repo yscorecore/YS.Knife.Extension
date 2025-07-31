@@ -86,7 +86,7 @@ namespace YS.Knife.Import.Impl.Base
         }
         protected abstract Task<Dictionary<string, List<Dictionary<string, object>>>> ReadData(string filePath, EntityMetadata[] entityMetadata);
 
-        public abstract Task<Dictionary<string, List<ColumnInfo>>> ReadColumn(Guid token);
+        public abstract Task<Dictionary<string, List<ColumnInfo>>> ReadColumns(Guid token);
         protected virtual async Task<ImportInfo> GetExportInfo(Guid token)
         {
             var exportInfo = await distributedCache.GetObjectAsync<ImportInfo>(token.ToString());

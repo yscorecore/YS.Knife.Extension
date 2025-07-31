@@ -193,7 +193,7 @@ namespace YS.Knife.Import.Impl.NPOI
             }
         }
 
-        public override async Task<Dictionary<string, List<ColumnInfo>>> ReadColumn(Guid token)
+        public override async Task<Dictionary<string, List<ColumnInfo>>> ReadColumns(Guid token)
         {
             var res = new Dictionary<string, List<ColumnInfo>>();
             var exportinfo = await GetExportInfo(token);

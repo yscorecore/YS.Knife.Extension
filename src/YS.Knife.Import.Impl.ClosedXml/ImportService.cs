@@ -141,7 +141,7 @@ namespace YS.Knife.Import.ClosedXml
             }
         }
 
-        public async override Task<Dictionary<string, List<ColumnInfo>>> ReadColumn(Guid token)
+        public async override Task<Dictionary<string, List<ColumnInfo>>> ReadColumns(Guid token)
         {
             var exportinfo = await GetExportInfo(token);
             var res = new Dictionary<string, List<ColumnInfo>>();
