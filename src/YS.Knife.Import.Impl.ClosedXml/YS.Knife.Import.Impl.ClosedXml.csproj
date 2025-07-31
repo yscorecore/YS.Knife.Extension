@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.Import.Impl.Base\YS.Knife.Import.Impl.Base.csproj" />
+      <PackageReference Include="ClosedXML" Version="0.102.1" />
+  </ItemGroup>
+
+</Project>

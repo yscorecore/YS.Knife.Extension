@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "YS.Knife.Export.Impl.NPOI.IntegrationTest": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:50592;http://localhost:50593"
+    }
+  }
+}

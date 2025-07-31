@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.Extensions.DistributedCache\YS.Knife.Extensions.DistributedCache.csproj" />
+    <ProjectReference Include="..\YS.Knife.Import.Core\YS.Knife.Import.Core.csproj" />
+      <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+  </ItemGroup>
+
+</Project>
