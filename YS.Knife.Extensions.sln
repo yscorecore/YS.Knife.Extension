@@ -131,6 +131,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Export.Impl.Closed
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Export.Impl.NPOI.IntegrationTest", "test\YS.Knife.Export.Impl.NPOI.IntegrationTest\YS.Knife.Export.Impl.NPOI.IntegrationTest.csproj", "{32F7035B-8EE3-46E0-7581-3FE6EC634204}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Metadata.Impl.Mvc.IntegrationTest", "test\YS.Knife.Metadata.Impl.Mvc.IntegrationTest\YS.Knife.Metadata.Impl.Mvc.IntegrationTest.csproj", "{A0A4ED94-D743-41B9-9E69-88FF2770CE35}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -321,6 +323,10 @@ Global
 		{32F7035B-8EE3-46E0-7581-3FE6EC634204}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32F7035B-8EE3-46E0-7581-3FE6EC634204}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32F7035B-8EE3-46E0-7581-3FE6EC634204}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0A4ED94-D743-41B9-9E69-88FF2770CE35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0A4ED94-D743-41B9-9E69-88FF2770CE35}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0A4ED94-D743-41B9-9E69-88FF2770CE35}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0A4ED94-D743-41B9-9E69-88FF2770CE35}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -381,6 +387,7 @@ Global
 		{B17322D8-F7E5-19CE-5CEA-1F81567ED5A2} = {C1077C14-6D5B-4FA5-9D03-01EBCB967992}
 		{C4FE5E0C-8641-B3C2-6FAC-66FC5CDF41EF} = {9D50B35B-1EAA-4620-B0A6-245456051247}
 		{32F7035B-8EE3-46E0-7581-3FE6EC634204} = {9D50B35B-1EAA-4620-B0A6-245456051247}
+		{A0A4ED94-D743-41B9-9E69-88FF2770CE35} = {9D50B35B-1EAA-4620-B0A6-245456051247}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB11BB21-3F5D-42D6-8737-F19C0666F1F8}
