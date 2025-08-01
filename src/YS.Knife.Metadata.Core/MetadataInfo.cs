@@ -20,4 +20,9 @@
         public string DataTypeName { get; set; }
         public string EditorSource { get; set; }
     }
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    public class MetadataColumnAttribute : Attribute
+    {
+        public string PropertyName { get; set; }
+    }
 }

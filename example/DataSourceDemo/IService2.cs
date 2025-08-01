@@ -1,4 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 using FlyTiger;
 using YS.Knife;
 using YS.Knife.DataSource;
@@ -14,7 +16,9 @@ namespace DataSourceDemo
     public record Service2Data
     {
         public Guid Id { get; set; }
+        [Display(Name = "名称", Order = 1)]
         public string Name { get; set; }
+        [DisplayName("值")]
         public int Value { get; set; }
     }
     [AutoConstructor]

@@ -23,6 +23,11 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
             var firstColumn = info.Columns.First();
             firstColumn.PropertyPath.Should().Be("name");
         }
+        [Metadata("GetMetadataInfo_PropertyPath")]
+        internal class User_GetMetadataInfo_PropertyPath
+        {
+            public string Name { get; set; }
+        }
         [Fact]
         public async Task Should_GetMetadataInfo_PropertyPath_CustomName()
         {
@@ -32,18 +37,13 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
             var firstColumn = info.Columns.First();
             firstColumn.PropertyPath.Should().Be("name1");
         }
-
-        [Metadata("GetMetadataInfo_PropertyPath")]
-        internal class User_GetMetadataInfo_PropertyPath
-        {
-            public string Name { get; set; }
-        }
         [Metadata("GetMetadataInfo_PropertyPath_CustomName")]
         internal class User_GetMetadataInfo_PropertyPath_CustomName
         {
             [JsonPropertyName("name1")]
             public string Name { get; set; }
         }
+
         #endregion
 
         #region DisplayName
@@ -181,6 +181,44 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
             [Display(Description = "from Display")]
             public string Name { get; set; }
         }
+        #endregion
+
+        #region NestedClass
+        [Fact]
+        public async Task Should_GetMetadataInfo_PropertyPath_FromNestedClass()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetMetadataInfo_PropertyPath_ByNestedClass");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.PropertyPath.Should().Be("class.name");
+        }
+        [Metadata("GetMetadataInfo_PropertyPath_ByNestedClass")]
+        class User_GetMetadataInfo_PropertyPath_ByNestedClass
+        {
+            public NestedClass_GetMetadataInfo_PropertyPath_ByNestedClass Class { get; set; }
+        }
+        class NestedClass_GetMetadataInfo_PropertyPath_ByNestedClass
+        {
+            public string Name { get; set; }
+        }
+
+        [Fact]
+        public async Task Should_GetMetadataInfo_ByNestedClass_WithLoop()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetMetadataInfo_ByNestedClass_WithLoop");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.PropertyPath.Should().Be("name");
+        }
+        [Metadata("GetMetadataInfo_ByNestedClass_WithLoop")]
+        class User_GetMetadataInfo_PropertyPath_ByNestedClass_WithLoop
+        {
+            public string Name { get; set; }
+            public User_GetMetadataInfo_PropertyPath_ByNestedClass_WithLoop Nested { get; set; }
+        }
+
         #endregion
     }
 }
