@@ -16,35 +16,47 @@ namespace YS.Knife.DataSource.Management
 
         [HttpGet]
         [Route("load-data")]
-        public Task<PagedList<T>> LoadData([FromRoute] string datasourceName, [FromQuery] LimitQueryInfo queryInfo, CancellationToken cancellationToken)
+        public Task<PagedList<T>> LoadData([FromQuery] LimitQueryInfo queryInfo, CancellationToken cancellationToken)
         {
+            var datasourceName = GetDatasourceNameFromContext();
             return dataSourceService.LoadData<T>(datasourceName, queryInfo, cancellationToken);
         }
+
+
+
         [HttpGet]
         [Route("agg")]
-        public Task<object> Agg([FromRoute] string datasourceName, [FromQuery] LimitQueryInfo queryInfo, CancellationToken cancellationToken)
+        public Task<object> Agg([FromQuery] LimitQueryInfo queryInfo, CancellationToken cancellationToken)
         {
+            var datasourceName = GetDatasourceNameFromContext();
             return dataSourceService.Agg(datasourceName, queryInfo, cancellationToken);
         }
 
         [HttpGet]
         [Route("list-all")]
-        public Task<List<T>> All([FromRoute] string datasourceName, [FromQuery] QueryInfo queryInfo, CancellationToken cancellationToken)
+        public Task<List<T>> All([FromQuery] QueryInfo queryInfo, CancellationToken cancellationToken)
         {
+            var datasourceName = GetDatasourceNameFromContext();
             return dataSourceService.All<T>(datasourceName, queryInfo, cancellationToken);
         }
         [HttpGet]
         [Route("count")]
-        public Task<long> Count([FromRoute] string datasourceName, [FromQuery] string filter, CancellationToken cancellationToken)
+        public Task<long> Count([FromQuery] string filter, CancellationToken cancellationToken)
         {
+            var datasourceName = GetDatasourceNameFromContext();
             return dataSourceService.Count(datasourceName, filter, cancellationToken);
         }
 
         [HttpGet]
         [Route("find-by-{key}/{value}")]
-        public Task<T> FindBy([FromRoute] string datasourceName, [FromRoute] string key, [FromRoute] string value, CancellationToken cancellationToken)
+        public Task<T> FindBy([FromRoute] string key, [FromRoute] string value, CancellationToken cancellationToken)
         {
+            var datasourceName = GetDatasourceNameFromContext();
             return dataSourceService.FindBy<T>(datasourceName, key, value, cancellationToken);
+        }
+        private string GetDatasourceNameFromContext()
+        {
+            return this.HttpContext.GetEndpoint()?.Metadata?.GetMetadata<DataSourceNameAttribute>()?.Name;
         }
     }
 }

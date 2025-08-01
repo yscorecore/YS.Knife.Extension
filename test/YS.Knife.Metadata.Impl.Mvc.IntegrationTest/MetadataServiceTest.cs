@@ -86,8 +86,8 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
             var firstColumn = info.Columns.First();
             firstColumn.DisplayName.Should().Be("用户名");
         }
-        
-        
+
+
         [Metadata("GetMetadataInfo_DisplayName_When_Define_DisplayAttribute")]
         class User_GetMetadataInfo_DisplayName_When_Define_DisplayAttribute
         {
@@ -112,7 +112,7 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
             [Display(Name = "from Display")]
             public string Name { get; set; }
         }
-        
+
 
 
         #endregion
@@ -161,7 +161,7 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
         [Metadata("GetMetadataInfo_Description_When_Define_DisplayAttribute_WithDescriptionProperty")]
         internal class User_GetMetadataInfo_Description_When_Define_DisplayAttribute_WithDescriptionProperty
         {
-            [Display(Description ="desc1")]
+            [Display(Description = "desc1")]
             public string Name { get; set; }
         }
 

@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.Filters;
 using YS.Knife.AspnetCore.Mvc;
 namespace YS.Knife.DataSource.Api.AspnetCore
 {
-    public class DataSourceGenericControllerAttribute : GenericControllerAttribute, IControllerModelConvention
+    public partial class DataSourceGenericControllerAttribute : GenericControllerAttribute, IControllerModelConvention
     {
         public DataSourceGenericControllerAttribute(Type genericControllerType) : base(genericControllerType)
         {
@@ -22,11 +23,13 @@ namespace YS.Knife.DataSource.Api.AspnetCore
             controller.Selectors.Clear();
             foreach (var route in routes)
             {
-                controller.Selectors.Add(new SelectorModel
+                var selector = new SelectorModel
                 {
                     AttributeRouteModel = new AttributeRouteModel(new RouteAttribute($"{template}/{route}")),
-                });
-                controller.RouteValues["datasourceName"] = route;
+                };
+                selector.EndpointMetadata.Add(new DataSourceNameAttribute(route));
+                controller.Selectors.Add(selector);
+
             }
         }
 
