@@ -31,6 +31,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
                     {
                         var context = new MetadataFilterContext
                         {
+                            Name = name,
                             MetadataInfo = metadataInfo
                         };
                         await interceptor.Process(context, cancellationToken);

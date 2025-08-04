@@ -11,9 +11,4 @@ namespace YS.Knife.Metadata
         int Priority { get; }
         Task Process(MetadataFilterContext context, CancellationToken cancellationToken);
     }
-    public record MetadataFilterContext
-    {
-        public MetadataInfo MetadataInfo { get; set; }
-        
-    }
 }

@@ -133,6 +133,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Export.Impl.NPOI.I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Metadata.Impl.Mvc.IntegrationTest", "test\YS.Knife.Metadata.Impl.Mvc.IntegrationTest\YS.Knife.Metadata.Impl.Mvc.IntegrationTest.csproj", "{A0A4ED94-D743-41B9-9E69-88FF2770CE35}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "KeyValue", "KeyValue", "{B0211214-C5BE-4574-8B2C-D9A3C5D3D5F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.KeyValue.Core", "src\YS.Knife.KeyValue.Core\YS.Knife.KeyValue.Core.csproj", "{D32CFE8A-F6E7-4628-9657-8C9E57F832C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -327,6 +331,10 @@ Global
 		{A0A4ED94-D743-41B9-9E69-88FF2770CE35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0A4ED94-D743-41B9-9E69-88FF2770CE35}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0A4ED94-D743-41B9-9E69-88FF2770CE35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D32CFE8A-F6E7-4628-9657-8C9E57F832C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D32CFE8A-F6E7-4628-9657-8C9E57F832C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D32CFE8A-F6E7-4628-9657-8C9E57F832C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D32CFE8A-F6E7-4628-9657-8C9E57F832C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -388,6 +396,8 @@ Global
 		{C4FE5E0C-8641-B3C2-6FAC-66FC5CDF41EF} = {9D50B35B-1EAA-4620-B0A6-245456051247}
 		{32F7035B-8EE3-46E0-7581-3FE6EC634204} = {9D50B35B-1EAA-4620-B0A6-245456051247}
 		{A0A4ED94-D743-41B9-9E69-88FF2770CE35} = {9D50B35B-1EAA-4620-B0A6-245456051247}
+		{B0211214-C5BE-4574-8B2C-D9A3C5D3D5F5} = {6C7E5914-CD6B-40F1-BFD7-8FB17E3EAE11}
+		{D32CFE8A-F6E7-4628-9657-8C9E57F832C2} = {B0211214-C5BE-4574-8B2C-D9A3C5D3D5F5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB11BB21-3F5D-42D6-8737-F19C0666F1F8}
