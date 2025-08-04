@@ -18,14 +18,28 @@ namespace YS.Knife.Metadata.Impl.Mvc
         private readonly IModelMetadataProvider modelMetadataProvider;
         private readonly IOptions<MetadataOptions> metadataOptions;
         private readonly IOptions<JsonOptions> jsonOptions;
+        private readonly IEnumerable<IMetadataFilter> metadataFilters;
 
-        public Task<MetadataInfo> GetMetadataInfo(string name, CancellationToken cancellationToken = default)
+        public async Task<MetadataInfo> GetMetadataInfo(string name, CancellationToken cancellationToken = default)
         {
             if (metadataOptions.Value.Metas.TryGetValue(name, out var type))
             {
-                return Task.FromResult(GetMetadataInfoFromType(type));
+                var metadataInfo = GetMetadataInfoFromType(type);
+                if (metadataFilters.Any())
+                {
+                    foreach (var interceptor in metadataFilters.OrderBy(p => p.Priority))
+                    {
+                        var context = new MetadataFilterContext
+                        {
+                            MetadataInfo = metadataInfo
+                        };
+                        await interceptor.Process(context, cancellationToken);
+                        metadataInfo = context.MetadataInfo;
+                    }
+                }
+                return metadataInfo;
             }
-            throw new Exception($"Can not find data meta by name '{name}'.");
+            throw new Exception($"Can not find metadata by name '{name}'.");
         }
         public Task<List<string>> ListAllNames(CancellationToken cancellationToken = default)
         {
@@ -79,6 +93,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 Description = GetDescription(p),
                 IsArray = isArray,
                 DataTypeName = typeCode,
+                DisplayOrder = p.Order,
                 EditorSource = p.Attributes.Attributes.OfType<EditorSourceAttribute>().Select(p => p.Source).FirstOrDefault()
             };
         }
