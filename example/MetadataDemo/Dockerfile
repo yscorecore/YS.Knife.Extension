@@ -9,7 +9,7 @@ EXPOSE 80
 
 
 # 此阶段用于生成服务项目
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Debug
 WORKDIR /src
 COPY ["example/Directory.Build.props", "example/"]

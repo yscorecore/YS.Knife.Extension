@@ -2,11 +2,13 @@
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace YS.Knife.Metadata.Impl.Mvc
@@ -19,6 +21,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
         private readonly IOptions<MetadataOptions> metadataOptions;
         private readonly IOptions<JsonOptions> jsonOptions;
         private readonly IEnumerable<IMetadataFilter> metadataFilters;
+        private readonly ILogger<MetadataService> logger;
 
         public async Task<MetadataInfo> GetMetadataInfo(string name, CancellationToken cancellationToken = default)
         {
@@ -48,13 +51,18 @@ namespace YS.Knife.Metadata.Impl.Mvc
         }
         private MetadataInfo GetMetadataInfoFromType(Type type)
         {
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("zh-Hans-CN");
+            logger.LogInformation(Thread.CurrentThread.CurrentCulture.Name);
             var model = modelMetadataProvider.GetMetadataForType(type);
-            return new MetadataInfo
+            var res = new MetadataInfo
             {
                 DisplayName = model.DisplayName ?? type.Name,
                 Description = model.Description,
                 Columns = GetMetadataColumns(model, new HashSet<Type>()).ToList()
             };
+            logger.LogInformation("GetMetadataInfoFromType:" + model.DisplayName == null ? true.ToString() : false.ToString());
+            logger.LogInformation("GetMetadataInfoFromType:" + JsonSerializer.Serialize(res));
+            return res;
         }
 
         private IEnumerable<MetadataClolumnInfo> GetMetadataColumns(ModelMetadata model, ISet<Type> handledTypes)
@@ -80,6 +88,8 @@ namespace YS.Knife.Metadata.Impl.Mvc
             }
 
         }
+
+
         private MetadataClolumnInfo2 PropertyToMetadataClolumnInfo(ModelMetadata c)
         {
             var p = c as DefaultModelMetadata;
@@ -95,12 +105,12 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 IsArray = isArray,
                 DataTypeName = typeCode,
                 DisplayOrder = p.Order,
-                EditorSource = p.Attributes.Attributes.OfType<EditorSourceAttribute>().Select(p => p.Source).FirstOrDefault()
+                EditorSource = p.Attributes.PropertyAttributes.OfType<EditorSourceAttribute>().Select(p => p.Source).FirstOrDefault()
             };
         }
         private string GetPropertyPath(DefaultModelMetadata metadata)
         {
-            if (metadata.Attributes.Attributes.OfType<JsonPropertyNameAttribute>().FirstOrDefault() is { } jsonPropertyName)
+            if (metadata.Attributes.PropertyAttributes.OfType<JsonPropertyNameAttribute>().FirstOrDefault() is { } jsonPropertyName)
             {
                 return jsonPropertyName.Name;
             }
@@ -113,11 +123,11 @@ namespace YS.Knife.Metadata.Impl.Mvc
         }
         private static string GetDisplayName(DefaultModelMetadata metadata)
         {
-            if (metadata.Attributes.Attributes.OfType<DisplayAttribute>().FirstOrDefault() is { } displayAttribute)
+            if (metadata.Attributes.PropertyAttributes.OfType<DisplayAttribute>().FirstOrDefault() is { } displayAttribute)
             {
                 return displayAttribute.Name;
             }
-            if (metadata.Attributes.Attributes.OfType<DisplayNameAttribute>().FirstOrDefault() is { } displayNameAttribute)
+            if (metadata.Attributes.PropertyAttributes.OfType<DisplayNameAttribute>().FirstOrDefault() is { } displayNameAttribute)
             {
                 return displayNameAttribute.DisplayName;
             }
@@ -126,7 +136,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
         private static string GetDescription(DefaultModelMetadata metadata)
         {
             return metadata.Description ?? (
-                metadata.Attributes.Attributes.OfType<DescriptionAttribute>().Select(p => p.Description).FirstOrDefault()
+                metadata.Attributes.PropertyAttributes.OfType<DescriptionAttribute>().Select(p => p.Description).FirstOrDefault()
                 );
         }
         private static (bool, string) GetTypeCode(Type type)
