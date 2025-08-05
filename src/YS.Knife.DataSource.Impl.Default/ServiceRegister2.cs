@@ -18,7 +18,7 @@ namespace YS.Knife.DataSource.Impl.Default
             {
                 foreach (var item in AssemblyDataSourceEntryFinder.Instance.All.Values.Where(p => p.AutoRegisterMeta))
                 {
-                    o.Metas[item.Name] = item.EntityType;
+                    o.AddMeta(item.Name, item.EntityType);
                 }
             });
         }

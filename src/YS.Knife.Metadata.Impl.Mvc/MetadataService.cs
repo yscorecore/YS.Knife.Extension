@@ -2,13 +2,11 @@
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace YS.Knife.Metadata.Impl.Mvc
@@ -21,48 +19,48 @@ namespace YS.Knife.Metadata.Impl.Mvc
         private readonly IOptions<MetadataOptions> metadataOptions;
         private readonly IOptions<JsonOptions> jsonOptions;
         private readonly IEnumerable<IMetadataFilter> metadataFilters;
-        private readonly ILogger<MetadataService> logger;
 
         public async Task<MetadataInfo> GetMetadataInfo(string name, CancellationToken cancellationToken = default)
         {
             if (metadataOptions.Value.Metas.TryGetValue(name, out var type))
             {
-                var metadataInfo = GetMetadataInfoFromType(type);
-                if (metadataFilters.Any())
-                {
-                    foreach (var interceptor in metadataFilters.OrderBy(p => p.Priority))
-                    {
-                        var context = new MetadataFilterContext
-                        {
-                            Name = name,
-                            MetadataInfo = metadataInfo
-                        };
-                        await interceptor.Process(context, cancellationToken);
-                        metadataInfo = context.MetadataInfo;
-                    }
-                }
-                return metadataInfo;
+                var (metadataInfo, filters) = GetMetadataInfoFromType(type);
+                return await ExecuteFilters(name, metadataInfo, filters, cancellationToken);
             }
             throw new Exception($"Can not find metadata by name '{name}'.");
+        }
+        private async Task<MetadataInfo> ExecuteFilters(string name, MetadataInfo metadataInfo, string[] filters, CancellationToken cancellationToken)
+        {
+            if (metadataFilters.Any())
+            {
+                foreach (var interceptor in metadataFilters.Where(p => p.IsGlobal || filters.Contains(p.Name)).OrderBy(p => p.Priority))
+                {
+                    var context = new MetadataFilterContext
+                    {
+                        Name = name,
+                        MetadataInfo = metadataInfo
+                    };
+                    await interceptor.Process(context, cancellationToken);
+                    metadataInfo = context.MetadataInfo;
+                }
+            }
+            return metadataInfo;
         }
         public Task<List<string>> ListAllNames(CancellationToken cancellationToken = default)
         {
             return Task.FromResult(metadataOptions.Value.Metas.Keys.ToList());
         }
-        private MetadataInfo GetMetadataInfoFromType(Type type)
+        private (MetadataInfo Metadata, string[] Filters) GetMetadataInfoFromType(Type type)
         {
-            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("zh-Hans-CN");
-            logger.LogInformation(Thread.CurrentThread.CurrentCulture.Name);
             var model = modelMetadataProvider.GetMetadataForType(type);
-            var res = new MetadataInfo
+            return (new MetadataInfo
             {
                 DisplayName = model.DisplayName ?? type.Name,
                 Description = model.Description,
                 Columns = GetMetadataColumns(model, new HashSet<Type>()).ToList()
-            };
-            logger.LogInformation("GetMetadataInfoFromType:" + model.DisplayName == null ? true.ToString() : false.ToString());
-            logger.LogInformation("GetMetadataInfoFromType:" + JsonSerializer.Serialize(res));
-            return res;
+            },
+            type.GetCustomAttributes<MetadataFilterAttribute>().Select(p => p.FilterName).ToArray()
+            );
         }
 
         private IEnumerable<MetadataClolumnInfo> GetMetadataColumns(ModelMetadata model, ISet<Type> handledTypes)
