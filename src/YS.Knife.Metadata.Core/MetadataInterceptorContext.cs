@@ -1,8 +1,8 @@
 ﻿namespace YS.Knife.Metadata
 {
-    public record MetadataFilterContext
+    public record MetadataInterceptorContext
     {
-        public string Name { get; set; }
+        public string MetadataName { get; set; }
         public MetadataInfo MetadataInfo { get; set; }
     }
 }

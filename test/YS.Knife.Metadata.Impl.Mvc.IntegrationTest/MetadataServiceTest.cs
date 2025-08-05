@@ -220,5 +220,93 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
         }
 
         #endregion
+
+        #region DataSource
+
+        [Fact]
+        public async Task Should_GetMetadataInfo_DataSource_From_EditorDataSourceAttribute()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetMetadataInfo_DataSource_From_EditorDataSourceAttribute");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.DataSource.Should().BeEquivalentTo(new DataSourceInfo
+            {
+                Value = "abc",
+                Type = SourceType.DataSource
+            });
+        }
+        [Metadata("GetMetadataInfo_DataSource_From_EditorDataSourceAttribute")]
+        internal class User_GetMetadataInfo_DataSource_From_EditorDataSourceAttribute
+        {
+            [EditorDataSource("abc")]
+            public string Name { get; set; }
+        }
+        #endregion
+
+        #region EnumDataSource
+        [Fact]
+        public async Task Should_GetMetadataInfo_DataSource_From_EditorEnumSourceAttribute()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetMetadataInfo_DataSource_From_EditorEnumSourceAttribute");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.DataSource.Should().BeEquivalentTo(new DataSourceInfo
+            {
+                Value = "abc",
+                Type = SourceType.Enum
+            });
+        }
+        [Metadata("GetMetadataInfo_DataSource_From_EditorEnumSourceAttribute")]
+        internal class User_GetMetadataInfo_DataSource_From_EditorEnumSourceAttribute
+        {
+            [EditorEnumSource("abc")]
+            public string Name { get; set; }
+        }
+        #endregion
+
+        #region ConstDataSource
+        [Fact]
+        public async Task Should_GetMetadataInfo_DataSource_From_EditorConstantSourceAttribute()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetMetadataInfo_DataSource_From_EditorConstantSourceAttribute");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.DataSource.Should().NotBeNull();
+            firstColumn.DataSource.Type.Should().Be(SourceType.Constant);
+            firstColumn.DataSource.Value.Should().BeEquivalentTo(new object[] { "a", "b" });
+        }
+        [Metadata("GetMetadataInfo_DataSource_From_EditorConstantSourceAttribute")]
+        internal class User_GetMetadataInfo_DataSource_From_EditorConstantSourceAttribute
+        {
+            [EditorConstantSource("a", "b")]
+            public string Name { get; set; }
+        }
+        #endregion
+
+        #region QueryFilter
+        [Fact]
+        public async Task Should_GetMetadataInfo_QueryFilter_From_QueryFilterAttribute()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetMetadataInfo_QueryFilter_From_QueryFilterAttribute");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.QueryFilter.Should().NotBeNull();
+            firstColumn.QueryFilter.Should().BeEquivalentTo(new QueryFilterInfo
+            {
+                Operator = Operators.Equal,
+                DefaultValue = "abc"
+            });
+        }
+        [Metadata("GetMetadataInfo_QueryFilter_From_QueryFilterAttribute")]
+        internal class User_GetMetadataInfo_QueryFilter_From_QueryFilterAttribute
+        {
+            [QueryFilter(Operators.Equal, DefaultValue = "abc")]
+            public string Name { get; set; }
+        }
+        #endregion
     }
 }

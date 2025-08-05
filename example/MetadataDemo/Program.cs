@@ -26,7 +26,6 @@ namespace MetadataDemo
         public string Category { get; set; }
         [DisplayName("编码")]
         [DisplayFormat(DataFormatString = "FileUrl")]
-        [EditorSource("abc")]
         public string Code { get; set; }
         [DisplayName("名称")]
         public string Name { get; set; }

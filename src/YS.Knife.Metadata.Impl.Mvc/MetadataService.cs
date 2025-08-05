@@ -18,26 +18,26 @@ namespace YS.Knife.Metadata.Impl.Mvc
         private readonly IModelMetadataProvider modelMetadataProvider;
         private readonly IOptions<MetadataOptions> metadataOptions;
         private readonly IOptions<JsonOptions> jsonOptions;
-        private readonly IEnumerable<IMetadataFilter> metadataFilters;
+        private readonly IEnumerable<IMetadataInterceptor> metadataInterceptors;
 
         public async Task<MetadataInfo> GetMetadataInfo(string name, CancellationToken cancellationToken = default)
         {
             if (metadataOptions.Value.Metas.TryGetValue(name, out var type))
             {
-                var (metadataInfo, filters) = GetMetadataInfoFromType(type);
-                return await ExecuteFilters(name, metadataInfo, filters, cancellationToken);
+                var (metadataInfo, interceptors) = GetMetadataInfoFromType(type);
+                return await ExecuteInterceptors(name, metadataInfo, interceptors, cancellationToken);
             }
             throw new Exception($"Can not find metadata by name '{name}'.");
         }
-        private async Task<MetadataInfo> ExecuteFilters(string name, MetadataInfo metadataInfo, string[] filters, CancellationToken cancellationToken)
+        private async Task<MetadataInfo> ExecuteInterceptors(string name, MetadataInfo metadataInfo, string[] filters, CancellationToken cancellationToken)
         {
-            if (metadataFilters.Any())
+            if (metadataInterceptors.Any())
             {
-                foreach (var interceptor in metadataFilters.Where(p => p.IsGlobal || filters.Contains(p.Name)).OrderBy(p => p.Priority))
+                foreach (var interceptor in metadataInterceptors.Where(p => p.IsGlobal || filters.Contains(p.Name)).OrderBy(p => p.Priority))
                 {
-                    var context = new MetadataFilterContext
+                    var context = new MetadataInterceptorContext
                     {
-                        Name = name,
+                        MetadataName = name,
                         MetadataInfo = metadataInfo
                     };
                     await interceptor.Process(context, cancellationToken);
@@ -50,7 +50,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
         {
             return Task.FromResult(metadataOptions.Value.Metas.Keys.ToList());
         }
-        private (MetadataInfo Metadata, string[] Filters) GetMetadataInfoFromType(Type type)
+        private (MetadataInfo Metadata, string[] Interceptors) GetMetadataInfoFromType(Type type)
         {
             var model = modelMetadataProvider.GetMetadataForType(type);
             return (new MetadataInfo
@@ -59,7 +59,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 Description = model.Description,
                 Columns = GetMetadataColumns(model, new HashSet<Type>()).ToList()
             },
-            type.GetCustomAttributes<MetadataFilterAttribute>().Select(p => p.FilterName).ToArray()
+            type.GetCustomAttributes<MetadataInterceptorAttribute>().Select(p => p.InterceptorName).ToArray()
             );
         }
 
@@ -91,7 +91,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
         private MetadataClolumnInfo2 PropertyToMetadataClolumnInfo(ModelMetadata c)
         {
             var p = c as DefaultModelMetadata;
-            var (isArray, typeCode) = GetTypeCode(p.ModelType);
+            var (isArray, typeCode, type) = GetTypeCode(p.ModelType);
             return new MetadataClolumnInfo2
             {
                 PropertyModel = p,
@@ -103,7 +103,34 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 IsArray = isArray,
                 DataTypeName = typeCode,
                 DisplayOrder = p.Order,
-                EditorSource = p.Attributes.PropertyAttributes.OfType<EditorSourceAttribute>().Select(p => p.Source).FirstOrDefault()
+                DataSource = GetEditorSource(p, type),
+                QueryFilter = GetQueryFilterInfo(p),
+            };
+        }
+        private DataSourceInfo GetEditorSource(DefaultModelMetadata metadata, Type itemType)
+        {
+            var source = metadata.Attributes.PropertyAttributes.OfType<EditorSourceAttribute>().FirstOrDefault();
+            if (source == null && itemType.IsEnum)
+            {
+                source = new EditorEnumSourceAttribute(itemType.Name);
+            }
+            return source == null ? null : new DataSourceInfo
+            {
+                Type = source.SourceType,
+                Value = source.Value
+            };
+        }
+        private QueryFilterInfo GetQueryFilterInfo(DefaultModelMetadata metadata)
+        {
+            var filter = metadata.Attributes.PropertyAttributes.OfType<QueryFilterAttribute>().FirstOrDefault();
+            if (filter == null)
+            {
+                return null;
+            }
+            return new QueryFilterInfo
+            {
+                DefaultValue = filter.DefaultValue,
+                Operator = filter.Operator,
             };
         }
         private string GetPropertyPath(DefaultModelMetadata metadata)
@@ -137,24 +164,24 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 metadata.Attributes.PropertyAttributes.OfType<DescriptionAttribute>().Select(p => p.Description).FirstOrDefault()
                 );
         }
-        private static (bool, string) GetTypeCode(Type type)
+        private static (bool, string, Type) GetTypeCode(Type type)
         {
             if (type.IsArray)
             {
-                return (true, GetTypeCode(type!.GetElementType()));
+                return (true, GetTypeCode(type!.GetElementType()), type!.GetElementType());
             }
             if (Type.GetTypeCode(type) != TypeCode.Object)
             {
-                return (false, GetTypeCode(type));
+                return (false, GetTypeCode(type), type);
             }
             if (typeof(IEnumerable).IsAssignableFrom(type))
             {
                 var itemType = type.GetInterfaces()
                     .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                     .Select(p => p.GetGenericArguments().First()).DefaultIfEmpty(typeof(object)).FirstOrDefault();
-                return (true, GetTypeCode(itemType));
+                return (true, GetTypeCode(itemType), itemType);
             }
-            return (false, GetTypeCode(type));
+            return (false, GetTypeCode(type), type);
             static string GetTypeCode(Type type)
             {
                 return Type.GetTypeCode(type).ToString().ToLowerInvariant();
