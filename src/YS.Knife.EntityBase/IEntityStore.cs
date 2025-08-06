@@ -8,6 +8,6 @@ namespace YS.Knife.Entity
         IQueryable<T> Current { get; }
         void Add(T entity);
         void Delete(T entity);
-        Task SaveChangesAsync();
+        Task SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

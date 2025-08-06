@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.KeyValue.Core\YS.Knife.KeyValue.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.Service.EFCoreBase\YS.Knife.Service.EFCoreBase.csproj" />
+  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+    </ItemGroup>
+</Project>

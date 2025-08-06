@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "KeyValueDemo": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_ENTITYKEYTYPE": "guid"
+      },
+      "applicationUrl": "https://localhost:52586;http://localhost:52587"
+    }
+  }
+}

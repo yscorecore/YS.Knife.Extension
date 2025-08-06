@@ -38,9 +38,9 @@ namespace YS.Knife.EfCore
             this.set.Remove(entity);
         }
 
-        public Task SaveChangesAsync()
+        public Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return this.context.SaveChangesAsync();
+            return this.context.SaveChangesAsync(cancellationToken);
         }
     }
 }
