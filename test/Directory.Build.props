@@ -9,7 +9,7 @@
         <Using Include="Xunit" />
         <Using Include="FluentAssertions"/>
         <PackageReference Include="FlyTiger" Version="[0.*,99)" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
         <PackageReference Include="Moq" Version="4.16.1" />
         <PackageReference Include="FluentAssertions" Version="5.10.3" />
         <PackageReference Include="Bogus" Version="33.0.2" />
