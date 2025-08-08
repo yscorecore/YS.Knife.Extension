@@ -2,7 +2,7 @@
 {
     public abstract class KeyValueGroup
     {
-        public abstract Task<string> GetKeyPrefix();
+        public abstract string BuildUniqueKey(string key);
 
     }
 }

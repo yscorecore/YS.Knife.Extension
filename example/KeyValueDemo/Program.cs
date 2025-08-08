@@ -22,7 +22,7 @@ namespace KeyValueDemo
             base.OnConfigureCustomService(builder, serviceCollection);
             serviceCollection.AddDbContext<KeyValueContext>((op) =>
             {
-                op.UseSqlite("Data Source=demo.db").EnableSensitiveDataLogging(true);
+                op.UseSqlite("Data Source=:memory:").EnableSensitiveDataLogging(true);
                 op.LogTo(Console.WriteLine);
             });
         }

@@ -4,20 +4,20 @@ using YS.Knife.KeyValue;
 
 namespace KeyValueDemo
 {
-    [Service(typeof(UserSetting))]
+    [Service(typeof(UserSetting), ServiceLifetime.Singleton)]
     public class UserSetting : KeyValueGroup
     {
-        public override Task<string> GetKeyPrefix()
+        public override string BuildUniqueKey(string key)
         {
-            return Task.FromResult($"userstting::{Thread.CurrentPrincipal?.Identity?.Name}");
+            return $"userstting::{Thread.CurrentPrincipal?.Identity?.Name}";
         }
     }
     [Service(typeof(OrgSetting))]
     public class OrgSetting : KeyValueGroup
     {
-        public override Task<string> GetKeyPrefix()
+        public override string BuildUniqueKey(string key)
         {
-            return Task.FromResult($"orgstting::{Thread.CurrentPrincipal?.Identity?.Name}");
+            return $"orgstting::{Thread.CurrentPrincipal?.Identity?.Name}";
         }
     }
 }

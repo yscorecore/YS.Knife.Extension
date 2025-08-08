@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.36" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.36" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.EFCore\YS.Knife.EFCore.csproj" />
+  </ItemGroup>
+</Project>

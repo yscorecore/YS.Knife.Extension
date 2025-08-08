@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection.Metadata;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using YS.Knife.EfCore;
 using YS.Knife.KeyValue.Impl.EFCore;
 
@@ -11,5 +13,21 @@ namespace KeyValueDemo
         {
         }
         public DbSet<KeyValueEntity<Guid>> KeyValues { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            this.ApplyKnifeExtensions(modelBuilder);
+            modelBuilder.ApplyConfiguration(new BlogEntityTypeConfiguration());
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(KeyValueContext).Assembly);
+        }
+    }
+
+    public class BlogEntityTypeConfiguration : IEntityTypeConfiguration<KeyValueEntity<Guid>>
+    {
+        public void Configure(EntityTypeBuilder<KeyValueEntity<Guid>> builder)
+        {
+
+        }
     }
 }

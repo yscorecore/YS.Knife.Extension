@@ -4,31 +4,23 @@ namespace YS.Knife.KeyValue
 {
     public static class KeyValueServiceExtensions
     {
-        private static async Task<string> GetFullKey(KeyValueGroup group, string key, CancellationToken cancellationToken)
+        private static string GetFullKey(KeyValueGroup group, string key)
         {
-            if (group == null)
-            {
-                return key;
-            }
-            else
-            {
-                var keyPrefix = await group.GetKeyPrefix();
-                return $"{keyPrefix}::{key}";
-            }
+            return group == null ? key : group.BuildUniqueKey(key);
         }
         public static async Task<string> GetValue(this IKeyValueService service, KeyValueGroup group, string key, CancellationToken cancellationToken = default)
         {
-            var fullKey = await GetFullKey(group, key, cancellationToken);
+            var fullKey = GetFullKey(group, key);
             return await service.GetValue(fullKey, cancellationToken);
         }
         public static async Task SetValue(this IKeyValueService service, KeyValueGroup group, string key, string value, CancellationToken cancellationToken = default)
         {
-            var fullKey = await GetFullKey(group, key, cancellationToken);
+            var fullKey = GetFullKey(group, key);
             await service.SetValue(fullKey, value, cancellationToken);
         }
         public static async Task Delete(this IKeyValueService service, KeyValueGroup group, string key, CancellationToken cancellationToken = default)
         {
-            var fullKey = await GetFullKey(group, key, cancellationToken);
+            var fullKey = GetFullKey(group, key);
             await service.Delete(fullKey, cancellationToken);
 
         }
