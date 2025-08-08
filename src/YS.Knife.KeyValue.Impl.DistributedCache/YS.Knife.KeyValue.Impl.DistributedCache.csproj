@@ -1,11 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\YS.Knife.Extensions.DistributedCache\YS.Knife.Extensions.DistributedCache.csproj" />
     <ProjectReference Include="..\YS.Knife.KeyValue.Core\YS.Knife.KeyValue.Core.csproj" />
