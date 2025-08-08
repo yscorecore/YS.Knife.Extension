@@ -3,8 +3,8 @@
         
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[6.*,9.9.0)" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[6.*,9.9.0)" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[7.0.20, 9.9.0)" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[7.0.20, 9.9.0)" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\YS.Knife.EntityBase\YS.Knife.EntityBase.csproj" />
