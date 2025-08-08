@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.Extensions.Json\YS.Knife.Extensions.Json.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Extensions\YS.Knife.Extensions.csproj" />
+  </ItemGroup>
+</Project>

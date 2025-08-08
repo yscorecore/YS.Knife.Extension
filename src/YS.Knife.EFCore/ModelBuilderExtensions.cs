@@ -14,6 +14,7 @@ namespace Microsoft.EntityFrameworkCore
                 modelAttribute.Apply(model);
             }
 
+
             foreach (var entityType in model.GetEntityTypes())
             {
                 var clrType = entityType.ClrType;
@@ -23,6 +24,13 @@ namespace Microsoft.EntityFrameworkCore
                     {
                         typeAttribute.Apply(entityType);
                     }
+                }
+                var allProperties = clrType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(p => p.GetCustomAttributes(true).OfType<IModelPropertyAttribute>().Any())
+                    .ToArray();
+                foreach (var p in allProperties)
+                {
+                    modelBuilder.Entity(entityType.ClrType).Property(p.PropertyType, p.Name);
                 }
                 foreach (var property in entityType.GetProperties())
                 {

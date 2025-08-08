@@ -61,6 +61,9 @@ namespace YS.Knife.EFCore.UnitTest
         {
             public int Id { get; set; }
             public int Value { get; set; }
+
+            [JsonContent]
+            public Dictionary<string, object> Details { get; set; }
         }
         #endregion
 
