@@ -7,6 +7,6 @@
 
     <ItemGroup>
         <Using Include="YS.Knife" />
-        <PackageReference Include="YS.Knife.Query" Version="0.0.6" />
+        <PackageReference Include="YS.Knife.Query" Version="0.0.7" />
     </ItemGroup>
 </Project>
