@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using YS.Knife.Entity;
 
-namespace YS.Knife.EfCore
+namespace YS.Knife.EFCore
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class EFEntityStoreAttribute : KnifeAttribute

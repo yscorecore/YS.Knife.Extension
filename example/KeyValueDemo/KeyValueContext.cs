@@ -1,7 +1,7 @@
 ﻿using System.Reflection.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using YS.Knife.EfCore;
+using YS.Knife.EFCore;
 using YS.Knife.KeyValue.Impl.EFCore;
 
 namespace KeyValueDemo
