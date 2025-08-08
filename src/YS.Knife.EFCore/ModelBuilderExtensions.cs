@@ -11,34 +11,36 @@ namespace Microsoft.EntityFrameworkCore
             var model = modelBuilder.Model;
             foreach (var modelAttribute in dbContext.GetType().GetCustomAttributes(true).OfType<IModelAttribute>().FilterAndSort(provider))
             {
-                modelAttribute.Apply(model);
+                modelAttribute.Apply(modelBuilder);
             }
 
 
             foreach (var entityType in model.GetEntityTypes())
             {
                 var clrType = entityType.ClrType;
+                var typeBuilder = modelBuilder.Entity(clrType);
                 if (clrType != null)
                 {
                     foreach (var typeAttribute in clrType.GetCustomAttributes(true).OfType<IModelTypeAttribute>().FilterAndSort(provider))
                     {
-                        typeAttribute.Apply(entityType);
+                        typeAttribute.Apply(typeBuilder);
                     }
                 }
                 var allProperties = clrType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                    .Where(p => p.GetCustomAttributes(true).OfType<IModelPropertyAttribute>().Any())
-                    .ToArray();
+                    .Select(p => new
+                    {
+                        Prop = p,
+                        Attrs = p.GetCustomAttributes(true).OfType<IModelPropertyAttribute>().ToList()
+                    })
+                    .Where(p => p.Attrs.Any());
+
                 foreach (var p in allProperties)
                 {
-                    modelBuilder.Entity(entityType.ClrType).Property(p.PropertyType, p.Name);
-                }
-                foreach (var property in entityType.GetProperties())
-                {
-                    var memberInfo = property.PropertyInfo ?? (MemberInfo)property.FieldInfo;
-                    if (memberInfo == null) continue;
-                    foreach (var propertyAttribute in memberInfo.GetCustomAttributes(true).OfType<IModelPropertyAttribute>().FilterAndSort(provider))
+                    var propBuilder = modelBuilder.Entity(clrType)
+                         .Property(p.Prop.Name);
+                    foreach (var propertyAttribute in p.Attrs.FilterAndSort(provider))
                     {
-                        propertyAttribute.Apply(property);
+                        propertyAttribute.Apply(propBuilder);
                     }
                 }
             }
@@ -47,37 +49,26 @@ namespace Microsoft.EntityFrameworkCore
         {
             foreach (var item in source)
             {
-                if (item is not ProviderAttribute)
+                if (item is not IProviderAttribute)
                 {
                     yield return item;
                 }
             }
             foreach (var item in source)
             {
-                if (item is ProviderAttribute providerAttribute && string.IsNullOrEmpty(providerAttribute.Provider))
+                if (item is IProviderAttribute providerAttribute && string.IsNullOrEmpty(providerAttribute.Provider))
                 {
                     yield return item;
                 }
             }
             foreach (var item in source)
             {
-                if (item is ProviderAttribute providerAttribute && string.Equals(providerAttribute.Provider, provider, StringComparison.OrdinalIgnoreCase))
+                if (item is IProviderAttribute providerAttribute && string.Equals(providerAttribute.Provider, provider, StringComparison.OrdinalIgnoreCase))
                 {
                     yield return item;
                 }
             }
         }
-        private static bool ShouldUse(object attribute, string provider)
-        {
-            if (attribute is ProviderAttribute providerAttribute)
-            {
-                if (string.IsNullOrEmpty(providerAttribute.Provider))
-                {
-                    return true;
-                }
-                return string.Equals(providerAttribute.Provider, provider, StringComparison.OrdinalIgnoreCase);
-            }
-            return true;
-        }
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -9,14 +9,14 @@ namespace Microsoft.EntityFrameworkCore
             Collation = collation;
         }
         public string Collation { get; set; }
-        public void Apply(IMutableProperty property)
+        public void Apply(ModelBuilder modelBuilder)
         {
-            property.SetCollation(Collation);
+            modelBuilder.Model.SetCollation(Collation);
         }
 
-        public void Apply(IMutableModel model)
+        public void Apply(PropertyBuilder propertyBuilder)
         {
-            model.SetCollation(Collation);
+            propertyBuilder.Metadata.SetCollation(Collation);
         }
     }
 }

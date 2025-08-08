@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -19,16 +20,16 @@ namespace Microsoft.EntityFrameworkCore
         public Type Type { get; }
         public string PropertyName { get; }
 
-        public void Apply(IMutableEntityType type)
+
+
+        public void Apply(EntityTypeBuilder typeBuilder)
         {
-            //throw new NotImplementedException();
-            // type.AddProperty(PropertyName, Type, ConfigurationSource.Convention);
+            //  throw new NotImplementedException();
         }
 
-        public void Apply(IMutableModel model)
+        public void Apply(ModelBuilder modelBuilder)
         {
-
-            // throw new NotImplementedException();
+            //  throw new NotImplementedException();
         }
     }
 }

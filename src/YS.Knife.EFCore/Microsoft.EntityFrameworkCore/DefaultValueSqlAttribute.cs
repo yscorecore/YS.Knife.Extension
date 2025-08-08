@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -11,9 +12,10 @@ namespace Microsoft.EntityFrameworkCore
         }
         public string Sql { get; set; }
 
-        public void Apply(IMutableProperty property)
+
+        public void Apply(PropertyBuilder propertyBuilder)
         {
-            property.SetDefaultValueSql(Sql);
+            propertyBuilder.HasDefaultValueSql(Sql);
         }
     }
 

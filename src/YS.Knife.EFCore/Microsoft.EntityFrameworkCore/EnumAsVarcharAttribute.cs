@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Microsoft.EntityFrameworkCore
@@ -11,17 +12,17 @@ namespace Microsoft.EntityFrameworkCore
         {
             this.VarcharLength = varcharLength;
         }
-
-        public void Apply(IMutableProperty property)
+        public void Apply(PropertyBuilder property)
         {
-            if (property.ClrType.IsEnum == false)
+            if (property.Metadata.ClrType.IsEnum == false)
             {
-                throw new InvalidOperationException($"The property '{property.Name}' is not an enum type.");
+                throw new InvalidOperationException($"The property '{property.Metadata.Name}' is not an enum type.");
+
             }
             var mappintHints = new ConverterMappingHints(size: VarcharLength);
-            var type = typeof(EnumToStringConverter<>).MakeGenericType(property.ClrType);
+            var type = typeof(EnumToStringConverter<>).MakeGenericType(property.Metadata.ClrType);
             var instance = Activator.CreateInstance(type, new object[] { mappintHints }) as ValueConverter;
-            property.SetValueConverter(instance);
+            property.HasConversion(instance);
         }
     }
 }

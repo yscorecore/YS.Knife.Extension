@@ -1,34 +1,40 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Microsoft.EntityFrameworkCore
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-    public sealed class JsonContentAttribute : Attribute, IModelPropertyAttribute
+    public sealed class JsonContentAttribute : ColumnAttribute, IModelPropertyAttribute
     {
-        public void Apply(IMutableProperty property)
+        public JsonContentAttribute() : base()
         {
-            var valueConverterType = typeof(JsonContentConvert<>).MakeGenericType(property.PropertyInfo.PropertyType);
-            property.SetValueConverter((ValueConverter)Activator.CreateInstance(valueConverterType));
-
-            if (IsDictionary(property.PropertyInfo))
+            this.TypeName = "TEXT";
+        }
+        public void Apply(PropertyBuilder property)
+        {
+            var valueConverterType = typeof(JsonContentConvert<>).MakeGenericType(property.Metadata.PropertyInfo.PropertyType);
+            if (IsDictionary(property.Metadata.PropertyInfo))
             {
-
-                var argumentsType = property.PropertyInfo.PropertyType.GetGenericArguments();
+                var argumentsType = property.Metadata.PropertyInfo.PropertyType.GetGenericArguments();
                 var valueComparerType = typeof(DicValueComparer<,>).MakeGenericType(argumentsType[0], argumentsType[1]);
-                property.SetValueComparer((ValueComparer)Activator.CreateInstance(valueComparerType));
+                property.HasConversion(valueConverterType, valueComparerType);
             }
-            else if (IsList(property.PropertyInfo))
+            else if (IsList(property.Metadata.PropertyInfo))
             {
-                var listItemType = property.PropertyInfo.PropertyType.GetGenericArguments().Single();
+                var listItemType = property.Metadata.PropertyInfo.PropertyType.GetGenericArguments().Single();
                 var valueComparerType = typeof(ListValueComparer<>).MakeGenericType(listItemType);
-                property.SetValueComparer((ValueComparer)Activator.CreateInstance(valueComparerType));
-
+                property.HasConversion(valueConverterType, valueComparerType);
+            }
+            else
+            {
+                property.HasConversion(valueConverterType);
             }
 
 
@@ -41,6 +47,7 @@ namespace Microsoft.EntityFrameworkCore
                 return v.PropertyType.IsGenericType && v.PropertyType.GetGenericTypeDefinition() == typeof(List<>);
             }
         }
+
         private class JsonContentConvert<T> : ValueConverter<T, string>
         {
             static JsonSerializerOptions Options = new JsonSerializerOptions()

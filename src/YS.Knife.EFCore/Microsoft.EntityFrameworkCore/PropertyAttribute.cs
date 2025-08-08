@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -12,15 +7,14 @@ namespace Microsoft.EntityFrameworkCore
     }
     public interface IModelPropertyAttribute
     {
-        void Apply(IMutableProperty property);
-
+        void Apply(PropertyBuilder propertyBuilder);
     }
     public interface IModelAttribute
     {
-        void Apply(IMutableModel model);
+        void Apply(ModelBuilder modelBuilder);
     }
     public interface IModelTypeAttribute
     {
-        void Apply(IMutableEntityType type);
+        void Apply(EntityTypeBuilder typeBuilder);
     }
 }

@@ -1,11 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Microsoft.EntityFrameworkCore
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
     public sealed class ComputedColumnSqlAttribute : ProviderAttribute, IModelPropertyAttribute
     {
-        public ComputedColumnSqlAttribute(string sql, bool? stored)
+        public ComputedColumnSqlAttribute(string sql)
+        {
+            this.Sql = sql;
+        }
+        public ComputedColumnSqlAttribute(string sql, bool stored)
         {
             this.Sql = sql;
             this.Stored = stored;
@@ -13,11 +18,9 @@ namespace Microsoft.EntityFrameworkCore
         public string Sql { get; }
         public bool? Stored { get; }
 
-        public void Apply(IMutableProperty property)
+        public void Apply(PropertyBuilder propertyBuilder)
         {
-            property.SetComputedColumnSql(Sql);
-            property.SetIsStored(Stored);
-
+            propertyBuilder.HasComputedColumnSql(Sql, Stored);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +35,7 @@ namespace YS.Knife.EFCore.UnitTest
         {
             public int Id { get; set; }
             [JsonContent]
+            // [Column(TypeName = "TEXT")]
             public Dictionary<string, string> Value { get; set; }
         }
         #endregion
@@ -63,6 +65,7 @@ namespace YS.Knife.EFCore.UnitTest
         {
             public int Id { get; set; }
             [JsonContent]
+            // [Column(TypeName = "TEXT")]
             public List<object> Value { get; set; }
         }
         #endregion
@@ -92,7 +95,15 @@ namespace YS.Knife.EFCore.UnitTest
         {
             public int Id { get; set; }
             [JsonContent]
-            public int Value { get; set; }
+            // [Column(TypeName = "TEXT")]
+            public SafeOrderConfig Value { get; set; }
+        }
+
+        public class SafeOrderConfig
+        {
+            public int Period { get; set; }
+
+            public int[] Values { get; set; }
         }
         #endregion
     }

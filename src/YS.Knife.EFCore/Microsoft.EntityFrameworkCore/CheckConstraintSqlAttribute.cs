@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -18,14 +19,9 @@ namespace Microsoft.EntityFrameworkCore
         public string ConstraintName { get; set; }
         public string Sql { get; set; }
 
-        public void Apply(IMutableEntityType type)
+        public void Apply(EntityTypeBuilder typeBuilder)
         {
-            var current = type.FindCheckConstraint(ConstraintName);
-            if (current != null)
-            {
-                type.RemoveCheckConstraint(ConstraintName);
-            }
-            type.AddCheckConstraint(ConstraintName, Sql);
+            typeBuilder.HasCheckConstraint(ConstraintName, Sql);
         }
     }
 }
