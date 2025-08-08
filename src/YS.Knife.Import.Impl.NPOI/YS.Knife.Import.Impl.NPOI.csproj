@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <PackageReference Include="NPOI" Version="2.6.2" />
+    <PackageReference Include="NPOI" Version="2.7.4" />
   </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\YS.Knife.Import.Impl.Base\YS.Knife.Import.Impl.Base.csproj" />
