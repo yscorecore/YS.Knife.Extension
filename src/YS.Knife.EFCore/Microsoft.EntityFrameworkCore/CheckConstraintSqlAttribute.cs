@@ -21,7 +21,7 @@ namespace Microsoft.EntityFrameworkCore
 
         public void Apply(EntityTypeBuilder typeBuilder)
         {
-            typeBuilder.HasCheckConstraint(ConstraintName, Sql);
+            typeBuilder.HasCheckConstraint($"{typeBuilder.Metadata?.ClrType?.Name}_{ConstraintName}", Sql);
         }
     }
 }

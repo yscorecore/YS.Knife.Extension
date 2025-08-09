@@ -11,12 +11,12 @@ namespace Microsoft.EntityFrameworkCore
         public string Collation { get; set; }
         public void Apply(ModelBuilder modelBuilder)
         {
-            modelBuilder.Model.SetCollation(Collation);
+            modelBuilder.UseCollation(Collation);
         }
 
         public void Apply(PropertyBuilder propertyBuilder)
         {
-            propertyBuilder.Metadata.SetCollation(Collation);
+            propertyBuilder.UseCollation(Collation);
         }
     }
 }

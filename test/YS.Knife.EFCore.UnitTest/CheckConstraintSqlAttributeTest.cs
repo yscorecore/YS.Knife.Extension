@@ -18,7 +18,7 @@ namespace YS.Knife.EFCore.UnitTest
             entity.GetCheckConstraints().Count().Should().Be(1);
             var checkConstanint = entity.GetCheckConstraints().First();
             checkConstanint.Sql.Should().Be("Value >5");
-            checkConstanint.Name.Should().Be("check1");
+            checkConstanint.Name.Should().EndWith("check1");
 
         }
 
@@ -45,7 +45,7 @@ namespace YS.Knife.EFCore.UnitTest
             var entity = model.GetEntityTypes().First();
             var checkConstanint = entity.GetCheckConstraints().First();
             checkConstanint.Sql.Should().Be("Value > 6");
-            checkConstanint.Name.Should().Be("check1");
+            checkConstanint.Name.Should().EndWith("check1");
         }
 
         private class GetCheckConstraintSql_When_Define_DefaultValueAttribute_And_DefaultValueAttributeWithProvider_Context : BaseContext

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -17,11 +18,13 @@ namespace Microsoft.EntityFrameworkCore
 
             foreach (var entityType in model.GetEntityTypes())
             {
+
                 var clrType = entityType.ClrType;
-                var typeBuilder = modelBuilder.Entity(clrType);
-                if (clrType != null)
+                var modelAttributes = clrType.GetCustomAttributes(true).OfType<IModelTypeAttribute>().FilterAndSort(provider).ToList();
+                if (clrType != null && modelAttributes.Any())
                 {
-                    foreach (var typeAttribute in clrType.GetCustomAttributes(true).OfType<IModelTypeAttribute>().FilterAndSort(provider))
+                    var typeBuilder = modelBuilder.Entity(entityType.ClrType);
+                    foreach (var typeAttribute in modelAttributes)
                     {
                         typeAttribute.Apply(typeBuilder);
                     }
@@ -32,17 +35,20 @@ namespace Microsoft.EntityFrameworkCore
                         Prop = p,
                         Attrs = p.GetCustomAttributes(true).OfType<IModelPropertyAttribute>().ToList()
                     })
-                    .Where(p => p.Attrs.Any());
-
-                foreach (var p in allProperties)
+                    .Where(p => p.Attrs.Any()).ToList();
+                if (clrType != null && allProperties.Any())
                 {
-                    var propBuilder = modelBuilder.Entity(clrType)
-                         .Property(p.Prop.Name);
-                    foreach (var propertyAttribute in p.Attrs.FilterAndSort(provider))
+                    var typeBuilder = modelBuilder.Entity(entityType.ClrType);
+                    foreach (var p in allProperties)
                     {
-                        propertyAttribute.Apply(propBuilder);
+                        var propBuilder = typeBuilder.Property(p.Prop.Name);
+                        foreach (var propertyAttribute in p.Attrs.FilterAndSort(provider))
+                        {
+                            propertyAttribute.Apply(propBuilder);
+                        }
                     }
                 }
+
             }
         }
         private static IEnumerable<T> FilterAndSort<T>(this IEnumerable<T> source, string provider)
