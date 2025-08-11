@@ -4,18 +4,16 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Microsoft.EntityFrameworkCore
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-    public sealed class JsonContentAttribute : ColumnAttribute, IModelPropertyAttribute
+    public sealed class JsonContentAttribute : Attribute, IModelPropertyAttribute
     {
         public JsonContentAttribute() : base()
         {
-            this.TypeName = "TEXT";
         }
         public void Apply(PropertyBuilder property)
         {
