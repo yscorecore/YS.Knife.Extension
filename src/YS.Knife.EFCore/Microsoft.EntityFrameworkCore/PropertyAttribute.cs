@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -16,5 +17,9 @@ namespace Microsoft.EntityFrameworkCore
     public interface IModelTypeAttribute
     {
         void Apply(EntityTypeBuilder typeBuilder);
+    }
+    public interface IModelMethodAttribute
+    {
+        void Apply(ModelBuilder modelBuilder, MethodInfo methodInfo);
     }
 }

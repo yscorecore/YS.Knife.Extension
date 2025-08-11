@@ -15,10 +15,23 @@ namespace Microsoft.EntityFrameworkCore
                 modelAttribute.Apply(modelBuilder);
             }
 
+            foreach (var method in dbContext.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .Select(m => new
+                {
+                    MethodInfo = m,
+                    Attr = m.GetCustomAttributes(true).OfType<IModelMethodAttribute>().ToList()
+                })
+                .Where(m => m.Attr.Any())
+               )
+            {
+                foreach (var modelMethodAttribute in method.Attr.FilterAndSort(provider))
+                {
+                    modelMethodAttribute.Apply(modelBuilder, method.MethodInfo);
+                }
+            }
 
             foreach (var entityType in model.GetEntityTypes())
             {
-
                 var clrType = entityType.ClrType;
                 var modelAttributes = clrType.GetCustomAttributes(true).OfType<IModelTypeAttribute>().FilterAndSort(provider).ToList();
                 if (clrType != null && modelAttributes.Any())
