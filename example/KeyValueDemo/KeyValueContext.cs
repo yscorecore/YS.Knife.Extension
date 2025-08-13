@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YS.Knife.EFCore;
-using YS.Knife.KeyValue.Impl.EFCore;
+using YS.Knife.KeyValue;
 
 namespace KeyValueDemo
 {
