@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\YS.Knife.Service.EFCoreBase\YS.Knife.Service.EFCoreBase.csproj" />
+    </ItemGroup>
+
+</Project>

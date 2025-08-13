@@ -151,6 +151,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Extensions.UnitTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Extensions.Json.UnitTest", "test\YS.Knife.Extensions.Json.UnitTest\YS.Knife.Extensions.Json.UnitTest.csproj", "{BB1766CF-6CCC-4947-8289-2D8F692F792F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.KeyValue.Entity.EFCore", "src\YS.Knife.KeyValue.Entity.EFCore\YS.Knife.KeyValue.Entity.EFCore.csproj", "{C82DF953-DA5F-416F-A133-924C43EECF5F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -377,6 +379,10 @@ Global
 		{BB1766CF-6CCC-4947-8289-2D8F692F792F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB1766CF-6CCC-4947-8289-2D8F692F792F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB1766CF-6CCC-4947-8289-2D8F692F792F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C82DF953-DA5F-416F-A133-924C43EECF5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C82DF953-DA5F-416F-A133-924C43EECF5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C82DF953-DA5F-416F-A133-924C43EECF5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C82DF953-DA5F-416F-A133-924C43EECF5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -447,6 +453,7 @@ Global
 		{B8362A8B-4181-4ABD-A1BB-971C618F8A97} = {9D50B35B-1EAA-4620-B0A6-245456051247}
 		{51F9B5D7-A911-403E-87F5-377977EDDE6C} = {9D50B35B-1EAA-4620-B0A6-245456051247}
 		{BB1766CF-6CCC-4947-8289-2D8F692F792F} = {9D50B35B-1EAA-4620-B0A6-245456051247}
+		{C82DF953-DA5F-416F-A133-924C43EECF5F} = {B0211214-C5BE-4574-8B2C-D9A3C5D3D5F5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB11BB21-3F5D-42D6-8737-F19C0666F1F8}

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using YS.Knife.Entity;
 
-namespace YS.Knife.KeyValue.Impl.EFCore
+namespace YS.Knife.KeyValue
 {
     [Index(nameof(Key), IsUnique = true)]
     public class KeyValueEntity<T> : BaseEntity<T>

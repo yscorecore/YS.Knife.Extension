@@ -32,7 +32,7 @@ namespace YS.Knife
             return entityType?.ToLowerInvariant() switch
             {
                 null => typeof(Guid),
-                "" => typeof(Guid),
+                "" => typeof(int),
                 "int" => typeof(int),
                 "long" => typeof(long),
                 "string" => typeof(string),
