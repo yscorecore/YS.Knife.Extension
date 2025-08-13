@@ -83,7 +83,7 @@ namespace YS.Knife.DataSource.Core.Impl
         {
             var res = await GetDataSourceFunc(name)(serviceProvider, new LimitQueryInfo
             {
-                Filter = filter
+                Filter = filter,
             }, cancellationToken);
             return res.TotalCount;
         }

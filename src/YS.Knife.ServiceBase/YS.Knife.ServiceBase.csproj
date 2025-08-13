@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="YS.Knife.Query" Version="0.0.7" />
+    <PackageReference Include="YS.Knife.Query" Version="0.0.8" />
   </ItemGroup>
 
 
