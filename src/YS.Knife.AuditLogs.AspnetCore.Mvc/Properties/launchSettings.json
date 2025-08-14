@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "YS.Knife.AuditLogs.AspnetCore.Mvc": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:63506;http://localhost:63507"
+    }
+  }
+}

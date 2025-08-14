@@ -40,5 +40,14 @@ namespace System
         {
             return string.Join(sep, items);
         }
+        public static string WithStyle(this string text, NameStyle style)
+        {
+            return style switch
+            {
+                NameStyle.Lower => text?.ToLowerInvariant(),
+                NameStyle.Upper => text?.ToUpperInvariant(),
+                _ => text
+            };
+        }
     }
 }

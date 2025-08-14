@@ -8,6 +8,7 @@ namespace Microsoft.EntityFrameworkCore
     public sealed class EnumAsVarcharAttribute : Attribute, IModelPropertyAttribute
     {
         public int VarcharLength { get; set; }
+        public NameStyle NameStyle { get; set; } = NameStyle.Original;
         public EnumAsVarcharAttribute(int varcharLength = 32)
         {
             this.VarcharLength = varcharLength;
@@ -20,9 +21,21 @@ namespace Microsoft.EntityFrameworkCore
 
             }
             var mappintHints = new ConverterMappingHints(size: VarcharLength);
-            var type = typeof(EnumToStringConverter<>).MakeGenericType(property.Metadata.ClrType);
-            var instance = Activator.CreateInstance(type, new object[] { mappintHints }) as ValueConverter;
+            var type = typeof(EnumVarcharConvert<>).MakeGenericType(property.Metadata.ClrType);
+            var instance = Activator.CreateInstance(type, new object[] { mappintHints, NameStyle }) as ValueConverter;
             property.HasConversion(instance);
+        }
+
+        private class EnumVarcharConvert<T> : ValueConverter<T, string>
+        {
+            public EnumVarcharConvert(ConverterMappingHints converterMappingHints, NameStyle nameStyle)
+            : base(
+               v => v == null ? null : v.ToString().WithStyle(nameStyle),
+               v => string.IsNullOrEmpty(v) ? default : (T)Enum.Parse(Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T), v, true),
+               converterMappingHints
+               )
+            {
+            }
         }
     }
 }
