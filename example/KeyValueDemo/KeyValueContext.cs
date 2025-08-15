@@ -5,6 +5,8 @@ using YS.Knife.KeyValue;
 namespace KeyValueDemo
 {
     [EFEntityStore(typeof(KeyValueEntity<Guid>))]
+    [ModelScopeDefaultValueSql(nameof(YS.Knife.Entity.BaseEntity<Guid>.CreateTime), typeof(DateTime), "current_timestamp")]
+
     public class KeyValueContext : DbContext
     {
         public KeyValueContext(DbContextOptions options) : base(options)

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace YS.Knife.KeyValue.Api.AspnetCore
 {
@@ -12,7 +11,6 @@ namespace YS.Knife.KeyValue.Api.AspnetCore
     {
         private readonly T group;
         private readonly IKeyValueService keyValueService;
-        private readonly IOptions<JsonOptions> options;
 
         [HttpDelete]
         [Route("{key}")]
@@ -22,18 +20,14 @@ namespace YS.Knife.KeyValue.Api.AspnetCore
         }
         [HttpGet]
         [Route("{key}")]
-        public async Task<object> GetValue([FromRoute] string key, CancellationToken cancellationToken)
+        public Task<object> GetValue([FromRoute] string key, CancellationToken cancellationToken = default)
         {
-            return await keyValueService.GetValue<object>(group, key, default,
-                 options.Value.JsonSerializerOptions, cancellationToken);
+            return keyValueService.GetValue<object>(group, key, cancellationToken);
         }
         [HttpPost]
-        [Route("{key}")]
-        public async Task SetValue([FromRoute] string key, [FromBody] object value, CancellationToken cancellationToken)
+        public Task SetValue([FromBody] KeyValuePair<string, object> body, [FromQuery] bool keepstring = true, CancellationToken cancellationToken = default)
         {
-            await keyValueService.SetValue(group,
-                key, value,
-                options.Value.JsonSerializerOptions, cancellationToken);
+            return keyValueService.SetValue(group, body.Key, body.Value, keepstring, cancellationToken);
         }
     }
 }

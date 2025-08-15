@@ -9,7 +9,7 @@ namespace KeyValueDemo
     {
         public override string BuildUniqueKey(string key)
         {
-            return $"userstting::{Thread.CurrentPrincipal?.Identity?.Name}";
+            return $"userstting::{Thread.CurrentPrincipal?.Identity?.Name}::{key}";
         }
     }
     [Service(typeof(OrgSetting))]
@@ -17,7 +17,7 @@ namespace KeyValueDemo
     {
         public override string BuildUniqueKey(string key)
         {
-            return $"orgstting::{Thread.CurrentPrincipal?.Identity?.Name}";
+            return $"orgstting::{Thread.CurrentPrincipal?.Identity?.Name}::{key}";
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YS.Knife.AspnetCore.Mvc;
 
@@ -15,6 +16,11 @@ namespace KeyValueDemo
         }
         protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
+            serviceCollection.Configure<MvcOptions>(options =>
+            {
+
+                options.Filters.Add<WrapCodeResultAttribute>();
+            });
             serviceCollection.AddMvc().ConfigureApplicationPartManager(manager =>
             {
                 manager.FeatureProviders.Add(new GenericControllerFeatureProvider());
@@ -22,7 +28,8 @@ namespace KeyValueDemo
             base.OnConfigureCustomService(builder, serviceCollection);
             serviceCollection.AddDbContext<KeyValueContext>((op) =>
             {
-                op.UseSqlite("Data Source=:memory:").EnableSensitiveDataLogging(true);
+                //op.UseSqlite("Data Source=:memory:").EnableSensitiveDataLogging(true);
+                op.UseSqlite("Data Source=abc.db.tmp").EnableSensitiveDataLogging(true);
                 op.LogTo(Console.WriteLine);
             });
         }

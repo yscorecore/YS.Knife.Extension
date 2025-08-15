@@ -7,19 +7,18 @@ namespace YS.Knife.KeyValue.Impl.DistributedCache
     public partial class KeyValueService : IKeyValueService
     {
         private readonly IDistributedCache cache;
+        private readonly KeyValueOptions keyValueOptions;
         public Task Delete(string key, CancellationToken cancellationToken = default)
         {
             return cache.RemoveAsync(key, cancellationToken);
         }
-
-        public Task<string> GetValue(string key, CancellationToken cancellationToken = default)
+        public Task<T> GetValue<T>(string key, CancellationToken cancellationToken = default)
         {
-            return cache.GetStringAsync(key, cancellationToken);
+            return cache.GetObjectAsync<T>(key, keyValueOptions.JsonSerializerOptions);
         }
-
-        public Task SetValue(string key, string value, CancellationToken cancellationToken = default)
+        public Task SetValue(string key, object value, bool _, CancellationToken cancellationToken = default)
         {
-            return cache.SetStringAsync(key, value, cancellationToken);
+            return cache.SetObjectAsync(key, value, keyValueOptions.JsonSerializerOptions);
         }
     }
 }

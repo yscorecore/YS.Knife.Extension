@@ -8,8 +8,9 @@ namespace YS.Knife.KeyValue
     public class KeyValueEntity<T> : BaseEntity<T>
     {
         [Required]
-        [StringLength(64)]
+        [StringLength(128)]
         public string Key { get; set; }
         public string Value { get; set; }
+        public bool KeepString { get; set; }
     }
 }

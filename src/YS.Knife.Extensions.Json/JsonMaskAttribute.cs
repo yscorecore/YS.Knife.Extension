@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
 namespace System.Text.Json.Serialization;
-
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 public partial class JsonMaskAttribute : JsonConverterAttribute
 {
     public JsonMaskAttribute()

@@ -41,6 +41,10 @@ namespace Microsoft.Extensions.Caching.Distributed
         {
             await cache.SetStringAsync(key, data.ToJsonText(options), entryOptions);
         }
+        public static async Task SetObjectAsync<T>(this IDistributedCache cache, string key, T data, JsonSerializerOptions options = default)
+        {
+            await cache.SetStringAsync(key, data.ToJsonText(options), new DistributedCacheEntryOptions());
+        }
         public static async Task SetStringAsync(this IDistributedCache cache, string key, string content, TimeSpan maxCacheTimeSpan)
         {
             await cache.SetStringAsync(key, content, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = maxCacheTimeSpan });
