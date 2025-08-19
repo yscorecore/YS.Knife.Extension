@@ -1,7 +1,10 @@
-﻿namespace YS.Knife
+﻿using System.Text.Json.Serialization;
+
+namespace YS.Knife
 {
     public record CodeResult
     {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Dictionary<string, object> Errors { get; set; }
         public string Code { get; set; }
         public string Message { get; set; }

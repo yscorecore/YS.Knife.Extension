@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "YS.Knife.FileStorage.Minio": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:50596;http://localhost:50597"
+    }
+  }
+}

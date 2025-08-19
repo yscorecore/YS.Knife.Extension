@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "YS.Knife.FileStorage.Api.AspnetCore": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:60864;http://localhost:60865"
+    }
+  }
+}
