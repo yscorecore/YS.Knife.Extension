@@ -1,10 +1,7 @@
-﻿using FlyTiger;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using YS.Knife.DataSource.Api.AspnetCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using YS.Knife.Query;
 
-namespace YS.Knife.DataSource.Management
+namespace YS.Knife.DataSource.Api.AspnetCore
 {
     [Route("api/[controller]")]
     [ApiController]

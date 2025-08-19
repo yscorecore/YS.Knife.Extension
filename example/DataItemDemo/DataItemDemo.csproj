@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <!--<Nullable>enable</Nullable>-->
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+    <ItemGroup>
+        <!-- 引用 AspectCore 解决低版本对于Attribute中包含object[]的问题 -->
+        <PackageReference Include="AspectCore.Abstractions" Version="2.4.0" />
+        <PackageReference Include="AspectCore.Core" Version="2.4.0" />
+        <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.4.0" />
+        <PackageReference Include="YS.Knife.Hosting.Web" Version="2.0.2" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\YS.Knife.AspnetCore\YS.Knife.AspnetCore.csproj" />
+      <ProjectReference Include="..\..\src\YS.Knife.DataItem.Api.AspnetCore\YS.Knife.DataItem.Api.AspnetCore.csproj" />
+      <ProjectReference Include="..\..\src\YS.Knife.DataItem.Core\YS.Knife.DataItem.Core.csproj" />
+      <ProjectReference Include="..\..\src\YS.Knife.DataItem.Impl.Default\YS.Knife.DataItem.Impl.Default.csproj" />
+    </ItemGroup>
+</Project>
