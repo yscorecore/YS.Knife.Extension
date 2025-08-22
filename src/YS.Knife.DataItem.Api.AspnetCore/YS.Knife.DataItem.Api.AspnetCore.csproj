@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.AspnetCore\YS.Knife.AspnetCore.csproj" />
       <ProjectReference Include="..\YS.Knife.DataItem.Core\YS.Knife.DataItem.Core.csproj" />
     </ItemGroup>
 

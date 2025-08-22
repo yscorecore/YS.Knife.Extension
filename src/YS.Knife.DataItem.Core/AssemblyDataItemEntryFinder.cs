@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace YS.Knife.DataItem
+namespace YS.Knife.DataSource
 {
     [SingletonPattern]
     public partial class AssemblyDataItemEntryFinder
@@ -30,15 +30,19 @@ namespace YS.Knife.DataItem
                     })
                     .SelectMany(p => p.GetTypes().Where(t => t.IsInterface))
                     .SelectMany(p => p.GetMethods().Where(t => Attribute.IsDefined(t, typeof(DataItemAttribute))))
-                    .SelectMany(p => p.GetCustomAttributes<DataItemAttribute>().Select(a => new DataItemEntry
+                    .SelectMany(p => p.GetCustomAttributes<DataItemAttribute>().Select(a =>
                     {
-                        Method = p,
-                        Name = a.Name,
-                        ServiceType = p.DeclaringType,
-                        ReturnType = GetDataItemClassType(p),
-                        AutoRegisterMeta = a.AutoRegisterMeta,
-                        HasCancellationToken = p.GetParameters().TakeLast(1).Any(q => q.ParameterType == typeof(CancellationToken)),
-                        IsValueTask = p.ReturnType.IsGenericType && p.ReturnType.GetGenericTypeDefinition() == typeof(ValueTask<>),
+                        return new DataItemEntry
+                        {
+                            Method = p,
+                            Name = a.Name,
+                            ServiceType = p.DeclaringType,
+                            ReturnType = GetDataItemClassType(p),
+                            AutoRegisterMeta = a.AutoRegisterMeta,
+                            Parameters = p.GetParameters().Where(t => t.ParameterType != typeof(CancellationToken)).ToArray(),
+                            HasCancellationToken = p.GetParameters().TakeLast(1).Any(q => q.ParameterType == typeof(CancellationToken)),
+                            IsValueTask = p.ReturnType.IsGenericType && p.ReturnType.GetGenericTypeDefinition() == typeof(ValueTask<>),
+                        };
                     }));
 
         }

@@ -6,7 +6,7 @@ namespace YS.Knife.DataSource.Management
     [Route("api/[controller]")]
     [ApiController]
     [AutoConstructor]
-    public partial class FileController: ControllerBase
+    public partial class FileController : ControllerBase
     {
 
         private readonly IFileCategoryFactory fileCategoryFactory;
@@ -33,7 +33,7 @@ namespace YS.Knife.DataSource.Management
             //        }
             //        else
             //        { 
-                        
+
             //        }   
             //    }
             //}

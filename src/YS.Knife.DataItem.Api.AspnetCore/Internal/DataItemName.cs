@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.DataItem.Api.AspnetCore
+﻿namespace YS.Knife.DataItem.Api.AspnetCore.Internal
 {
     [AttributeUsage(AttributeTargets.Parameter)]
     internal class DataItemNameAttribute : Attribute

@@ -1,9 +1,8 @@
 ﻿
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Primitives;
 
-namespace YS.Knife.DataItem.Impl.Default
+namespace YS.Knife.DataSource.Impl.Default
 {
     [Service]
     [AutoConstructor]
@@ -11,17 +10,14 @@ namespace YS.Knife.DataItem.Impl.Default
     {
         private readonly IServiceProvider serviceProvider;
 
-
-        private async Task<object> GetItemObject(string name, IDictionary<string, StringValues> arguments, CancellationToken cancellationToken)
+        public async Task<object> GetItem(string name, object[] args, CancellationToken cancellationToken)
         {
             var entry = GetDataItemEntry(name);
             var serviceInstance = serviceProvider.GetRequiredService(entry.ServiceType);
-
-            return await InvokeMethod(entry, serviceInstance, Array.Empty<object>(), cancellationToken); ;
+            return await InvokeMethod(entry, serviceInstance, args, cancellationToken);
         }
         private Task<object> InvokeMethod(DataItemEntry entry, object instance, object[] args, CancellationToken token)
         {
-
             ITaskInvoker invoker = Activator.CreateInstance(typeof(TaskInvoker<>).MakeGenericType(entry.ReturnType)) as ITaskInvoker;
             if (entry.IsValueTask)
             {
@@ -36,23 +32,21 @@ namespace YS.Knife.DataItem.Impl.Default
         {
             return AssemblyDataItemEntryFinder.Instance.All.TryGetValue(name, out var entry) ? entry : throw new Exception($"can not find data item '{name}'");
         }
-        public async Task<Dictionary<string, object>> GetItems(string[] names, DataItemArguments arguments, CancellationToken cancellationToken)
+
+        public Task<List<DataItemDesc>> GetAllDataItems()
         {
-            var dic = new Dictionary<string, object>();
-            foreach (var name in (names ?? Array.Empty<string>()).Distinct())
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
-                dic[name] = await GetItemObject(name, arguments.GetItemArguments(name), cancellationToken);
-            }
-            return dic;
+            var res = AssemblyDataItemEntryFinder.Instance.All
+                 .Select(p => new DataItemDesc
+                 {
+                     Name = p.Key,
+                     Description = p.Key
+                 }).ToList();
+            return Task.FromResult(res);
         }
 
-        public Task<T> GetItem<T, TArg>(string name, TArg arg, CancellationToken cancellationToken)
+        public Task<DataItemEntry> GetEntry(string name)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(AssemblyDataItemEntryFinder.Instance.All[name]);
         }
 
         interface ITaskInvoker
@@ -78,8 +72,8 @@ namespace YS.Knife.DataItem.Impl.Default
             private object[] CombinArguments(DataItemEntry entry, object[] args, CancellationToken token)
             {
                 return entry.HasCancellationToken ?
-                    (args ).Concat(new object[] { token }).ToArray()
-                    : args ;
+                    (args).Concat(new object[] { token }).ToArray()
+                    : args;
 
             }
         }

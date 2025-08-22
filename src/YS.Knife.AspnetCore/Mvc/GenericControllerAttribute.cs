@@ -35,6 +35,7 @@ namespace YS.Knife.AspnetCore.Mvc
             foreach (var argTypes in GetAllGenericTypes())
             {
                 var controllerType = GenericControllerType.MakeGenericType(argTypes);
+
                 feature.Controllers.Add(controllerType.GetTypeInfo());
             }
         }

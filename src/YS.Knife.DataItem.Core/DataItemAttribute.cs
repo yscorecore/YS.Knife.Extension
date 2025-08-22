@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.DataItem
+﻿namespace YS.Knife.DataSource
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
     public class DataItemAttribute : Attribute
