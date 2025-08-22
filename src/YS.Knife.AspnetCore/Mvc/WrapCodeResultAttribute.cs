@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
 
 namespace YS.Knife.AspnetCore.Mvc
 {
@@ -48,7 +47,7 @@ namespace YS.Knife.AspnetCore.Mvc
             }
             if (context.ExceptionHandled && context.Result is ObjectResult obj && obj.Value is CodeResult cr)
             {
-                logger.LogError(originalException, "Exception handled to code result. Code:{code} Message: {msg}", cr.Code, cr.Message);
+                logger.LogError(originalException, "Exception handled to code result. Code:{code}, Message: {msg}.", cr.Code, cr.Message);
             }
         }
 
