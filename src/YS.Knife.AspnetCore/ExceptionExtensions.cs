@@ -7,7 +7,7 @@
         public static bool IsCodeException<T>(this T exception, out string code)
             where T : Exception
         {
-            var func = _codeCache.GetOrAdd(typeof(T), (t) => GetCodeFunc(t));
+            var func = _codeCache.GetOrAdd(exception.GetType(), (t) => GetCodeFunc(t));
             if (func != null)
             {
                 code = func(exception);
