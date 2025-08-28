@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.Tts.Impl.Aliyun\YS.Knife.Tts.Impl.Aliyun.csproj" />
+  </ItemGroup>
+
+
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

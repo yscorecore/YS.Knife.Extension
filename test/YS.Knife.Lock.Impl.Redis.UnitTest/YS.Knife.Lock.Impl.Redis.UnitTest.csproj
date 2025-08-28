@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\YS.Knife.Lock.Impl.Redis\YS.Knife.Lock.Impl.Redis.csproj" />
+        <ProjectReference Include="..\YS.Knife.Lock.Core.UnitTest\YS.Knife.Lock.Core.UnitTest.csproj" />
+    </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

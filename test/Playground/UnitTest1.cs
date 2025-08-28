@@ -1,4 +1,8 @@
-﻿namespace Playground
+﻿using System.Net;
+using System.Text;
+using System.Web;
+
+namespace Playground
 {
     [Test("Test1")]
     public class UnitTest1
@@ -12,6 +16,9 @@
                 .Select(p => p.Name.Value)
                 .Should().Contain("Test1");
         }
+      
+
+    
     }
 
     public class TestAttribute : BaseAttribute

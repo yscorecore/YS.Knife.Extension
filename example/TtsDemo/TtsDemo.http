@@ -1,0 +1,6 @@
+@TtsDemo_HostAddress = http://localhost:5240
+
+GET {{TtsDemo_HostAddress}}/tts?text=你所拨打的电话已关机
+Accept: application/json
+
+###

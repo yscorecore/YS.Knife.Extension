@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.*" />
+      <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.Lock.Core\YS.Knife.Lock.Core.csproj" />
+  </ItemGroup>
+</Project>

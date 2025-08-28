@@ -10,19 +10,33 @@ namespace System.Net.Http
 {
     public static class HttpClientExtensions
     {
-        private static JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+        private static JsonSerializerOptions DefaultJsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            NumberHandling = JsonNumberHandling.AllowReadingFromString
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
+            PropertyNameCaseInsensitive = true,
         };
 
 
         public static async Task<string> SendAsString(this HttpClient client, HttpMethod method, string baseUrl, string path, object header, object param, object body = default, Encoding encoding = default)
         {
+            var response = await SendAsResponse(client, method, baseUrl, path, header, param, body, encoding);
 
+            using var stream = await response.Content.ReadAsStreamAsync();
+            using var reader = new StreamReader(stream, encoding ?? Encoding.UTF8);
+            var content = await reader.ReadToEndAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException($"Response status code {response.StatusCode} not success. response content:{content}");
+            }
+            return content;
+        }
+
+        public static async Task<HttpResponseMessage> SendAsResponse(this HttpClient client, HttpMethod method, string baseUrl, string path, object header, object param, object body, Encoding encoding)
+        {
             var queryString = param != null ?
-                    string.Join("&", Foreach(param).Select(p => $"{UrlEncoder.Default.Encode(p.Key)}={UrlEncoder.Default.Encode(p.Value)}"))
-                    : string.Empty;
+                                string.Join("&", Foreach(param).Select(p => $"{UrlEncoder.Default.Encode(p.Key)}={UrlEncoder.Default.Encode(p.Value)}"))
+                                : string.Empty;
             var request = new HttpRequestMessage(method, baseUrl.JoinUrl(path).CombinQueryString(queryString));
             foreach (var (k, v) in Foreach(header))
             {
@@ -36,17 +50,11 @@ namespace System.Net.Http
                 }
                 else
                 {
-                    request.Content = new StringContent(body.ToJsonText(JsonOptions), encoding: encoding ?? Encoding.UTF8, mediaType: MediaTypeNames.Application.Json);
+                    request.Content = new StringContent(body.ToJsonText(DefaultJsonOptions), encoding: encoding ?? Encoding.UTF8, mediaType: MediaTypeNames.Application.Json);
                 }
             }
             var response = await client.SendAsync(request);
-
-            response.EnsureSuccessStatusCode();
-            var content = response.Content;
-            using var stream = await response.Content.ReadAsStreamAsync();
-            using var reader = new StreamReader(stream, encoding ?? Encoding.UTF8);
-            return await reader.ReadToEndAsync();
-
+            return response;
         }
 
         public static Task<string> GetAsString(this HttpClient client, string baseUrl, string path, object header, object param, object body = default, Encoding encoding = default)
@@ -54,10 +62,10 @@ namespace System.Net.Http
             return client.SendAsString(HttpMethod.Get, baseUrl, path, header, param, body, encoding);
 
         }
-        public static async Task<T> GetAsObject<T>(this HttpClient client, string baseUrl, string path, object header, object param, object body = default, Encoding encoding = default)
+        public static async Task<T> GetAsObject<T>(this HttpClient client, string baseUrl, string path, object header, object param, object body = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = null)
         {
             var content = await client.GetAsString(baseUrl, path, header, param, body, encoding);
-            return content.AsJsonObject<T>(JsonOptions);
+            return content.AsJsonObject<T>(jsonOptions ?? DefaultJsonOptions);
 
         }
         public static Task<string> PostAsString(this HttpClient client, string baseUrl, string path, object header, object param = default, object body = default, Encoding encoding = default)
@@ -65,10 +73,10 @@ namespace System.Net.Http
             return client.SendAsString(HttpMethod.Post, baseUrl, path, header, param, body, encoding);
 
         }
-        public static async Task<T> PostAsObject<T>(this HttpClient client, string baseUrl, string path, object header, object param = default, object body = default, Encoding encoding = default)
+        public static async Task<T> PostAsObject<T>(this HttpClient client, string baseUrl, string path, object header, object param = default, object body = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = null)
         {
             var content = await client.PostAsString(baseUrl, path, header, param, body, encoding);
-            return content.AsJsonObject<T>(JsonOptions);
+            return content.AsJsonObject<T>(jsonOptions ?? DefaultJsonOptions);
 
         }
 
