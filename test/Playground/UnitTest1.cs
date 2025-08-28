@@ -16,9 +16,6 @@ namespace Playground
                 .Select(p => p.Name.Value)
                 .Should().Contain("Test1");
         }
-      
-
-    
     }
 
     public class TestAttribute : BaseAttribute
