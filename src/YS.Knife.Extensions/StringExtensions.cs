@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 
 namespace System
 {
@@ -42,10 +43,15 @@ namespace System
         }
         public static string WithStyle(this string text, NameStyle style)
         {
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
             return style switch
             {
-                NameStyle.Lower => text?.ToLowerInvariant(),
-                NameStyle.Upper => text?.ToUpperInvariant(),
+                NameStyle.Lower => text.ToLowerInvariant(),
+                NameStyle.Upper => text.ToUpperInvariant(),
+                NameStyle.TitleCase => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(text),
                 _ => text
             };
         }

@@ -5,5 +5,6 @@
         Original,
         Lower,
         Upper,
+        TitleCase,
     }
 }
