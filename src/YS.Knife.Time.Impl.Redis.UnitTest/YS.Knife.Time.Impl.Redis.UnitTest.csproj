@@ -1,0 +1,6 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\test\YS.Knife.Time.Core.UnitTest\YS.Knife.Time.Core.UnitTest.csproj" />
+    <ProjectReference Include="..\YS.Knife.Time.Impl.Redis\YS.Knife.Time.Impl.Redis.csproj" />
+  </ItemGroup>
+</Project>

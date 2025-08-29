@@ -7,6 +7,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[6.*,9.9.0)" />
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.Data\YS.Knife.Data.csproj" />
       <ProjectReference Include="..\YS.Knife.EntityBase\YS.Knife.EntityBase.csproj" />
       <ProjectReference Include="..\YS.Knife.Extensions\YS.Knife.Extensions.csproj" />
     </ItemGroup>

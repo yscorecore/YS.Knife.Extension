@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.Data\YS.Knife.Data.csproj" />
+    <ProjectReference Include="..\YS.Knife.Extensions.DbConnection\YS.Knife.Extensions.DbConnection.csproj" />
+    <ProjectReference Include="..\YS.Knife.Time.Core\YS.Knife.Time.Core.csproj" />
+      <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+  </ItemGroup>
+</Project>

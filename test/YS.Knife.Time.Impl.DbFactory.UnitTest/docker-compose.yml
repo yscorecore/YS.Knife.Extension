@@ -1,0 +1,17 @@
+version: '3.3'
+
+services:
+  db:
+    image: "postgres"
+    environment:
+      POSTGRES_PASSWORD: mypassword
+      TZ: Asia/Shanghai
+    ports:
+      - "${DBPORT:-5432}:5432"
+  wait-compose-ready:
+    image: ysknife/wait-compose-ready:1.2.9
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      REPORT_TO_HOST_PORT: ${REPORT_TO_HOST_PORT:-8901}
+      WAIT_HOSTS: db:5432

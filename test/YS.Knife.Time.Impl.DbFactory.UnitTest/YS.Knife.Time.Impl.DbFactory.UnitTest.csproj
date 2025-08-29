@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.18" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.EFCore\YS.Knife.EFCore.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Time.Impl.DbFactory\YS.Knife.Time.Impl.DbFactory.csproj" />
+  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\test\YS.Knife.Time.Core.UnitTest\YS.Knife.Time.Core.UnitTest.csproj" />
+    </ItemGroup>
+</Project>

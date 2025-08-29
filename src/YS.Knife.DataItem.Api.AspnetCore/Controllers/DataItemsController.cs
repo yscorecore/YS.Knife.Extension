@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using YS.Knife.DataItem.Api.AspnetCore;
 using YS.Knife.DataItem.Api.AspnetCore.Internal;
 
 namespace YS.Knife.DataSource.Api.AspnetCore
@@ -80,7 +79,7 @@ namespace YS.Knife.DataSource.Api.AspnetCore
             {
                 return parameterInfo.DefaultValue;
             }
-            return TypeDefaultValue.Instance.GetDefaultValue(parameterInfo.ParameterType);
+            return parameterInfo.ParameterType.GetDefaultValue();
 
         }
 
@@ -90,9 +89,6 @@ namespace YS.Knife.DataSource.Api.AspnetCore
         {
             return dataItemService.GetAllDataItems();
         }
-
-
-
     }
 
 }

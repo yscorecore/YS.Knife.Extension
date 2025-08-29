@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="YS.Knife.Hosting" Version="2.0.2" />
+        <PackageReference Include="YS.Knife.Testing" Version="2.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\YS.Knife.Time.Core\YS.Knife.Time.Core.csproj" />
+    </ItemGroup>
+
+</Project>

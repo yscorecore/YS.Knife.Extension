@@ -7,6 +7,7 @@ using StackExchange.Redis;
 
 namespace YS.Knife.Lock.Impl.Redis
 {
+    [Options("Redis")]
     public class RedisLockOptions
     {
         public string LockKeyPrefix { get; set; } = "Lock_";
