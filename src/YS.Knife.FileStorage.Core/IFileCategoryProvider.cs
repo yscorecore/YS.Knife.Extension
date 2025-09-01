@@ -1,9 +1,8 @@
 ﻿namespace YS.Knife.FileStorage
 {
-    public interface IFileCategoryFactory
+    public interface IFileCategoryProvider
     {
         Task<FileCategory> CreateCategory(string categoryName);
-
     }
 
 }

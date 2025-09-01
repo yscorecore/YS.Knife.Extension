@@ -171,9 +171,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FileStorage", "FileStorage"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.FileStorage.Core", "src\YS.Knife.FileStorage.Core\YS.Knife.FileStorage.Core.csproj", "{8DF5FEC0-1E1E-5AEA-499C-354CD8475710}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.FileStorage.AliyunOss", "src\YS.Knife.FileStorage.AliyunOss\YS.Knife.FileStorage.AliyunOss.csproj", "{F11BA505-5351-B17E-6A54-9EEE22054417}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.FileStorage.Impl.AliyunOss", "src\YS.Knife.FileStorage.AliyunOss\YS.Knife.FileStorage.Impl.AliyunOss.csproj", "{F11BA505-5351-B17E-6A54-9EEE22054417}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.FileStorage.Minio", "src\YS.Knife.FileStorage.Minio\YS.Knife.FileStorage.Minio.csproj", "{C2F62461-D7AC-F229-4C77-7CD7847A32F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.FileStorage.Impl.Minio", "src\YS.Knife.FileStorage.Minio\YS.Knife.FileStorage.Impl.Minio.csproj", "{C2F62461-D7AC-F229-4C77-7CD7847A32F6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.FileStorage.Api.AspnetCore", "src\YS.Knife.FileStorage.Api.AspnetCore\YS.Knife.FileStorage.Api.AspnetCore.csproj", "{01909DFE-7951-4057-BF04-D369F620DCAF}"
 EndProject
@@ -242,6 +242,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Sms.Core", "src\YS.Knife.Sms.Core\YS.Knife.Sms.Core.csproj", "{6DCC14ED-36C6-4681-9AE2-DC5ED38BD8CB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Sms.Impl.Submail", "src\YS.Knife.Sms.Impl.Submail\YS.Knife.Sms.Impl.Submail.csproj", "{8FADF81C-8FFB-4AD0-AC04-BF3B5A6BA839}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.FileStorage.CategoryProvider.Default", "src\YS.Knife.FileStorage.CategoryProvider.Default\YS.Knife.FileStorage.CategoryProvider.Default.csproj", "{6535F795-45DD-40AE-9B94-6DD091327861}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.FileStorage.SystemArgument.Default", "src\YS.Knife.FileStorage.SystemArgument.Default\YS.Knife.FileStorage.SystemArgument.Default.csproj", "{D72F41C7-DC81-4C49-BD77-259EDC3929F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.FileStorage.Impl.Local", "src\YS.Knife.FileStorage.Impl.Local\YS.Knife.FileStorage.Impl.Local.csproj", "{057F225F-AF49-4BEC-9E4D-3BF092435B2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStorageDemo", "src\FileStorageDemo\FileStorageDemo.csproj", "{BD30B166-EB30-4E8D-B75D-92EC0EE4728D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -613,6 +621,22 @@ Global
 		{8FADF81C-8FFB-4AD0-AC04-BF3B5A6BA839}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FADF81C-8FFB-4AD0-AC04-BF3B5A6BA839}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FADF81C-8FFB-4AD0-AC04-BF3B5A6BA839}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6535F795-45DD-40AE-9B94-6DD091327861}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6535F795-45DD-40AE-9B94-6DD091327861}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6535F795-45DD-40AE-9B94-6DD091327861}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6535F795-45DD-40AE-9B94-6DD091327861}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D72F41C7-DC81-4C49-BD77-259EDC3929F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D72F41C7-DC81-4C49-BD77-259EDC3929F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D72F41C7-DC81-4C49-BD77-259EDC3929F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D72F41C7-DC81-4C49-BD77-259EDC3929F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{057F225F-AF49-4BEC-9E4D-3BF092435B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{057F225F-AF49-4BEC-9E4D-3BF092435B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{057F225F-AF49-4BEC-9E4D-3BF092435B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{057F225F-AF49-4BEC-9E4D-3BF092435B2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD30B166-EB30-4E8D-B75D-92EC0EE4728D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD30B166-EB30-4E8D-B75D-92EC0EE4728D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD30B166-EB30-4E8D-B75D-92EC0EE4728D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD30B166-EB30-4E8D-B75D-92EC0EE4728D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -729,6 +753,10 @@ Global
 		{9122636E-4EB3-4BBE-B36C-05BA3DE45EE6} = {6C7E5914-CD6B-40F1-BFD7-8FB17E3EAE11}
 		{6DCC14ED-36C6-4681-9AE2-DC5ED38BD8CB} = {9122636E-4EB3-4BBE-B36C-05BA3DE45EE6}
 		{8FADF81C-8FFB-4AD0-AC04-BF3B5A6BA839} = {9122636E-4EB3-4BBE-B36C-05BA3DE45EE6}
+		{6535F795-45DD-40AE-9B94-6DD091327861} = {B9029880-50A3-4AD2-84AD-D62A6390BBC2}
+		{D72F41C7-DC81-4C49-BD77-259EDC3929F6} = {B9029880-50A3-4AD2-84AD-D62A6390BBC2}
+		{057F225F-AF49-4BEC-9E4D-3BF092435B2C} = {B9029880-50A3-4AD2-84AD-D62A6390BBC2}
+		{BD30B166-EB30-4E8D-B75D-92EC0EE4728D} = {9BC89E41-835A-46A8-B536-06AED03AE51B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB11BB21-3F5D-42D6-8737-F19C0666F1F8}
