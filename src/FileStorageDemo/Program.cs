@@ -1,9 +1,4 @@
-﻿
-
-
-using Microsoft.AspNetCore.HttpOverrides;
-
-namespace FileStorageDemo
+﻿namespace FileStorageDemo
 {
     public class Program : YS.Knife.Hosting.KnifeWebHost
     {
@@ -22,10 +17,8 @@ namespace FileStorageDemo
         }
         protected override void ConfigureWebApp(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UsePathBase("/myapp");
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions());
             base.ConfigureWebApp(app, env);
-
         }
     }
 }

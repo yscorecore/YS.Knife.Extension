@@ -25,7 +25,7 @@ namespace YS.Knife.FileStorage.Minio
                 return (options.Endpoint, true);
             }
         }
-        public async Task<FileObject> PutObject(string key, Stream content, IDictionary<string, object> metadata)
+        public async Task<FileObject> PutObject(string key, Stream content, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -41,10 +41,11 @@ namespace YS.Knife.FileStorage.Minio
                         .WithStreamData(content)
                         .WithObjectSize(content.Length)
                         .WithHeaders(ConvertMeta(metadata));
-                var res = await minio.PutObjectAsync(arg);
+                var res = await minio.PutObjectAsync(arg, cancellationToken);
 
                 return new FileObject
                 {
+                    Key = res.ObjectName,
                     PublicUrl = $"{options.PublicPoint}/{res.ObjectName}"
                 };
             }
@@ -72,7 +73,7 @@ namespace YS.Knife.FileStorage.Minio
             return res;
         }
 
-        public async Task<FileObject> MoveObject(string key, string newKey)
+        public async Task<FileObject> MoveObject(string key, string newKey, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -88,13 +89,14 @@ namespace YS.Knife.FileStorage.Minio
                         .WithObject(newKey)
                         .WithCopyObjectSource(new CopySourceObjectArgs().WithBucket(options.BucketName).WithObject(key));
 
-                await minio.CopyObjectAsync(arg);
+                await minio.CopyObjectAsync(arg, cancellationToken);
 
                 var removeArg = new RemoveObjectArgs().WithBucket(options.BucketName).WithObject(key);
-                await minio.RemoveObjectAsync(removeArg);
+                await minio.RemoveObjectAsync(removeArg, cancellationToken);
 
                 return new FileObject
                 {
+                    Key = newKey,
                     PublicUrl = $"{options.PublicPoint}/{newKey}"
                 };
             }
@@ -109,6 +111,7 @@ namespace YS.Knife.FileStorage.Minio
         {
             return Task.FromResult(new FileObject
             {
+                Key = key,
                 PublicUrl = $"{options.PublicPoint}/{key}"
             });
         }

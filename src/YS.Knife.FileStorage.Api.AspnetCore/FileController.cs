@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
 using YS.Knife.FileStorage;
 
 namespace YS.Knife.DataSource.Management
@@ -8,7 +9,7 @@ namespace YS.Knife.DataSource.Management
     [AutoConstructor]
     public partial class FileController : ControllerBase
     {
-        private readonly IFileCategoryProvider fileCategoryFactory;
+        private readonly IFileCategoryProvider fileCategoryProvider;
         private readonly IFileStorageService fileStorageService;
         private readonly IEnumerable<IFileStreamInterceptor> streamInterceptors;
         private readonly IEnumerable<ISystemArgProvider> systemArgsProvider;
@@ -17,10 +18,17 @@ namespace YS.Knife.DataSource.Management
         [Route("upload/{category}")]
         public async Task<FileObject> Upload([FromRoute] string category)
         {
-            var categoryObj = await fileCategoryFactory.CreateCategory(category) ?? throw new Exception($"The file category '{category}' is not defined");
+            var categoryObj = await fileCategoryProvider.CreateCategory(category) ?? throw new Exception($"The file category '{category}' is not defined");
             var formFile = this.Request.Form.Files[categoryObj.FileFormName] ?? throw new Exception($"Missing form file field '{categoryObj.FileFormName}'");
+
+            if (categoryObj.MaxLength > 0 && formFile.Length > categoryObj.MaxLength)
+            {
+                throw new Exception($"The uploaded file size exceeds the limit of {categoryObj.MaxLength} bytes.");
+            }
+
             //元数据
-            var inputArgs = this.Request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
+            var userArgs = this.Request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
+            CheckUserArgs(userArgs);
             var formFileArgs = new ISystemArgProvider[] { new FileNameArg(formFile), new FileExtArg(formFile) };
             var systemArgs = systemArgsProvider.Concat(formFileArgs).ToDictionary(p => p.Name, StringComparer.InvariantCultureIgnoreCase);
             var meta = new Dictionary<string, object>();
@@ -28,7 +36,7 @@ namespace YS.Knife.DataSource.Management
             {
                 if (item.Value is string strValue)
                 {
-                    meta[item.Key] = FillTemplate(strValue, inputArgs, systemArgs);
+                    meta[item.Key] = FillTemplate(strValue, userArgs, systemArgs);
                 }
                 else
                 {
@@ -36,7 +44,7 @@ namespace YS.Knife.DataSource.Management
                 }
             }
             //文件名
-            var fileName = FillTemplate(categoryObj.PathTemplate, inputArgs, systemArgs);
+            var fileName = FillTemplate(categoryObj.PathTemplate, userArgs, systemArgs);
             //处理流
             var stream = formFile.OpenReadStream();
             foreach (var interceptor in categoryObj.Interceptors ?? Array.Empty<string>())
@@ -63,7 +71,18 @@ namespace YS.Knife.DataSource.Management
         {
             return TemplatePlaceholder.Instance.FillPlaceholder(template, userArgs, systemArgs);
         }
-        class FileNameArg : ISystemArgProvider
+
+        private void CheckUserArgs(IDictionary<string, string> userArgs)
+        {
+            foreach (var (k, v) in userArgs)
+            {
+                if (!Regex.IsMatch(v, @"^\w+$"))
+                {
+                    throw new Exception($"The user argument '{k}' is invalid.");
+                }
+            }
+        }
+        private class FileNameArg : ISystemArgProvider
         {
             private readonly IFormFile formFile;
 
@@ -81,7 +100,7 @@ namespace YS.Knife.DataSource.Management
             }
         }
 
-        class FileExtArg : ISystemArgProvider
+        private class FileExtArg : ISystemArgProvider
         {
             private readonly IFormFile formFile;
 

@@ -23,7 +23,7 @@ namespace YS.Knife.FileStorage.Impl.Local
             return Task.FromResult(fileObj);
         }
 
-        public Task<FileObject> MoveObject(string key, string newKey)
+        public Task<FileObject> MoveObject(string key, string newKey, CancellationToken cancellationToken = default)
         {
             var oldPath = GetFileFullPath(key);
             var newPath = GetFileFullPath(newKey);

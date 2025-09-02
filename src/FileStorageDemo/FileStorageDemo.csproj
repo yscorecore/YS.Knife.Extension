@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -14,7 +14,7 @@
       <ProjectReference Include="..\YS.Knife.FileStorage.Api.AspnetCore\YS.Knife.FileStorage.Api.AspnetCore.csproj" />
       <ProjectReference Include="..\YS.Knife.FileStorage.CategoryProvider.Default\YS.Knife.FileStorage.CategoryProvider.Default.csproj" />
       <ProjectReference Include="..\YS.Knife.FileStorage.Impl.Local\YS.Knife.FileStorage.Impl.Local.csproj" />
-      <ProjectReference Include="..\YS.Knife.FileStorage.SystemArgument.Default\YS.Knife.FileStorage.SystemArgument.Default.csproj" />
+      <ProjectReference Include="..\YS.Knife.FileStorage.SystemArguments.Default\YS.Knife.FileStorage.SystemArguments.Default.csproj" />
     </ItemGroup>
 
     <ItemGroup>

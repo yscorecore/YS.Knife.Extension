@@ -17,7 +17,7 @@ namespace YS.Knife.FileStorage.AliyunOss
             });
         }
 
-        public Task<FileObject> MoveObject(string key, string newKey)
+        public Task<FileObject> MoveObject(string key, string newKey, CancellationToken cancellationToken = default)
         {
             var client = CreateClient();
             var result = client.CopyObject(new CopyObjectRequest(ossConfiguration.BucketName, key, ossConfiguration.BucketName, newKey));
@@ -41,7 +41,7 @@ namespace YS.Knife.FileStorage.AliyunOss
         }
 
 
-        public Task<FileObject> PutObject(string key, Stream content, IDictionary<string, object> metadata)
+        public Task<FileObject> PutObject(string key, Stream content, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
         {
             var client = CreateClient();
             var result = client.PutObject(ossConfiguration.BucketName, key, content, CreateObjectMeta(metadata));
@@ -49,6 +49,7 @@ namespace YS.Knife.FileStorage.AliyunOss
             {
                 var imageInfo = new FileObject
                 {
+                    Key = key,
                     PublicUrl = $"{ossConfiguration.PublicPoint}/{key}"
                 };
                 return Task.FromResult(imageInfo);

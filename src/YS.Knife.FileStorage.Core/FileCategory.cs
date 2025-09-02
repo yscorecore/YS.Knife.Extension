@@ -9,6 +9,7 @@ namespace YS.Knife.FileStorage
         public string PathTemplate { get; set; }
         public Dictionary<string, object> Metadata { get; set; }
         public string[] Interceptors { get; set; }
+        public long MaxLength { get; set; } = 4 * 1024 * 1024;
     }
 
 }

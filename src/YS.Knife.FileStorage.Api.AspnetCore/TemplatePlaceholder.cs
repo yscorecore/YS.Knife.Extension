@@ -29,7 +29,7 @@ namespace YS.Knife.FileStorage
                     }
                     else
                     {
-                        throw new Exception($"User argument '{name}' not found. Support user arguments: [{string.Join(", ", userArgs.Keys)}].");
+                        throw new Exception($"User argument '{name}' not found.");
                     }
                 }
                 else
@@ -38,7 +38,6 @@ namespace YS.Knife.FileStorage
                     {
                         var format = string.IsNullOrEmpty(fmt) ? sysArg.DefaultFormatter : fmt;
                         return FormatValue(sysArg.GetValue(), format);
-
                     }
                     else
                     {

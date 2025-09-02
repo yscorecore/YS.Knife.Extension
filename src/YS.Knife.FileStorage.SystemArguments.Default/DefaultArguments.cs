@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace YS.Knife.FileStorage.SystemArgument.Default
+﻿namespace YS.Knife.FileStorage.SystemArgument.Default
 {
     [Service(Lifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton)]
     public class NowArgumentProvider : ISystemArgProvider
@@ -126,14 +120,14 @@ namespace YS.Knife.FileStorage.SystemArgument.Default
     [Service(Lifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton)]
     public class TimeSecondsArgumentProvider : ISystemArgProvider
     {
-        public string Name => "timeSeconds";
+        public string Name => "seconds";
         public string DefaultFormatter => string.Empty;
         public object GetValue() => DateTimeOffset.Now.ToUnixTimeSeconds();
     }
     [Service(Lifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton)]
     public class TimeMillisecondsArgumentProvider : ISystemArgProvider
     {
-        public string Name => "timeMilliseconds";
+        public string Name => "milliseconds";
         public string DefaultFormatter => string.Empty;
         public object GetValue() => DateTimeOffset.Now.ToUnixTimeMilliseconds();
     }
