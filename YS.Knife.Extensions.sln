@@ -251,6 +251,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.FileStorage.Impl.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.FileStorage.Impl.Minio", "src\YS.Knife.FileStorage.Impl.Minio\YS.Knife.FileStorage.Impl.Minio.csproj", "{BE7E6930-1547-ED09-BA1B-2F88C5EE95EA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sms", "Sms", "{24903CBD-439A-4880-B8F2-9C90741D6D53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Sms.Impl.Submail.IntegrationTest", "test\YS.Knife.Sms.Impl.Submail.IntegrationTest\YS.Knife.Sms.Impl.Submail.IntegrationTest.csproj", "{FEA52EDE-E4FC-4680-93A3-6398ECF0A6B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -637,6 +641,10 @@ Global
 		{BE7E6930-1547-ED09-BA1B-2F88C5EE95EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE7E6930-1547-ED09-BA1B-2F88C5EE95EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE7E6930-1547-ED09-BA1B-2F88C5EE95EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEA52EDE-E4FC-4680-93A3-6398ECF0A6B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA52EDE-E4FC-4680-93A3-6398ECF0A6B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEA52EDE-E4FC-4680-93A3-6398ECF0A6B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEA52EDE-E4FC-4680-93A3-6398ECF0A6B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -757,6 +765,8 @@ Global
 		{1D330CEA-F338-42D8-D020-32464E2D28B3} = {B9029880-50A3-4AD2-84AD-D62A6390BBC2}
 		{46FC9697-BE3D-D856-AE61-ED243280A53A} = {B9029880-50A3-4AD2-84AD-D62A6390BBC2}
 		{BE7E6930-1547-ED09-BA1B-2F88C5EE95EA} = {B9029880-50A3-4AD2-84AD-D62A6390BBC2}
+		{24903CBD-439A-4880-B8F2-9C90741D6D53} = {9D50B35B-1EAA-4620-B0A6-245456051247}
+		{FEA52EDE-E4FC-4680-93A3-6398ECF0A6B9} = {24903CBD-439A-4880-B8F2-9C90741D6D53}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB11BB21-3F5D-42D6-8737-F19C0666F1F8}

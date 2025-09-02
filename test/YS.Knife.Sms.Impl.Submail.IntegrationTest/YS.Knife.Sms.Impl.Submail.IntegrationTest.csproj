@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="YS.Knife.Hosting" Version="2.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\YS.Knife.Lock.Core\YS.Knife.Lock.Core.csproj" />
+        <ProjectReference Include="..\..\src\YS.Knife.Sms.Impl.Submail\YS.Knife.Sms.Impl.Submail.csproj" />
+    </ItemGroup>
+
+</Project>

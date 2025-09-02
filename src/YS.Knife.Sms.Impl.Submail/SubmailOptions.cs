@@ -3,7 +3,7 @@
     [Options]
     public class SubmailOptions
     {
-        public string AppId { get; set; } = "95331";
+        public string AppId { get; set; }
         public string AppKey { get; set; } = "xxxx";
 
     }
