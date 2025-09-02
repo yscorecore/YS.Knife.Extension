@@ -51,7 +51,6 @@ namespace YS.Knife.FileStorage.Minio
             }
             catch (Exception ex)
             {
-
                 throw new Exception("upload minio file failed", ex);
             }
 
