@@ -41,7 +41,7 @@ namespace YS.Knife.FileStorage.Api.AspnetCore.UnitTest
 
         }
         [Theory]
-        [InlineData("{guid}",  @"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")]
+        [InlineData("{guid}", @"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")]
         public void ShouldCreateNameWhenContainsValidFunctionAndWithExtension(string templateName, string matchRegex)
         {
             var name = FillTemplate(templateName);

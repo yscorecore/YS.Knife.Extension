@@ -259,6 +259,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FileStorage", "FileStorage"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.FileStorage.Api.AspnetCore.UnitTest", "test\YS.Knife.FileStorage.Api.AspnetCore.UnitTest\YS.Knife.FileStorage.Api.AspnetCore.UnitTest.csproj", "{E6CA6302-64A7-3848-74D7-7E2E91D07251}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.ServiceSwitch", "src\YS.Knife.ServiceSwitch\YS.Knife.ServiceSwitch.csproj", "{983F935E-38BD-4472-9CB4-2C9152CF6BCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -653,6 +655,10 @@ Global
 		{E6CA6302-64A7-3848-74D7-7E2E91D07251}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6CA6302-64A7-3848-74D7-7E2E91D07251}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6CA6302-64A7-3848-74D7-7E2E91D07251}.Release|Any CPU.Build.0 = Release|Any CPU
+		{983F935E-38BD-4472-9CB4-2C9152CF6BCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{983F935E-38BD-4472-9CB4-2C9152CF6BCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{983F935E-38BD-4472-9CB4-2C9152CF6BCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{983F935E-38BD-4472-9CB4-2C9152CF6BCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -777,6 +783,7 @@ Global
 		{1F3382D2-5E7A-C8D2-1473-492738EBC053} = {9BC89E41-835A-46A8-B536-06AED03AE51B}
 		{734BA551-801F-427F-A15E-54B1E26822F0} = {9D50B35B-1EAA-4620-B0A6-245456051247}
 		{E6CA6302-64A7-3848-74D7-7E2E91D07251} = {734BA551-801F-427F-A15E-54B1E26822F0}
+		{983F935E-38BD-4472-9CB4-2C9152CF6BCC} = {6C7E5914-CD6B-40F1-BFD7-8FB17E3EAE11}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB11BB21-3F5D-42D6-8737-F19C0666F1F8}
