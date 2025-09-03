@@ -1,4 +1,5 @@
-﻿namespace YS.Knife.FileStorage
+﻿
+namespace YS.Knife.FileStorage
 {
     public interface IFileStorageService
     {
@@ -8,5 +9,6 @@
 
         Task<FileObject> GetObject(string key);
     }
+
 
 }

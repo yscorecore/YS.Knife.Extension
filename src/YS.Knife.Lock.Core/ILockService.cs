@@ -33,22 +33,19 @@ namespace YS.Knife.Lock
         {
             return lockService.Update(key, key, timeSpan);
         }
-        public static async Task<bool> GlobalRunOnce(this ILockService lockService, string key, Action action)
+        public static async Task<bool> RunOnce(this ILockService lockService, string key, TimeSpan maxTimeSpan, Action action)
         {
-            if (action == null) throw new ArgumentNullException(nameof(action));
-            if (await lockService.Lock(key, TimeSpan.MaxValue))
+            var success = await lockService.Lock(key, maxTimeSpan);
+            if (success)
             {
-                try
-                {
-                    action();
-                    return true;
-                }
-                finally
-                {
-                    await lockService.UnLock(key);
-                }
+                action?.Invoke();
+                return true;
             }
             return false;
+        }
+        public static Task<bool> GlobalRunOnce(this ILockService lockService, string key, Action action)
+        {
+            return lockService.RunOnce(key, TimeSpan.MaxValue, action);
         }
         public static async Task WaitFor(this ILockService lockService, string key, int millisecondsDelayInLoop = 100, CancellationToken cancellationToken = default)
         {
@@ -114,6 +111,7 @@ namespace YS.Knife.Lock
         {
             return RunWithLock(lockService, key, TimeSpan.MaxValue, action);
         }
+
     }
 
 }

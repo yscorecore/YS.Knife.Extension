@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Moq;
+﻿using Moq;
 using YS.Knife.Lock;
 using YS.Knife.Testing;
 
@@ -53,7 +49,7 @@ namespace YS.Lock.Core.UnitTest
                         return isFirst;
                     }
                 });
-            var tasks = System.Linq.Enumerable.Range(0, 10).Select(p => lockService.GlobalRunOnce(key, Action)).ToArray();
+            var tasks = System.Linq.Enumerable.Range(0, 10).Select(p => lockService.RunOnce(key, TimeSpan.FromMinutes(1), Action)).ToArray();
             Task.WaitAll(tasks);
             int executeActionTaskCount = tasks.Count(p => p.Result);
 

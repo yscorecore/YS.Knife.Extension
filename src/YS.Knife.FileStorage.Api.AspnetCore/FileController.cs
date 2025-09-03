@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using YS.Knife.FileStorage;
 
 namespace YS.Knife.DataSource.Management
@@ -10,27 +11,36 @@ namespace YS.Knife.DataSource.Management
     public partial class FileController : ControllerBase
     {
         private readonly IFileCategoryProvider fileCategoryProvider;
-        private readonly IFileStorageService fileStorageService;
-        private readonly IEnumerable<IFileStreamInterceptor> streamInterceptors;
-        private readonly IEnumerable<ISystemArgProvider> systemArgsProvider;
-
+        private readonly IDictionary<string, IFileStreamInterceptor> streamInterceptors;
+        private readonly IDictionary<string, ISystemArgProvider> systemArgs;
+        private readonly IServiceProvider serviceProvider;
         [HttpPost]
         [Route("upload/{category}")]
         public async Task<FileObject> Upload([FromRoute] string category)
         {
+
             var categoryObj = await fileCategoryProvider.CreateCategory(category) ?? throw new Exception($"The file category '{category}' is not defined");
             var formFile = this.Request.Form.Files[categoryObj.FileFormName] ?? throw new Exception($"Missing form file field '{categoryObj.FileFormName}'");
-
+            var extName = Path.GetExtension(formFile.FileName);
+            var name = Path.GetFileNameWithoutExtension(formFile.FileName);
             if (categoryObj.MaxLength > 0 && formFile.Length > categoryObj.MaxLength)
             {
                 throw new Exception($"The uploaded file size exceeds the limit of {categoryObj.MaxLength} bytes.");
             }
+            if (categoryObj.AllowExtensions != null && categoryObj.AllowExtensions.Length > 0 && !categoryObj.AllowExtensions.Contains(extName, StringComparer.InvariantCultureIgnoreCase))
+            {
+                throw new Exception($"The uploaded file extension '{extName}' is not allowed. Allowed extensions: {string.Join(", ", categoryObj.AllowExtensions)}");
+            }
+
+            var fileStorageService = serviceProvider.GetServiceByNameOrConfiguationSwitch<IFileStorageService>(categoryObj.ServiceName);
 
             //元数据
             var userArgs = this.Request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
             CheckUserArgs(userArgs);
-            var formFileArgs = new ISystemArgProvider[] { new FileNameArg(formFile), new FileExtArg(formFile) };
-            var systemArgs = systemArgsProvider.Concat(formFileArgs).ToDictionary(p => p.Name, StringComparer.InvariantCultureIgnoreCase);
+            //增加系统参数
+            systemArgs["name"] = new FixedValueArgProvider(name);
+            systemArgs["ext"] = new FixedValueArgProvider(extName);
+
             var meta = new Dictionary<string, object>();
             foreach (var item in categoryObj.Metadata ?? new Dictionary<string, object>())
             {
@@ -49,18 +59,17 @@ namespace YS.Knife.DataSource.Management
             var stream = formFile.OpenReadStream();
             foreach (var interceptor in categoryObj.Interceptors ?? Array.Empty<string>())
             {
-                stream = RunInterceptor(stream, interceptor);
+                stream = RunInterceptor(stream, interceptor, userArgs, systemArgs);
                 stream.Position = 0;
             }
             return await fileStorageService.PutObject(fileName, stream, categoryObj.Metadata);
 
         }
-        private Stream RunInterceptor(Stream stream, string interceptorName)
+        private Stream RunInterceptor(Stream stream, string interceptorName, IDictionary<string, string> userArgs, IDictionary<string, ISystemArgProvider> systemArgs)
         {
-            var interceptor = streamInterceptors.FirstOrDefault(p => p.Name.Equals(interceptorName, StringComparison.InvariantCultureIgnoreCase));
-            if (interceptor != null)
+            if (streamInterceptors.TryGetValue(interceptorName, out var interceptor))
             {
-                return interceptor.HandlerStream(stream, this.HttpContext.RequestAborted);
+                return interceptor.HandlerStream(stream, userArgs, systemArgs, this.HttpContext.RequestAborted);
             }
             else
             {
@@ -82,40 +91,53 @@ namespace YS.Knife.DataSource.Management
                 }
             }
         }
-        private class FileNameArg : ISystemArgProvider
+
+
+        class FixedValueArgProvider : ISystemArgProvider
         {
-            private readonly IFormFile formFile;
-
-            public FileNameArg(IFormFile formFile)
+            private readonly object value;
+            public FixedValueArgProvider(object value)
             {
-                this.formFile = formFile;
+                this.value = value;
             }
-            public string Name => "name";
-
             public string DefaultFormatter => string.Empty;
-
             public object GetValue()
             {
-                return Path.GetFileNameWithoutExtension(formFile.FileName);
+                return value;
             }
         }
+    }
 
-        private class FileExtArg : ISystemArgProvider
+
+    public static class ServiceExtensions
+    {
+        public static T GetServiceByName<T>(this IServiceProvider serviceProvider, string name)
         {
-            private readonly IFormFile formFile;
-
-            public FileExtArg(IFormFile formFile)
+            if (string.IsNullOrEmpty(name))
             {
-                this.formFile = formFile;
+                return serviceProvider.GetRequiredService<T>();
             }
-            public string Name => "ext";
-
-            public string DefaultFormatter => string.Empty;
-
-            public object GetValue()
+            else
             {
-                return Path.GetExtension(formFile.FileName);
+                var services = serviceProvider.GetRequiredService<IDictionary<string, T>>();
+                if (services.TryGetValue(name, out var s))
+                {
+                    return s;
+                }
+                throw new Exception($"Can not find service '{typeof(T).FullName}' by name '{name}'");
             }
+        }
+        public static T GetServiceByNameOrConfiguationSwitch<T>(this IServiceProvider serviceProvider, string name = default)
+        {
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            var serviceName = name ??
+                configuration[$"ServiceSwitch:{typeof(T).Name}"]
+                ?? configuration[$"ServiceSwitch:{typeof(T).FullName}"];
+            return GetServiceByName<T>(serviceProvider, serviceName);
+        }
+        public static T GetServiceByConfiguationSwitch<T>(this IServiceProvider serviceProvider)
+        {
+            return GetServiceByNameOrConfiguationSwitch<T>(serviceProvider, null);
         }
     }
 }

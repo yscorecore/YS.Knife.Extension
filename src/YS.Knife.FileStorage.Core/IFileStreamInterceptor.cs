@@ -10,11 +10,10 @@ namespace YS.Knife.FileStorage
     {
         string Name { get; }
 
-        Stream HandlerStream(Stream inputStream, CancellationToken cancellationToken);
+        Stream HandlerStream(Stream inputStream, IDictionary<string, string> userArgs, IDictionary<string, ISystemArgProvider> systemArgs, CancellationToken cancellationToken);
     }
     public interface ISystemArgProvider
     {
-        string Name { get; }
         string DefaultFormatter { get; }
         object GetValue();
     }
