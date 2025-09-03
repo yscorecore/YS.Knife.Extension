@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using YS.Knife.FileStorage;
 
-namespace YS.Knife.DataSource.Management
+namespace YS.Knife.FileStorage.Api.AspnetCore
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -89,21 +89,6 @@ namespace YS.Knife.DataSource.Management
                 {
                     throw new Exception($"The user argument '{k}' is invalid.");
                 }
-            }
-        }
-
-
-        class FixedValueArgProvider : ISystemArgProvider
-        {
-            private readonly object value;
-            public FixedValueArgProvider(object value)
-            {
-                this.value = value;
-            }
-            public string DefaultFormatter => string.Empty;
-            public object GetValue()
-            {
-                return value;
             }
         }
     }
