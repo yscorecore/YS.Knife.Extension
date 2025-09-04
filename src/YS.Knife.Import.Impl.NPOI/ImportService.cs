@@ -206,6 +206,10 @@ namespace YS.Knife.Import.Impl.NPOI
                     var sheet = workbook.GetSheetAt(i);
                     IRow headerRow = sheet.GetRow(0);
                     var col = new List<ColumnInfo>();
+                    if (headerRow == null)
+                    {
+                        continue;
+                    }
                     for (int j = 0; j < headerRow.LastCellNum; j++)
                     {
                         ICell cell = headerRow.GetCell(j);
