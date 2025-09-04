@@ -8,7 +8,7 @@ namespace YS.Knife.FileStorage
         Task<FileObject> MoveObject(string key, string newKey, CancellationToken cancellationToken = default);
 
         Task<FileObject> GetObject(string key);
+
+        //Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, FileCategory category, CancellationToken cancellationToken = default);
     }
-
-
 }

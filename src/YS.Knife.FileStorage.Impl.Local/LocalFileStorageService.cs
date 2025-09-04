@@ -67,5 +67,17 @@ namespace YS.Knife.FileStorage.Impl.Local
             var request = _httpContextAccessor.HttpContext.Request;
             return $"{request.Scheme}://{request.Host}{request.PathBase}/{uploadOptions.UploadRootFolder}/{key}".Replace('\\', '/');
         }
+
+        public Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, FileCategory category, CancellationToken cancellationToken = default)
+        {
+            var res = new ClientUploadInfo()
+            {
+                Headers = new Dictionary<string, object>(),
+                FileFormName = category.FileFormName,
+                Method = "POST",
+                Url = GetAccessUrl(key)
+            };
+            return Task.FromResult(res);
+        }
     }
 }

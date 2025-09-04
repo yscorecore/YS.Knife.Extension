@@ -9,6 +9,14 @@ namespace YS.Knife.FileStorage.AliyunOss
     {
         private readonly AliyunOssOptions ossConfiguration;
 
+        public Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new ClientUploadInfo
+            {
+
+            });
+        }
+
         public Task<FileObject> GetObject(string key)
         {
             return Task.FromResult(new FileObject

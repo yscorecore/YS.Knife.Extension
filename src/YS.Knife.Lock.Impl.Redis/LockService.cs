@@ -63,9 +63,9 @@ namespace YS.Knife.Lock.Impl.Redis
         }
         private ConnectionMultiplexer CreateConnection()
         {
-            return options.Configuration != null ?
-                    ConnectionMultiplexer.Connect(options.Configuration) :
-                    ConnectionMultiplexer.Connect(options.ConnectionString);
+            return options.ConfigurationOptions != null ?
+                    ConnectionMultiplexer.Connect(options.ConfigurationOptions) :
+                    ConnectionMultiplexer.Connect(options.Configuration);
         }
 
 

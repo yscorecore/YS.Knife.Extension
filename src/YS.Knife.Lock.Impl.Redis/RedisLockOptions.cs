@@ -11,7 +11,7 @@ namespace YS.Knife.Lock.Impl.Redis
     public class RedisLockOptions
     {
         public string LockKeyPrefix { get; set; } = "Lock_";
-        public string ConnectionString { get; set; } = "localhost";
-        public ConfigurationOptions Configuration { get; set; }
+        public string Configuration { get; set; } = "localhost";
+        public ConfigurationOptions ConfigurationOptions { get; set; }
     }
 }

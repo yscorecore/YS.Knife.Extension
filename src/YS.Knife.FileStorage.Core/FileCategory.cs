@@ -12,6 +12,7 @@ namespace YS.Knife.FileStorage
         public string[] Interceptors { get; set; }
         public long MaxLength { get; set; } = 4 * 1024 * 1024;
         public string[] AllowExtensions { get; set; }
+        public string[] Callbacks { get; set; }
     }
 
 }

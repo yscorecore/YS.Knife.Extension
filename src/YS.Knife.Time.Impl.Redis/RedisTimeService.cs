@@ -21,9 +21,9 @@ namespace YS.Knife.Time.Impl.Redis
         }
         private ConnectionMultiplexer CreateConnection()
         {
-            return redisOptions.Configuration != null ?
-                    ConnectionMultiplexer.Connect(redisOptions.Configuration) :
-                    ConnectionMultiplexer.Connect(redisOptions.ConnectionString);
+            return redisOptions.ConfigurationOptions != null ?
+                    ConnectionMultiplexer.Connect(redisOptions.ConfigurationOptions) :
+                    ConnectionMultiplexer.Connect(redisOptions.Configuration);
         }
     }
 }

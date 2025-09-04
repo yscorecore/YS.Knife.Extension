@@ -5,7 +5,7 @@ namespace YS.Knife.Time.Impl.Redis
     [Options("Redis")]
     public class RedisTimeOptions
     {
-        public string ConnectionString { get; set; } = "localhost";
-        public ConfigurationOptions Configuration { get; set; }
+        public string Configuration { get; set; } = "localhost";
+        public ConfigurationOptions ConfigurationOptions { get; set; }
     }
 }
