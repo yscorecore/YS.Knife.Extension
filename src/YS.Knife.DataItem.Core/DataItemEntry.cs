@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace YS.Knife.DataSource
+namespace YS.Knife.DataItem
 {
     public record DataItemEntry
     {

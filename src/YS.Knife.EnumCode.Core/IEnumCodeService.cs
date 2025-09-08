@@ -9,6 +9,8 @@ namespace YS.Knife.EnumCode
         public record CodeInfo
         {
             public int Key { get; set; }
+
+            public string Name { get; set; }
             public string Display { get; set; }
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
             public string Description { get; set; }

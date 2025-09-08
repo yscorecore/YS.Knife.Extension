@@ -2,7 +2,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace YS.Knife.DataSource.Impl.Default
+namespace YS.Knife.DataItem.Impl.Default
 {
     [Service]
     [AutoConstructor]

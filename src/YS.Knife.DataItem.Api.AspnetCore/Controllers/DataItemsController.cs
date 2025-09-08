@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using YS.Knife.DataItem.Api.AspnetCore.Internal;
 
-namespace YS.Knife.DataSource.Api.AspnetCore
+namespace YS.Knife.DataItem.Api.AspnetCore
 {
     [ApiController]
     [Route("api/[controller]")]

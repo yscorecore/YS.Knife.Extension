@@ -1,5 +1,5 @@
 ﻿using YS.Knife;
-using YS.Knife.DataSource;
+using YS.Knife.DataItem;
 using YS.Knife.Query;
 
 namespace DataItemDemo

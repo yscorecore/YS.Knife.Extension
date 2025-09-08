@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.DataSource
+﻿namespace YS.Knife.DataItem
 {
     public interface IDataItemService
     {

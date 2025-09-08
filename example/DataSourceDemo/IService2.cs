@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using FlyTiger;
 using YS.Knife;
-using YS.Knife.DataSource;
+using YS.Knife.DataItem;
 using YS.Knife.Query;
 
 namespace DataSourceDemo

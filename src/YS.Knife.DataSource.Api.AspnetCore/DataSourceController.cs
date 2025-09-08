@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using YS.Knife.Query;
 
-namespace YS.Knife.DataSource.Api.AspnetCore
+namespace YS.Knife.DataItem.Api.AspnetCore
 {
     [Route("api/[controller]")]
     [ApiController]

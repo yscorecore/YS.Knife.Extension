@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace YS.Knife.DataSource
+namespace YS.Knife.DataItem
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
     public class DataSourceAttribute : Attribute

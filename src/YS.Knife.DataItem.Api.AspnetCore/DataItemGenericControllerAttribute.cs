@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using YS.Knife.AspnetCore.Mvc;
 using YS.Knife.DataItem.Api.AspnetCore.Internal;
-namespace YS.Knife.DataSource.Api.AspnetCore
+namespace YS.Knife.DataItem.Api.AspnetCore
 {
     public partial class DataItemGenericControllerAttribute : GenericControllerAttribute, IControllerModelConvention
     {

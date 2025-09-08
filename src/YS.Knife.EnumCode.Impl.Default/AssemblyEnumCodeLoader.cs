@@ -42,6 +42,7 @@ namespace YS.Knife.EnumCode.Impl.Default
             return new CodeInfo
             {
                 Key = Convert.ToInt32(fieldInfo.GetValue(null)),
+                Name = fieldInfo.Name,
                 Display = dis?.Name ?? des?.Description ?? fieldInfo.Name,
                 Description = dis?.Description,
                 Group = dis?.GroupName,

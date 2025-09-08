@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Filters;
 using YS.Knife.AspnetCore.Mvc;
-namespace YS.Knife.DataSource.Api.AspnetCore
+namespace YS.Knife.DataItem.Api.AspnetCore
 {
     public partial class DataSourceGenericControllerAttribute : GenericControllerAttribute, IControllerModelConvention
     {

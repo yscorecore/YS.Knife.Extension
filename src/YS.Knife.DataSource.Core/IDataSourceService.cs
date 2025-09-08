@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YS.Knife.Query;
 
-namespace YS.Knife.DataSource
+namespace YS.Knife.DataItem
 {
     public interface IDataSourceService
     {

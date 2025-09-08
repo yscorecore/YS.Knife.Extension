@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-
-
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.DataItem.Core\YS.Knife.DataItem.Core.csproj" />
+  </ItemGroup>
 </Project>
