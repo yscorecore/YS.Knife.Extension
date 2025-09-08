@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace YS.Knife.DataItem
+namespace YS.Knife.DataSource
 {
     [SingletonPattern]
     public partial class AssemblyDataSourceEntryFinder

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using YS.Knife.Metadata;
 using YS.Knife.Query;
 
-namespace YS.Knife.DataItem.Impl.Default
+namespace YS.Knife.DataSource.Impl.Default
 {
     internal class ServiceRegister : IServiceRegister
     {

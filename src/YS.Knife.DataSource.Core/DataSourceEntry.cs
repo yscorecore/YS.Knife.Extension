@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace YS.Knife.DataItem
+namespace YS.Knife.DataSource
 {
     public record DataSourceEntry
     {

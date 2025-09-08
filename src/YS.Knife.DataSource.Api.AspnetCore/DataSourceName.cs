@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.DataItem.Api.AspnetCore
+﻿namespace YS.Knife.DataSource.Api.AspnetCore
 {
     [AttributeUsage(AttributeTargets.Parameter)]
     internal class DataSourceNameAttribute : Attribute

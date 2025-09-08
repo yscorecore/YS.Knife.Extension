@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using YS.Knife.Query;
 
-namespace YS.Knife.DataItem.Core.Impl
+namespace YS.Knife.DataSource.Core.Impl
 {
 
     [Service]
