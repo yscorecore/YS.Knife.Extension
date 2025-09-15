@@ -32,6 +32,10 @@ namespace YS.Knife.FileStorage.Api.AspnetCore
             {
                 throw new Exception($"The uploaded file extension '{extName}' is not allowed. Allowed extensions: {string.Join(", ", categoryObj.AllowExtensions)}");
             }
+            if (!IsValidFileName(formFile.FileName))
+            {
+                throw new Exception($"The uploaded file name '{formFile.FileName}' is invalid.");
+            }
 
             var fileStorageService = serviceProvider.GetServiceByNameOrConfiguationSwitch<IFileStorageService>(categoryObj.ServiceName);
 
@@ -39,7 +43,11 @@ namespace YS.Knife.FileStorage.Api.AspnetCore
             var userArgs = this.Request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
             CheckUserArgs(userArgs);
             //增加系统参数
-            systemArgs["ext"] = new FixedValueArgProvider(extName);
+            userArgs["ext"] = extName;
+            userArgs["name"] = Path.GetFileNameWithoutExtension(formFile.FileName);
+            userArgs["fullname"] = formFile.FileName;
+            userArgs["size"] = formFile.Length.ToString();
+            userArgs["contenttype"] = formFile.ContentType;
 
             var meta = new Dictionary<string, object>();
             foreach (var item in categoryObj.Metadata ?? new Dictionary<string, object>())
@@ -66,27 +74,67 @@ namespace YS.Knife.FileStorage.Api.AspnetCore
             //处理回调
             foreach (var callback in categoryObj.Callbacks ?? Array.Empty<string>())
             {
-                await RunCallback(res, callback, meta);
+                await RunCallback(res, callback, userArgs);
             }
             return res;
 
         }
+        static bool IsValidFileName(string fileName)
+        {
+            try
+            {
+                // 获取操作系统不允许在文件名中出现的字符数组
+                char[] invalidChars = Path.GetInvalidFileNameChars();
+
+                // 检查文件名中是否包含任何不允许的字符
+                foreach (char c in invalidChars)
+                {
+                    if (fileName.IndexOf(c) >= 0)
+                    {
+                        return false;
+                    }
+                }
+
+                // 检查文件名是否为空或仅包含空格
+                if (string.IsNullOrWhiteSpace(fileName))
+                {
+                    return false;
+                }
+
+                // 检查文件名是否包含保留文件名
+                string[] reservedFileNames = { "CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
+                foreach (string reservedName in reservedFileNames)
+                {
+                    if (fileName.Trim().Equals(reservedName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private Stream RunInterceptor(Stream stream, string interceptorName, IDictionary<string, string> userArgs, IDictionary<string, ISystemArgProvider> systemArgs)
         {
             if (streamInterceptors.TryGetValue(interceptorName, out var interceptor))
             {
-                return interceptor.HandlerStream(stream, userArgs, systemArgs, this.HttpContext.RequestAborted);
+                return interceptor.HandlerStream(stream, userArgs, this.HttpContext.RequestAborted);
             }
             else
             {
                 throw new Exception($"The file stream interceptor '{interceptorName}' is not defined");
             }
         }
-        private async Task RunCallback(FileObject fileObject, string callbackName, IDictionary<string, object> meta)
+        private async Task RunCallback(FileObject fileObject, string callbackName, IDictionary<string, string> userArgs)
         {
             if (callbacks.TryGetValue(callbackName, out var callbackHandler))
             {
-                await callbackHandler.OnFileUploaded(fileObject, meta, this.HttpContext.RequestAborted);
+                await callbackHandler.OnFileUploaded(fileObject, userArgs, this.HttpContext.RequestAborted);
             }
             else
             {

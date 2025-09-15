@@ -21,7 +21,10 @@ namespace YS.Knife.FileStorage.AliyunOss
         {
             return Task.FromResult(new FileObject
             {
-                PublicUrl = $"{ossConfiguration.PublicPoint}/{key}"
+                PublicUrl = $"{ossConfiguration.PublicPoint}/{key}",
+                Key = key,
+                FileName = Path.GetFileName(key)
+
             });
         }
 
@@ -38,7 +41,9 @@ namespace YS.Knife.FileStorage.AliyunOss
                 }
                 var imageInfo = new FileObject
                 {
-                    PublicUrl = $"{ossConfiguration.PublicPoint}/{newKey}"
+                    PublicUrl = $"{ossConfiguration.PublicPoint}/{newKey}",
+                    FileName = Path.GetFileName(newKey),
+                    Key = key,
                 };
                 return Task.FromResult(imageInfo);
             }
@@ -58,6 +63,7 @@ namespace YS.Knife.FileStorage.AliyunOss
                 var imageInfo = new FileObject
                 {
                     Key = key,
+                    FileName = Path.GetFileName(key),
                     PublicUrl = $"{ossConfiguration.PublicPoint}/{key}"
                 };
                 return Task.FromResult(imageInfo);

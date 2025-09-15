@@ -45,6 +45,7 @@ namespace YS.Knife.FileStorage.Minio
 
                 return new FileObject
                 {
+                    FileName = Path.GetFileName(key),
                     Key = res.ObjectName,
                     PublicUrl = $"{options.PublicPoint}/{res.ObjectName}"
                 };
@@ -96,6 +97,7 @@ namespace YS.Knife.FileStorage.Minio
                 return new FileObject
                 {
                     Key = newKey,
+                    FileName = Path.GetFileName(newKey),
                     PublicUrl = $"{options.PublicPoint}/{newKey}"
                 };
             }
@@ -111,6 +113,7 @@ namespace YS.Knife.FileStorage.Minio
             return Task.FromResult(new FileObject
             {
                 Key = key,
+                FileName = Path.GetFileName(key),
                 PublicUrl = $"{options.PublicPoint}/{key}"
             });
         }

@@ -18,6 +18,7 @@ namespace YS.Knife.FileStorage.Impl.Local
             var fileObj = new FileObject
             {
                 Key = key,
+                FileName = Path.GetFileName(key),
                 PublicUrl = GetAccessUrl(key)
             };
             return Task.FromResult(fileObj);
@@ -32,6 +33,7 @@ namespace YS.Knife.FileStorage.Impl.Local
             var fileObj = new FileObject
             {
                 Key = newKey,
+                FileName = Path.GetFileName(newKey),
                 PublicUrl = GetAccessUrl(newKey)
             };
             return Task.FromResult(fileObj);
@@ -46,6 +48,7 @@ namespace YS.Knife.FileStorage.Impl.Local
             return new FileObject
             {
                 Key = key,
+                FileName = Path.GetFileName(key),
                 PublicUrl = GetAccessUrl(key)
             };
         }
