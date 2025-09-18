@@ -10,7 +10,6 @@
         public string DisplayFormat { get; set; }
         public bool IsArray { get; set; }
         public string DataTypeName { get; set; }
-        public string DisplayWidth { get; set; } = "auto";//auto,100px,50%
         public int DisplayOrder { get; set; }
         public DataSourceInfo DataSource { get; set; }
         public QueryFilterInfo QueryFilter { get; set; }

@@ -22,10 +22,10 @@ namespace YS.Knife.Metadata
 
     public enum SourceType
     {
-        DataSource,
-        Enum,
-        Constant,
-        NamedConstant
+        DataSource = 0,
+        Enum = 1,
+        Constant = 2,
+        NamedConstant = 3
     }
     public class EditorDataSourceAttribute : EditorSourceAttribute
     {

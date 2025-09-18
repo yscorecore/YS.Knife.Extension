@@ -308,5 +308,39 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
             public string Name { get; set; }
         }
         #endregion
+
+        #region DateTimeType
+        [Fact]
+        public async Task Should_GetDateTimeType_Meta()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetDateTimeType_Meta");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.IsArray.Should().BeFalse();
+            firstColumn.DataTypeName.Should().Be("datetime");
+        }
+        [Metadata("GetDateTimeType_Meta")]
+        internal class GetDateTimeType_Meta
+        {
+            public DateTime Name { get; set; }
+        }
+        [Fact]
+        public async Task Should_GetNullableDateTimeType_Meta()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetNullableDateTimeType_Meta");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.IsArray.Should().BeFalse();
+            firstColumn.DataTypeName.Should().Be("datetime");
+        }
+        [Metadata("GetNullableDateTimeType_Meta")]
+        internal class GetNullableDateTimeType_Meta
+        {
+            public DateTime? Name { get; set; }
+        }
+        #endregion
+
     }
 }

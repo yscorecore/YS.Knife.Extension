@@ -166,6 +166,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
         }
         private static (bool, string, Type) GetTypeCode(Type type)
         {
+            type = ExcludeNullableType(type);
             if (type.IsArray)
             {
                 return (true, GetTypeCode(type!.GetElementType()), type!.GetElementType());
@@ -184,9 +185,13 @@ namespace YS.Knife.Metadata.Impl.Mvc
             return (false, GetTypeCode(type), type);
             static string GetTypeCode(Type type)
             {
+
                 return Type.GetTypeCode(type).ToString().ToLowerInvariant();
             }
-
+            static Type ExcludeNullableType(Type type)
+            {
+                return Nullable.GetUnderlyingType(type) ?? type;
+            }
         }
         internal record MetadataClolumnInfo2 : MetadataClolumnInfo
         {
