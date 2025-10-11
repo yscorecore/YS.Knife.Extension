@@ -82,5 +82,11 @@ namespace YS.Knife.FileStorage.Impl.Local
             };
             return Task.FromResult(res);
         }
+
+        public Task<bool> Exists(string key, CancellationToken cancellationToken = default)
+        {
+            var path = GetFileFullPath(key);
+            return Task.FromResult(File.Exists(path));
+        }
     }
 }

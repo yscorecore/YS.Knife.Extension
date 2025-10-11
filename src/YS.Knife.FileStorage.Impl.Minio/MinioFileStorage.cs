@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Microsoft.Extensions.Logging;
 using Minio;
 using Minio.DataModel.Args;
 
@@ -9,6 +10,7 @@ namespace YS.Knife.FileStorage.Minio
     public partial class MinioFileStorage : IFileStorageService
     {
         private MinioOptions options;
+        private ILogger<MinioFileStorage> logger;
 
         private (string, bool) GetEndPoint()
         {
@@ -116,6 +118,32 @@ namespace YS.Knife.FileStorage.Minio
                 FileName = Path.GetFileName(key),
                 PublicUrl = $"{options.PublicPoint}/{key}"
             });
+        }
+
+        public async Task<bool> Exists(string key, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var (endPoint, ssl) = GetEndPoint();
+                var minio = new MinioClient()
+                        .WithEndpoint(endPoint)
+                        .WithCredentials(options.AccessKeyId, options.AccessKeySecret)
+                        .WithSSL(ssl)
+                        .Build();
+
+                var args = new StatObjectArgs()
+                   .WithBucket(options.BucketName)
+                   .WithObject(key);
+
+                await minio.StatObjectAsync(args, cancellationToken);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.LogInformation(ex, "check minio object exists failed");
+                return false;
+
+            }
         }
     }
 }

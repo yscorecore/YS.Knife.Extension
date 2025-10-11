@@ -9,6 +9,13 @@ namespace YS.Knife.FileStorage.AliyunOss
     {
         private readonly AliyunOssOptions ossConfiguration;
 
+        public Task<bool> Exists(string key, CancellationToken cancellationToken = default)
+        {
+            var client = CreateClient();
+            var res = client.DoesObjectExist(ossConfiguration.BucketName, key);
+            return Task.FromResult(res);
+        }
+
         public Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new ClientUploadInfo
