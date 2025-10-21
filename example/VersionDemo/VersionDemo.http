@@ -1,0 +1,6 @@
+@VersionDemo_HostAddress = http://localhost:5224
+
+GET {{VersionDemo_HostAddress}}/api/version/
+Accept: application/json
+
+###
