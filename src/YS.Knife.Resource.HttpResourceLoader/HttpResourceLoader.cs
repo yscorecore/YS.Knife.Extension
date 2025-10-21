@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace YS.Knife.Resource
 {
@@ -54,23 +53,26 @@ namespace YS.Knife.Resource
         {
             if (File.Exists(filePath))
             {
-                DateTime lastModified = File.GetLastWriteTime(filePath);
-
-                var client = new HttpClient();
-                client.DefaultRequestHeaders.IfModifiedSince = lastModified;
-
-                var response = await client.GetAsync(uri);
-
-                if (response.StatusCode == HttpStatusCode.NotModified)
+                if (options.CheckRemoteLastModiedTime)
                 {
-                    logger.LogTrace("Template cache file not modified for the url {url}", uri);
-                }
-                else if (response.IsSuccessStatusCode)
-                {
-                    using var stream = await response.Content.ReadAsStreamAsync();
-                    using var fileStream = File.OpenWrite(filePath);
-                    stream.CopyTo(fileStream);
-                    logger.LogInformation("Template cache file updated for the url {url}", uri);
+                    var lastModified = File.GetLastWriteTime(filePath);
+
+                    using var client = new HttpClient();
+                    client.DefaultRequestHeaders.IfModifiedSince = lastModified;
+
+                    using var response = await client.GetAsync(uri);
+
+                    if (response.StatusCode == HttpStatusCode.NotModified)
+                    {
+                        logger.LogInformation("Template cache file not modified for the url {url}", uri);
+                    }
+                    else if (response.IsSuccessStatusCode)
+                    {
+                        using var stream = await response.Content.ReadAsStreamAsync();
+                        using var fileStream = File.OpenWrite(filePath);
+                        stream.CopyTo(fileStream);
+                        logger.LogInformation("Template cache file updated for the url {url}", uri);
+                    }
                 }
             }
             else

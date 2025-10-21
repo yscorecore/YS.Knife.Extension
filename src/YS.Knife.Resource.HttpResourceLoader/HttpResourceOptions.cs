@@ -8,6 +8,11 @@ namespace YS.Knife.Resource
     {
         [Required]
         public string CacheFolder { get; set; }
+
+
+        public bool CheckRemoteLastModiedTime { get; set; } = true;
+
+
     }
 
     [OptionsPostHandler]
