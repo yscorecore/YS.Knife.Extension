@@ -8,6 +8,14 @@ namespace YS.Knife.Documents.Preview
 {
     public interface IDocumentOnlinePreviewService
     {
-        Task<string> GetPreviewUrl(string fileUrl, string title, CancellationToken cancellationToken = default);
+        Task<string> GetPreviewUrl(string fileUrl, CancellationToken cancellationToken = default);
+    }
+    public interface IDocumentOnlineConvertService
+    {
+        Task<string> GetConvertUrl(string fileUrl, string targetFromat, CancellationToken cancellationToken = default);
+    }
+    public interface IDocumentOnlinePrintService
+    {
+        Task<string> GetPrintUrl(string fileUrl, CancellationToken cancellationToken = default);
     }
 }
