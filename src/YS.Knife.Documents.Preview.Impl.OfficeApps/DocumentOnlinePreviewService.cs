@@ -7,5 +7,10 @@ namespace YS.Knife.Documents.Preview.Impl.OfficeApps
         {
             throw new NotImplementedException();
         }
+
+        public Task<string> GetPreviewUrl(string fileUrl, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
