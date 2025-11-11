@@ -66,7 +66,7 @@ namespace YS.Knife.AspnetCore.Mvc
                 }
                 else
                 {
-                    context.Result = new ObjectResult(CodeResult.FromData($"{obj.StatusCode}", obj.Value?.ToString(), obj.Value)) { StatusCode = obj.StatusCode };
+                    context.Result = new ObjectResult(CodeResult.FromData($"{obj.StatusCode}", GetBadMessage(obj.Value), obj.Value)) { StatusCode = obj.StatusCode };
 
                 }
             }
@@ -77,6 +77,17 @@ namespace YS.Knife.AspnetCore.Mvc
             bool IsSuccessCode(ObjectResult obj)
             {
                 return obj.StatusCode == null || obj.StatusCode >= 200 && obj.StatusCode < 300;
+            }
+            string GetBadMessage(object value)
+            {
+                if (value is ValidationProblemDetails b && b.Errors.Count > 0)
+                {
+                    return b.Errors.First().Value.FirstOrDefault() ?? string.Empty;
+                }
+                else
+                {
+                    return value?.ToString();
+                }
             }
         }
 
