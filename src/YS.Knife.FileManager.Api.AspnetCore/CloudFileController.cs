@@ -18,7 +18,7 @@ namespace YS.Knife.FileManager.Api.AspnetCore
         {
             return cloudFileManagerService.Create(dtos, token);
         }
-        [HttpPost]
+        [HttpDelete]
         public Task Delete(Guid[] keys, CancellationToken token = default)
         {
             return cloudFileManagerService.Delete(keys);
