@@ -84,7 +84,7 @@ namespace Playground
 4. 不需要思考过程，直接给出结果
 5. 返回结果只有json，不要```json标记
 ") });
- 
+
             helper.WriteLine(res.ToString());
 
         }

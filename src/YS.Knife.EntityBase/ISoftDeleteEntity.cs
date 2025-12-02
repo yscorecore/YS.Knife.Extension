@@ -10,4 +10,12 @@ namespace YS.Knife.Entity
     {
         public bool IsDeleted { get; set; }
     }
+    public static class ISoftDeleteEntityEntensions
+    {
+        public static IQueryable<T> FilterDeleted<T>(this IQueryable<T> source)
+            where T : ISoftDeleteEntity
+        {
+            return source.Where(p => p.IsDeleted == false);
+        }
+    }
 }

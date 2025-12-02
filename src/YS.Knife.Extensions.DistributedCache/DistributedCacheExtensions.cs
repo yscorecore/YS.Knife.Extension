@@ -53,6 +53,26 @@ namespace Microsoft.Extensions.Caching.Distributed
             }
 
         }
+        public static async Task<T> GetOrAddObjectAsync<T>(this IDistributedCache cache, string key, Func<Task<T>> valueFactory, Func<T, DateTimeOffset> absoluteExpiration, int safeTimeWindowSeconds = 60, JsonSerializerOptions options = default)
+        {
+            var content = await cache.GetStringAsync(key);
+            if (string.IsNullOrEmpty(content))
+            {
+                var val = await valueFactory();
+                if (val != null)
+                {
+                    var body = val.ToJsonText(options);
+                    var expireTime = absoluteExpiration(val).AddSeconds(-safeTimeWindowSeconds);
+                    await cache.SetStringAsync(key, body, new DistributedCacheEntryOptions { AbsoluteExpiration = expireTime });
+                }
+                return val;
+            }
+            else
+            {
+                return content.AsJsonObject<T>(options);
+            }
+
+        }
 
         public static Task<T> GetOrAddObjectAsync<T>(this IDistributedCache cache, string key, T value, DateTimeOffset absoluteExpiration, bool cacheDefaultValue = false, JsonSerializerOptions options = default)
         {

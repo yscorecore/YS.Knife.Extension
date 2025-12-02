@@ -3,7 +3,7 @@
     public interface ICreateApi<TCreateDto, TKey>
         where TCreateDto : class
     {
-        Task<TKey[]> Create(TCreateDto[] Dtos, CancellationToken token = default);
+        Task<TKey[]> Create(TCreateDto[] dtos, CancellationToken token = default);
     }
 
 

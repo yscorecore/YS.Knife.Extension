@@ -27,11 +27,11 @@ namespace Playground
                 messages = messages
             };
             var response = await _httpClient.PostAsJsonAsync(ApiEndpoint, requestBody);
-           // response.EnsureSuccessStatusCode();
+            // response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
 
-      
+
     }
     public class DeepSeekMessage
     {

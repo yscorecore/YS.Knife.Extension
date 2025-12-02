@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.EFCore\YS.Knife.EFCore.csproj" />
+
+      <ProjectReference Include="..\YS.Knife.LogicRoles.Core\YS.Knife.LogicRoles.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.NotifyMessages.Core\YS.Knife.NotifyMessages.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.NotifyMessages.Entity.EFCore\YS.Knife.NotifyMessages.Entity.EFCore.csproj" />
+  </ItemGroup>
+</Project>

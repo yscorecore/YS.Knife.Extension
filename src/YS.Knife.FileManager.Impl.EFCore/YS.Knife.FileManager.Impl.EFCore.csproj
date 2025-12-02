@@ -1,3 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-   
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.EFCore\YS.Knife.EFCore.csproj" />
+    <ProjectReference Include="..\YS.Knife.EntityBase\YS.Knife.EntityBase.csproj" />
+    <ProjectReference Include="..\YS.Knife.FileManager.Core\YS.Knife.FileManager.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.FileManager.Entity.EFCore\YS.Knife.FileManager.Entity.EFCore.csproj" />
+    <ProjectReference Include="..\YS.Knife.LogicRoles.Core\YS.Knife.LogicRoles.Core.csproj" />
+  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+    </ItemGroup>
 </Project>

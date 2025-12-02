@@ -41,6 +41,11 @@ namespace System
         {
             return string.Join(sep, items);
         }
+        public static string JoinString<T>(this IEnumerable<T> items, Func<T, string> func, string sep)
+        {
+            _ = func ?? throw new ArgumentNullException(nameof(func));
+            return string.Join(sep, items.Select(func));
+        }
         public static string WithStyle(this string text, NameStyle style)
         {
             if (string.IsNullOrEmpty(text))

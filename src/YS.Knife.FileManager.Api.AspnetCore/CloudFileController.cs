@@ -1,0 +1,33 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+
+namespace YS.Knife.FileManager.Api.AspnetCore
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    [AutoConstructor]
+    public partial class CloudFileController : ControllerBase, ICloudFileManagerService
+    {
+        private readonly ICloudFileManagerService cloudFileManagerService;
+        [HttpPost]
+        public Task<Guid[]> Create([FromBody] CreateFileDto<Guid>[] dtos, CancellationToken token = default)
+        {
+            return cloudFileManagerService.Create(dtos, token);
+        }
+        [HttpPost]
+        public Task Delete(Guid[] keys, CancellationToken token = default)
+        {
+            return cloudFileManagerService.Delete(keys);
+        }
+        [HttpPost]
+        [Route("rename")]
+        public Task Rename([FromBody] RenameFileDto<Guid> renameFileDto, CancellationToken cancellationToken = default)
+        {
+            return cloudFileManagerService.Rename(renameFileDto, cancellationToken);
+        }
+    }
+}
