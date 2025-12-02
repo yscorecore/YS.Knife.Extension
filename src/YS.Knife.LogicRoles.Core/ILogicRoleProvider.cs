@@ -16,7 +16,8 @@
             {
                 if (logicRoleMap.TryGetValue(name, out var provider))
                 {
-                    res.AddRange(await provider.GetCurrentRoleCodes());
+                    var cleanRoleCodes = await provider.GetCurrentRoleCodes();
+                    res.AddRange(cleanRoleCodes.Select(p => $"{provider.Name}::{p}"));
                 }
                 else
                 {
@@ -28,6 +29,10 @@
         public static Task<IList<string>> GetAllRoles(this IEnumerable<ILogicRoleProvider> allProviders, string activeProviderName)
         {
             return allProviders.GetAllRoles(new string[] { activeProviderName });
+        }
+        public static Task<string> GetMainRole(this IEnumerable<ILogicRoleProvider> allProviders, string activeProviderName)
+        {
+            return GetAllRoles(allProviders, activeProviderName).ContinueWith(p => p.Result.Last());
         }
     }
 

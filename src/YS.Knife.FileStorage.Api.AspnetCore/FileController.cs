@@ -19,7 +19,7 @@ namespace YS.Knife.FileStorage.Api.AspnetCore
         private readonly IServiceProvider serviceProvider;
         [HttpPost]
         [Route("upload/{category}")]
-        public async Task<FileObject> Upload([FromRoute] string category)
+        public async Task<FileUploadObject> Upload([FromRoute] string category)
         {
             var categoryObj = await fileCategoryProvider.CreateCategory(category) ?? throw new Exception($"The file category '{category}' is not defined");
             var formFile = this.Request.Form.Files[categoryObj.FileFormName] ?? throw new Exception($"Missing form file field '{categoryObj.FileFormName}'");
@@ -76,7 +76,14 @@ namespace YS.Knife.FileStorage.Api.AspnetCore
             {
                 await RunCallback(res, callback, userArgs);
             }
-            return res;
+            return new FileUploadObject
+            {
+                FileName = res.FileName,
+                Extension = extName,
+                Key = res.Key,
+                PublicUrl = res.PublicUrl,
+                Size = formFile.Length,
+            };
 
         }
         static bool IsValidFileName(string fileName)
