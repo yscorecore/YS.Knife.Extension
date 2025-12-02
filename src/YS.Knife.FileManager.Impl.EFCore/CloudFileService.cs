@@ -25,6 +25,7 @@ namespace YS.Knife.FileManager.Impl.EFCore
 
         public async Task<Guid[]> Create(CreateFileDto<Guid>[] dtos, CancellationToken token = default)
         {
+            var mainLogicRole = (await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicRoleProvider)).Last();
             var entities = dtos.Select(p => p.To<FileEntity<Guid>>()).ToArray();
             Array.ForEach(entities, p =>
             {
@@ -32,6 +33,7 @@ namespace YS.Knife.FileManager.Impl.EFCore
                 {
                     throw ParentIsNotFolder();
                 }
+                p.Owner = mainLogicRole;
                 entityStore.Add(p);
             });
             await entityStore.SaveChangesAsync(token);
@@ -40,21 +42,24 @@ namespace YS.Knife.FileManager.Impl.EFCore
 
         public async Task Delete(Guid[] keys, CancellationToken token = default)
         {
-            var files = await entityStore.Current.FindArrayOrThrowAsync(keys, token);
+            var mainLogicRole = (await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicRoleProvider)).Last();
+            var files = await entityStore.Current.Where(p => p.Owner == mainLogicRole).FindArrayOrThrowAsync(keys, token);
             Array.ForEach(files, entityStore.Delete);
             await entityStore.SaveChangesAsync(token);
         }
 
         public async Task<PagedList<FileDto<Guid>>> QueryPagedList(LimitQueryInfo req, CancellationToken cancellationToken = default)
         {
-            var allOwners = await logicRoleProviders.GetAllRoles(cloudFileOptions.LogicRoleProviders);
-            return await entityStore.Current.FilterDeleted().Where(p => allOwners.Contains(p.Owner))
+            var mainLogicRole = (await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicRoleProvider)).Last();
+            //var allOwners = await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicProvider);
+            return await entityStore.Current.FilterDeleted().Where(p => mainLogicRole == p.Owner)
                  .To<FileDto<Guid>>().QueryPageAsync(req, cancellationToken);
         }
 
         public async Task Rename(RenameFileDto<Guid> renameFileDto, CancellationToken cancellationToken = default)
         {
-            var file = await entityStore.Current.FindOrThrowAsync(renameFileDto.Id, cancellationToken);
+            var mainLogicRole = (await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicRoleProvider)).Last();
+            var file = await entityStore.Current.Where(p => p.Owner == mainLogicRole).FindOrThrowAsync(renameFileDto.Id, cancellationToken);
             file.Name = renameFileDto.Name;
             await entityStore.SaveChangesAsync(cancellationToken);
         }

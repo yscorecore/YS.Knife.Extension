@@ -150,7 +150,7 @@ namespace YS.Knife.FileStorage.Api.AspnetCore
         {
             foreach (var (k, v) in userArgs)
             {
-                if (!Regex.IsMatch(v, @"^\w+$"))
+                if (!string.IsNullOrEmpty(v) && !Regex.IsMatch(v, @"^\w+$"))
                 {
                     throw new Exception($"The user argument '{k}' is invalid.");
                 }

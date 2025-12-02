@@ -10,7 +10,7 @@ namespace YS.Knife.FileManager.Api.AspnetCore
     [ApiController]
     [Route("api/[controller]")]
     [AutoConstructor]
-    public partial class CloudFileController : ControllerBase, ICloudFileManagerService
+    public partial class CloudFileController : ControllerBase
     {
         private readonly ICloudFileManagerService cloudFileManagerService;
         [HttpPost]
@@ -19,9 +19,9 @@ namespace YS.Knife.FileManager.Api.AspnetCore
             return cloudFileManagerService.Create(dtos, token);
         }
         [HttpDelete]
-        public Task Delete(Guid[] keys, CancellationToken token = default)
+        public Task Delete(Guid[] id, CancellationToken token = default)
         {
-            return cloudFileManagerService.Delete(keys);
+            return cloudFileManagerService.Delete(id);
         }
         [HttpPost]
         [Route("rename")]
