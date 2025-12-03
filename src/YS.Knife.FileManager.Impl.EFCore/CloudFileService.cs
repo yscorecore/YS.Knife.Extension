@@ -25,21 +25,30 @@ namespace YS.Knife.FileManager.Impl.EFCore
         [CodeException("001", "只能给目录下面创建文件")]
         private partial Exception ParentIsNotFolder();
 
+
+        [CodeException("002", "文件{file}已经存在")]
+        private partial Exception FileAlreadyExists(string file);
+
+        [CodeException("003", "目录{file}已经存在")]
+        private partial Exception FolderAlreadyExists(string file);
+
         public async Task<Guid[]> Create(CreateFileDto<Guid>[] dtos, CancellationToken token = default)
         {
             var mainLogicRole = (await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicRoleProvider)).Last();
-            var parents = await entityStore.Current.Where(p => p.Owner == mainLogicRole).FilterDeleted().FindDictionaryOrThrowAsync(dtos.Where(p => p.ParentId.HasValue).Select(p => p.ParentId!.Value).Distinct().ToArray(), token);
+            var baseQuery = entityStore.Current.Where(p => p.Owner == mainLogicRole).FilterDeleted();
+            var parents = await baseQuery.FindDictionaryOrThrowAsync(dtos.Where(p => p.ParentId.HasValue).Select(p => p.ParentId!.Value).Distinct().ToArray(), token);
+
+            var duplicateName = await baseQuery.WhereItemsOr(dtos, (p, v) => p.ParentId == v.ParentId && p.Name == v.Name)
+                .FirstOrDefaultAsync(token);
+            if (duplicateName != null)
+            {
+                throw FileAlreadyExists(duplicateName.Name);
+            }
             var entities = dtos.Select(p => p.To<FileEntity<Guid>>(t =>
             {
-                if (t.ParentId.HasValue)
+                if (t.ParentId.HasValue && parents.TryGetValue(t.ParentId.Value, out var parent) && !parent.IsFolder)
                 {
-                    if (parents.TryGetValue(t.ParentId.Value, out var parent))
-                    {
-                        if (!parent.IsFolder)
-                        {
-                            throw ParentIsNotFolder();
-                        }
-                    }
+                    throw ParentIsNotFolder();
                 }
                 t.IsFolder = false;
                 t.Owner = mainLogicRole;
@@ -52,19 +61,19 @@ namespace YS.Knife.FileManager.Impl.EFCore
         public async Task<Guid[]> CreateFolder(CreateFolderDto<Guid>[] dtos, CancellationToken token = default)
         {
             var mainLogicRole = (await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicRoleProvider)).Last();
-
-            var parents = await entityStore.Current.Where(p => p.Owner == mainLogicRole).FilterDeleted().FindDictionaryOrThrowAsync(dtos.Where(p => p.ParentId.HasValue).Select(p => p.ParentId!.Value).Distinct().ToArray(), token);
+            var baseQuery = entityStore.Current.Where(p => p.Owner == mainLogicRole).FilterDeleted();
+            var parents = await baseQuery.FindDictionaryOrThrowAsync(dtos.Where(p => p.ParentId.HasValue).Select(p => p.ParentId!.Value).Distinct().ToArray(), token);
+            var duplicateName = await baseQuery.WhereItemsOr(dtos, (p, v) => p.ParentId == v.ParentId && p.Name == v.Name)
+                .FirstOrDefaultAsync(token);
+            if (duplicateName != null)
+            {
+                throw FolderAlreadyExists(duplicateName.Name);
+            }
             var entities = dtos.Select(p => p.To<FileEntity<Guid>>(t =>
             {
-                if (t.ParentId.HasValue)
+                if (t.ParentId.HasValue && parents.TryGetValue(t.ParentId.Value, out var parent) && !parent.IsFolder)
                 {
-                    if (parents.TryGetValue(t.ParentId.Value, out var parent))
-                    {
-                        if (!parent.IsFolder)
-                        {
-                            throw ParentIsNotFolder();
-                        }
-                    }
+                    throw ParentIsNotFolder();
                 }
                 t.IsFolder = false;
                 t.Owner = mainLogicRole;
