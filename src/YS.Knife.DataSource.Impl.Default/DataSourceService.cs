@@ -110,7 +110,7 @@ namespace YS.Knife.DataSource.Core.Impl
             return res.Items;
         }
 
-        public async Task<object> Agg(string name, LimitQueryInfo queryInfo, CancellationToken cancellationToken = default)
+        public async Task<object> Agg(string name, AggQueryInfo queryInfo, CancellationToken cancellationToken = default)
         {
             dynamic res = await GetDataSourceFunc(name)(serviceProvider, new LimitQueryInfo
             {

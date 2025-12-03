@@ -83,6 +83,7 @@ namespace YS.Knife.FileStorage.Api.AspnetCore
                 Key = res.Key,
                 PublicUrl = res.PublicUrl,
                 Size = formFile.Length,
+                OriginFileName = formFile.FileName
             };
 
         }

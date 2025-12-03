@@ -18,6 +18,12 @@ namespace YS.Knife.FileManager.Api.AspnetCore
         {
             return cloudFileManagerService.Create(dtos, token);
         }
+        [HttpPost]
+        [Route("folders")]
+        public Task<Guid[]> CreateFolder([FromBody] CreateFolderDto<Guid>[] dtos, CancellationToken token = default)
+        {
+            return cloudFileManagerService.CreateFolder(dtos, token);
+        }
         [HttpDelete]
         public Task Delete(Guid[] id, CancellationToken token = default)
         {

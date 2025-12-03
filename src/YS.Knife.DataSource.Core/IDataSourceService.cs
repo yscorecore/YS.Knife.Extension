@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -18,6 +19,13 @@ namespace YS.Knife.DataSource
         Task<T> FindBy<T>(string name, string key, string value, CancellationToken cancellationToken = default);
         Task<object> All(string name, QueryInfo queryInfo, CancellationToken cancellationToken = default);
         Task<List<T>> All<T>(string name, QueryInfo queryInfo, CancellationToken cancellationToken = default);
-        Task<object> Agg(string name, LimitQueryInfo queryInfo, CancellationToken cancellationToken = default);
+        Task<object> Agg(string name, AggQueryInfo queryInfo, CancellationToken cancellationToken = default);
+    }
+    public class AggQueryInfo
+    {
+        [MaxLength(4096)]
+        public string Filter { get; set; }
+        [MaxLength(1024)]
+        public string Agg { get; set; }
     }
 }

@@ -10,6 +10,7 @@
     {
         public long Size { get; set; }
         public string Extension { get; set; }
+        public string OriginFileName { get; set; }
     }
 
 }

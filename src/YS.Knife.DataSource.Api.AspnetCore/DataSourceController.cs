@@ -23,7 +23,7 @@ namespace YS.Knife.DataSource.Api.AspnetCore
 
         [HttpGet]
         [Route("agg")]
-        public Task<object> Agg([FromQuery] LimitQueryInfo queryInfo, CancellationToken cancellationToken)
+        public Task<object> Agg([FromQuery] AggQueryInfo queryInfo, CancellationToken cancellationToken)
         {
             var datasourceName = GetDatasourceNameFromContext();
             return dataSourceService.Agg(datasourceName, queryInfo, cancellationToken);

@@ -6,19 +6,30 @@ namespace YS.Knife.FileManager
     public interface ICloudFileManagerService : IDeleteApi<Guid>, ICreateApi<CreateFileDto<Guid>, Guid>
     {
         Task Rename(RenameFileDto<Guid> renameFileDto, CancellationToken cancellationToken = default);
+
+        Task<Guid[]> CreateFolder(CreateFolderDto<Guid>[] dtos, CancellationToken token = default);
     }
     public class CreateFileDto<T>
         where T : struct
     {
         [Required]
         [StringLength(128, MinimumLength = 1)]
-        //[RegularExpression(@"^\\w+$", ErrorMessage = "文件名称不符合要求")]
+        [RegularExpression(@"^\w+$", ErrorMessage = "文件名称不符合要求")]
         public string Name { get; set; }
         public string Key { get; set; }
         public string Url { get; set; }
         public long Size { get; set; }
         public T? ParentId { get; set; }
-        public bool IsFolder { get; set; }
+    }
+    public class CreateFolderDto<T>
+        where T : struct
+    {
+        [Required]
+        [StringLength(128, MinimumLength = 1)]
+        [RegularExpression(@"^\w+$", ErrorMessage = "目录名称不符合要求")]
+        public string Name { get; set; }
+
+        public T? ParentId { get; set; }
     }
 
     public class RenameFileDto<T>
@@ -26,7 +37,7 @@ namespace YS.Knife.FileManager
         public T Id { get; set; }
         [Required]
         [StringLength(128, MinimumLength = 1)]
-        [RegularExpression(@"^\\w+$", ErrorMessage = "文件名称不符合要求")]
+        [RegularExpression(@"^\w+$", ErrorMessage = "名称不符合要求")]
         public string Name { get; set; }
     }
     public record FileDto<T> : BaseDto<T>
