@@ -50,6 +50,7 @@ namespace YS.Knife.FileManager.Impl.EFCore
                 {
                     throw ParentIsNotFolder();
                 }
+                t.Extension = System.IO.Path.GetExtension(t.Name);
                 t.IsFolder = false;
                 t.Owner = mainLogicRole;
             })).ToArray();
@@ -75,7 +76,7 @@ namespace YS.Knife.FileManager.Impl.EFCore
                 {
                     throw ParentIsNotFolder();
                 }
-                t.IsFolder = false;
+                t.IsFolder = true;
                 t.Owner = mainLogicRole;
             })).ToArray();
             entityStore.AddRange(entities);

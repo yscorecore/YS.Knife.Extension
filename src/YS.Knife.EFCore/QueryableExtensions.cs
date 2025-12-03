@@ -13,10 +13,10 @@ namespace Microsoft.EntityFrameworkCore
             new System.Collections.Concurrent.ConcurrentDictionary<Type, string>();
 
         [CodeException("001", "Can not find {name} by id '{id}'.")]
-        internal static partial Exception EntityNotFound(string name, object id, CancellationToken token = default);
+        internal static partial Exception EntityNotFound(string name, object id);
 
         [CodeException("002", "Already exists '{name}'.")]
-        internal static partial Exception EntityAlreadyExists(string name, object id, CancellationToken token = default);
+        internal static partial Exception EntityAlreadyExists(string name, object id);
 
 
         public static T FindOrThrow<T, TKey>(this IQueryable<T> source, TKey id)
