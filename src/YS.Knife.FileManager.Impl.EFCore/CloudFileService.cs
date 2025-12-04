@@ -98,9 +98,10 @@ namespace YS.Knife.FileManager.Impl.EFCore
             var mainLogicRole = (await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicRoleProvider)).Last();
             //var allOwners = await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicProvider);
             return await entityStore.Current.FilterDeleted().Where(p => mainLogicRole == p.Owner)
+                 .To<FileDto<Guid>>()
                  .OrderByDescending(p => p.IsFolder)
                  .ThenBy(p => p.Name)
-                 .To<FileDto<Guid>>().QueryPageAsync(req, cancellationToken);
+                 .QueryPageAsync(req, cancellationToken);
         }
 
         public async Task Rename(RenameFileDto<Guid> renameFileDto, CancellationToken cancellationToken = default)

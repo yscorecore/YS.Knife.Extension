@@ -14,7 +14,7 @@ namespace YS.Knife.FileManager
     {
         [Required]
         [StringLength(128, MinimumLength = 1)]
-        [RegularExpression(@"^\w+(\.\w+)*$", ErrorMessage = "文件名称不符合要求")]
+        [RegularExpression(@"^[^\x00-\x1F\x7F<>:""/\\|?*\u0000-\u001F]+$", ErrorMessage = "文件名称不符合要求")]
         public string Name { get; set; }
         public string Key { get; set; }
         public string Url { get; set; }
@@ -26,7 +26,7 @@ namespace YS.Knife.FileManager
     {
         [Required]
         [StringLength(128, MinimumLength = 1)]
-        [RegularExpression(@"^\w+(\.\w+)*$", ErrorMessage = "目录名称不符合要求")]
+        [RegularExpression(@"^[^\x00-\x1F\x7F<>:""/\\|?*\u0000-\u001F]+$", ErrorMessage = "目录名称不符合要求")]
         public string Name { get; set; }
 
         public T? ParentId { get; set; }
@@ -37,7 +37,7 @@ namespace YS.Knife.FileManager
         public T Id { get; set; }
         [Required]
         [StringLength(128, MinimumLength = 1)]
-        [RegularExpression(@"^\w+(\.\w+)*$", ErrorMessage = "名称不符合要求")]
+        [RegularExpression(@"^[^\x00-\x1F\x7F<>:""/\\|?*\u0000-\u001F]+$", ErrorMessage = "名称不符合要求")]
         public string Name { get; set; }
     }
     public record FileDto<T> : BaseDto<T>
