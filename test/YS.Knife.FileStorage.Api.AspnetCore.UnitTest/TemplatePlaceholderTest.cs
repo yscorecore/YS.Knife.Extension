@@ -49,6 +49,13 @@ namespace YS.Knife.FileStorage.Api.AspnetCore.UnitTest
 
 
         }
+        [Fact]
+        public void TestmplexTemplate()
+        {
+            var template = "message_files/{guid}/{now:yyyyMMdd}/{guid}";
+            var name = FillTemplate(template);
+            name.Should().HaveLength("message_files/c602970f-f579-45c5-bb05-a058f9a3438d/20251204/0f349d5c-5eb1-4dd6-ac62-0d6e66e00695".Length);
+        }
 
         string FillTemplate(string placeHolder)
         {
@@ -58,5 +65,7 @@ namespace YS.Knife.FileStorage.Api.AspnetCore.UnitTest
             var userArgs = new Dictionary<string, string>();
             return TemplatePlaceholder.Instance.FillPlaceholder(placeHolder, userArgs, systemArgs); ;
         }
+
+
     }
 }

@@ -12,7 +12,7 @@ namespace YS.Knife.FileStorage
     [SingletonPattern]
     public partial class TemplatePlaceholder
     {
-        private static readonly Regex _regex = new(@"(?<user>\$)?\{\s*(?<name>\w+)\s*(:(?<fmt>.+))?\}");
+        private static readonly Regex _regex = new(@"(?<user>\$)?\{\s*(?<name>\w+)\s*(:(?<fmt>.+?))?\}");
         public string FillPlaceholder(string placeHolder, IDictionary<string, string> userArgs, IDictionary<string, ISystemArgProvider> systemArgs)
         {
             _ = placeHolder ?? throw new ArgumentNullException(nameof(placeHolder));
