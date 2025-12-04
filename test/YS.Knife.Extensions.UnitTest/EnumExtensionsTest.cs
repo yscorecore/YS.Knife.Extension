@@ -53,7 +53,7 @@ namespace YS.Knife.Extensions.UnitTest
         [Flags]
         public enum FlagEnum
         {
-            [Display(Name ="测试")]
+            [Display(Name = "测试")]
             Field1 = 1,
             [Display(Name = "测试2")]
             Field2 = 2,
