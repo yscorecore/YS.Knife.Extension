@@ -50,7 +50,7 @@ namespace YS.Knife.FileManager.Impl.EFCore
                 {
                     throw ParentIsNotFolder();
                 }
-                t.Extension = System.IO.Path.GetExtension(t.Name);
+                t.Extension = Path.GetExtension(t.Name);
                 t.IsFolder = false;
                 t.Owner = mainLogicRole;
             })).ToArray();
@@ -89,7 +89,7 @@ namespace YS.Knife.FileManager.Impl.EFCore
         {
             var mainLogicRole = (await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicRoleProvider)).Last();
             var files = await entityStore.Current.Where(p => p.Owner == mainLogicRole).FindArrayOrThrowAsync(keys, token);
-            Array.ForEach(files, entityStore.Delete);
+            Array.ForEach(files, p => p.IsDeleted = true);
             await entityStore.SaveChangesAsync(token);
         }
 
