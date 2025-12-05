@@ -26,18 +26,24 @@ namespace YS.Knife.FileManager.Impl.EFCore
         private partial Exception ParentIsNotFolder();
 
 
-        [CodeException("002", "文件{file}已经存在")]
+        [CodeException("002", "文件\"{file}\"已经存在")]
         private partial Exception FileAlreadyExists(string file);
 
-        [CodeException("003", "目录{file}已经存在")]
+        [CodeException("003", "目录\"{file}\"已经存在")]
         private partial Exception FolderAlreadyExists(string file);
+
+        [CodeException("004", "存在重复的文件名")]
+        private partial Exception HasDuplicateFile();
 
         public async Task<Guid[]> Create(CreateFileDto<Guid>[] dtos, CancellationToken token = default)
         {
             var mainLogicRole = (await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicRoleProvider)).Last();
             var baseQuery = entityStore.Current.Where(p => p.Owner == mainLogicRole).FilterDeleted();
             var parents = await baseQuery.FindDictionaryOrThrowAsync(dtos.Where(p => p.ParentId.HasValue).Select(p => p.ParentId!.Value).Distinct().ToArray(), token);
-
+            if (dtos.HasDuplicate(p => (p.ParentId, p.Name)))
+            {
+                throw HasDuplicateFile();
+            }
             var duplicateName = await baseQuery.WhereItemsOr(dtos, (p, v) => p.ParentId == v.ParentId && p.Name == v.Name)
                 .FirstOrDefaultAsync(token);
             if (duplicateName != null)
@@ -96,7 +102,6 @@ namespace YS.Knife.FileManager.Impl.EFCore
         public async Task<PagedList<FileDto<Guid>>> QueryPagedList(LimitQueryInfo req, CancellationToken cancellationToken = default)
         {
             var mainLogicRole = (await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicRoleProvider)).Last();
-            //var allOwners = await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicProvider);
             return await entityStore.Current.FilterDeleted().Where(p => mainLogicRole == p.Owner)
                  .To<FileDto<Guid>>()
                  .OrderByDescending(p => p.IsFolder)
