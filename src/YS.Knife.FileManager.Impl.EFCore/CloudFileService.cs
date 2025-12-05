@@ -35,6 +35,9 @@ namespace YS.Knife.FileManager.Impl.EFCore
         [CodeException("004", "存在重复的文件名")]
         private partial Exception HasDuplicateFile();
 
+        [CodeException("005", "存在重复的目录名")]
+        private partial Exception HasDuplicateFolder();
+
         public async Task<Guid[]> Create(CreateFileDto<Guid>[] dtos, CancellationToken token = default)
         {
             var mainLogicRole = (await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicRoleProvider)).Last();
@@ -70,6 +73,11 @@ namespace YS.Knife.FileManager.Impl.EFCore
             var mainLogicRole = (await logicRoleProviders.GetAllRoles(cloudFileOptions.MainLogicRoleProvider)).Last();
             var baseQuery = entityStore.Current.Where(p => p.Owner == mainLogicRole).FilterDeleted();
             var parents = await baseQuery.FindDictionaryOrThrowAsync(dtos.Where(p => p.ParentId.HasValue).Select(p => p.ParentId!.Value).Distinct().ToArray(), token);
+            if (dtos.HasDuplicate(p => (p.ParentId, p.Name)))
+            {
+                throw HasDuplicateFolder();
+            }
+
             var duplicateName = await baseQuery.WhereItemsOr(dtos, (p, v) => p.ParentId == v.ParentId && p.Name == v.Name)
                 .FirstOrDefaultAsync(token);
             if (duplicateName != null)
