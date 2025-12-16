@@ -2,7 +2,7 @@
 using YS.Knife.Time;
 namespace ExposeApiDemo
 {
-    [ExposeApi(typeof(IService1), AllowAnonymous = true)]
+    [ExposeApi(typeof(IService1))]
     [ExposeApi(typeof(ITimeService), AllowAnonymous = true)]
     public class Program
     {
@@ -10,21 +10,26 @@ namespace ExposeApiDemo
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddAuthorization();
-
+            builder.Services.AddMvc();
+            // Add Swagger services with explicit configuration
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "ExposeApiDemo", Version = "v1" });
+            });
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
+            // Add Swagger middleware
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
-            app.UseAuthorization();
 
             var summaries = new[]
             {
                 "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
             };
-
+            app.MapControllers();
             app.MapGet("/weatherforecast", (HttpContext httpContext) =>
             {
                 var forecast = Enumerable.Range(1, 5).Select(index =>
@@ -44,7 +49,15 @@ namespace ExposeApiDemo
 
     public interface IService1
     {
-        string GetData(int id);
+        string GetData(int id, CancellationToken token);
+
+        Task<string> GetData2(int id);
+
+        ValueTask<string> GetData3(int id);
+
+        Task<string> ModifyAbc(string abc);
+
+        Task CreateNew();
     }
     public interface IService2
     {

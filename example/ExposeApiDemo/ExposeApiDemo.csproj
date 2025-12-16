@@ -9,5 +9,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\YS.Knife.Generators.ExposeApi\YS.Knife.Generators.ExposeApi.csproj" OutputItemType="Analyzer" />
     <ProjectReference Include="..\..\src\YS.Knife.Time.Core\YS.Knife.Time.Core.csproj" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 </Project>

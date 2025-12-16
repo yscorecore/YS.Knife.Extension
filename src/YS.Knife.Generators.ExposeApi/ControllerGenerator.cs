@@ -17,6 +17,25 @@ namespace YS.Knife.Generators.ExposeApi
         const string AttributeName = "ExposeApiAttribute";
         internal static string AttributeFullName = $"{NameSpaceName}.{AttributeName}";
 
+        private static readonly Dictionary<string, string[]> HttpMethodRules = new Dictionary<string, string[]>
+        {
+            {
+                "HttpGet", new string[] { "get", "query", "find", "fetch" }
+            },
+            {
+                "HttpPost", new string[] { "create", "add", "post" }
+            },
+            {
+                "HttpPut", new string[] { "update", "modify" }
+            },
+            {
+                "HttpDelete", new string[] { "delete", "remove" }
+            },
+            {
+                "HttpPatch", new string[] { "patch" }
+            }
+        };
+
         const string AttributeCode = @"using System;
 namespace YS.Knife
 {
@@ -138,12 +157,18 @@ namespace {namespaceName}");
             }
             codeBuilder.AppendCodeLines($"public class {controllerName} : ControllerBase");
             codeBuilder.BeginSegment();
+            codeBuilder.AppendCodeLines($@"private readonly {serviceType} {serviceName};");
             //构造函数
             codeBuilder.AppendCodeLines($@"public {controllerName}({serviceType} {serviceName})
 {{
     this.{serviceName} = {serviceName};
 }}");
-            codeBuilder.AppendCodeLines($@"private readonly {serviceType} {serviceName};");
+
+            foreach (var method in serviceTypeSymbol.GetMembers().OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.Ordinary))
+            {
+                codeBuilder.AppendLine();
+                codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceName, method));
+            }
 
             codeBuilder.EndAllSegments();
 
@@ -186,6 +211,126 @@ namespace {namespaceName}");
                 }
                 return $"{name}Controller";
             }
+
+        }
+        private static string GeneratorMethodCode(string instanceName, IMethodSymbol method)
+        {
+            var returnType = method.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            var methodName = method.Name;
+            var argumentList = string.Join(", ", method.Parameters.Select(p => p.Name));
+            var httpMethod = GetHttpMethod(method);
+            var firstArgIsId = IsFirstIdParameter(method);
+            var route = firstArgIsId ? $"{methodName}/{{id}}" : methodName;
+            var isGetOrDeleted = httpMethod == "HttpGet" || httpMethod == "HttpDelete";
+            var parameters = new List<string>();
+            for (var i = 0; i < method.Parameters.Length; i++)
+            {
+                var parameter = method.Parameters[i];
+                var item = $"{parameter.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)} {parameter.Name}";
+                if (i == 0 && firstArgIsId)
+                {
+                    parameters.Add($"[FromRoute] {item}");
+                }
+                else if (isGetOrDeleted)
+                {
+                    // 判断是否为复杂类型（非基本类型），包括可空类型
+                    var typeSymbol = parameter.Type;
+                    // 处理可空类型
+                    if (typeSymbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.IsGenericType && namedTypeSymbol.ConstructedFrom.SpecialType == SpecialType.System_Nullable_T)
+                    {
+                        typeSymbol = namedTypeSymbol.TypeArguments[0];
+                    }
+                    // 检查是否为特殊类型（如 CancellationToken），这些类型不需要 FromQuery
+                    var isSpecialType = false;
+                    if (typeSymbol is INamedTypeSymbol namedType)
+                    {
+                        var typeFullName = namedType.ToDisplayFullString();
+                        isSpecialType = typeFullName == "global::System.Threading.CancellationToken"
+                            || typeFullName == "global::Microsoft.AspNetCore.Http.HttpContext"
+                            || typeFullName == "global::Microsoft.AspNetCore.Http.HttpRequest"
+                            || typeFullName == "global::Microsoft.AspNetCore.Http.HttpResponse"
+                            || typeFullName == "global::System.Security.Claims.ClaimsPrincipal";
+                    }
+                    // 使用 IsPrimitive 方法判断是否为基本类型，非基本类型且非特殊类型则使用 FromQuery
+                    if (!typeSymbol.IsPrimitive() && !isSpecialType)
+                    {
+                        parameters.Add($"[FromQuery] {item}");
+                    }
+                    else
+                    {
+                        parameters.Add(item);
+                    }
+                }
+                else
+                {
+                    parameters.Add(item);
+                }
+            }
+            var paremeterLine = string.Join(", ", parameters);
+            return $@"[Route(""{route}"")]
+[{httpMethod}]
+public {returnType} {methodName}({paremeterLine})
+{{
+    return this.{instanceName}.{methodName}({argumentList});                    
+}}";
+        }
+        private static string GetHttpMethod(IMethodSymbol method)
+        {
+            var hasReturnType = HasReturnType(method.ReturnType);
+            var lowerMethodName = method.Name.ToLower();
+            foreach (var rule in HttpMethodRules)
+            {
+                if (rule.Value.Any(prefix => lowerMethodName.StartsWith(prefix)))
+                {
+                    return rule.Key;
+                }
+            }
+
+            // 根据返回值类型决定默认方法
+            return HasReturnType(method.ReturnType) ? "HttpGet" : "HttpPost";
+        }
+        private static bool IsFirstIdParameter(IMethodSymbol method)
+        {
+            if (method.Parameters.Length > 1)
+            {
+                return method.Parameters[0].Name == "id";
+            }
+            return false;
+        }
+        private static bool HasReturnType(ITypeSymbol returnType)
+        {
+            if (returnType == null)
+                return true;
+
+            var returnTypeName = returnType.Name;
+
+            // 处理Task类型
+            if (returnTypeName == "Task" && returnType is INamedTypeSymbol taskType && taskType.IsGenericType)
+            {
+                // 对于Task<T>，获取T作为实际返回值类型
+                var genericArgs = taskType.TypeArguments;
+                if (genericArgs.Length > 0)
+                {
+                    return false;
+                }
+                // Task（无泛型参数）视为void
+                return true;
+            }
+            // 处理ValueTask类型
+            else if (returnTypeName == "ValueTask" && returnType is INamedTypeSymbol valueTaskType && valueTaskType.IsGenericType)
+            {
+                // 对于ValueTask<T>，获取T作为实际返回值类型
+                var genericArgs = valueTaskType.TypeArguments;
+                if (genericArgs.Length > 0)
+                {
+                    return false;
+                }
+                // ValueTask（无泛型参数）视为void
+                return true;
+            }
+
+            // 非异步方法直接返回类型名称
+            return false;
         }
 
         // 为了兼容性，保持ISourceGenerator接口的实现

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -257,9 +257,9 @@ namespace FlyTiger
                 case SpecialType.System_UInt64:
                 case SpecialType.System_Single:
                 case SpecialType.System_Double:
+                case SpecialType.System_Decimal:
                 case SpecialType.System_Char:
                 case SpecialType.System_String:
-                case SpecialType.System_Object:
                     return true;
             }
             return false;
