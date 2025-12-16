@@ -1,6 +1,5 @@
 ﻿<Project>
   <PropertyGroup>
-    <!-- 自动为消费者项目设置正确的属性 -->
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+   
   </PropertyGroup>
 </Project>
