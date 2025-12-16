@@ -148,6 +148,11 @@ namespace YS.Knife
 using Microsoft.AspNetCore.Mvc;
 namespace {namespaceName}");
             codeBuilder.BeginSegment();
+            var comment = GetClassComment(serviceTypeSymbol);
+            if (!string.IsNullOrEmpty(comment))
+            {
+                codeBuilder.AppendCodeLines(comment);
+            }
             codeBuilder.AppendCodeLines($@"[ApiController]
 [Route(""{router}"")]
 ");
@@ -167,7 +172,7 @@ namespace {namespaceName}");
             foreach (var method in serviceTypeSymbol.GetMembers().OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.Ordinary))
             {
                 codeBuilder.AppendLine();
-                codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceName, method));
+                codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method));
             }
 
             codeBuilder.EndAllSegments();
@@ -213,7 +218,7 @@ namespace {namespaceName}");
             }
 
         }
-        private static string GeneratorMethodCode(string instanceName, IMethodSymbol method)
+        private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method)
         {
             var returnType = method.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             var methodName = method.Name;
@@ -222,6 +227,7 @@ namespace {namespaceName}");
             var firstArgIsId = IsFirstIdParameter(method);
             var route = firstArgIsId ? $"{methodName}/{{id}}" : methodName;
             var isGetOrDeleted = httpMethod == "HttpGet" || httpMethod == "HttpDelete";
+            var comment = GetMethodComment(serviceType, method);
             var parameters = new List<string>();
             for (var i = 0; i < method.Parameters.Length; i++)
             {
@@ -267,7 +273,8 @@ namespace {namespaceName}");
                 }
             }
             var paremeterLine = string.Join(", ", parameters);
-            return $@"[Route(""{route}"")]
+            return $@"{comment}
+[Route(""{route}"")]
 [{httpMethod}]
 public {returnType} {methodName}({paremeterLine})
 {{
@@ -285,9 +292,115 @@ public {returnType} {methodName}({paremeterLine})
                     return rule.Key;
                 }
             }
-
             // 根据返回值类型决定默认方法
             return HasReturnType(method.ReturnType) ? "HttpGet" : "HttpPost";
+        }
+        private static string GetMethodComment(INamedTypeSymbol serviceType, IMethodSymbol method)
+        {
+            //获取method上定义的原始xml注释
+            var xmlComment = method.GetDocumentationCommentXml();
+            if (string.IsNullOrWhiteSpace(xmlComment))
+            {
+                return string.Empty;
+            }
+            // 解析XML注释，提取<member>节点的子节点内容
+            try
+            {
+                var xDoc = System.Xml.Linq.XDocument.Parse(xmlComment);
+                var memberElement = xDoc.Element("member");
+                if (memberElement == null || !memberElement.HasElements)
+                {
+                    return string.Empty;
+                }
+
+                // 创建StringBuilder来构建格式化的注释
+                var formattedComment = new System.Text.StringBuilder();
+
+                // 遍历<member>节点的所有子元素
+                foreach (var child in memberElement.Elements())
+                {
+                    var elementName = child.Name.LocalName;
+                    var isSingleLineElement = elementName == "param" || elementName == "returns";
+
+                    if (isSingleLineElement)
+                    {
+                        // param 和 returns 标签在一行中显示
+                        var textContent = !string.IsNullOrWhiteSpace(child.Value) ? child.Value.Trim() : "";
+                        formattedComment.AppendLine($"///<{elementName}>{textContent}</{elementName}>");
+                    }
+                    else
+                    {
+                        // 其他标签（如 summary）保持多行格式
+                        formattedComment.AppendLine($"///<{elementName}>");
+
+                        // 如果元素有文本内容，添加缩进的文本行
+                        if (!string.IsNullOrWhiteSpace(child.Value))
+                        {
+                            foreach (var textLine in child.Value.Trim().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                formattedComment.AppendLine($"///{textLine.Trim()}");
+                            }
+                        }
+
+                        // 添加结束标签
+                        formattedComment.AppendLine($"///</{elementName}>");
+                    }
+                }
+
+                return formattedComment.ToString().TrimEnd();
+            }
+            catch (System.Xml.XmlException)
+            {
+                // 如果所有方法都失败，返回空字符串
+                return string.Empty;
+            }
+        }
+        private static string GetClassComment(INamedTypeSymbol serviceType)
+        {
+            //获取method上定义的原始xml注释
+            var xmlComment = serviceType.GetDocumentationCommentXml();
+            if (string.IsNullOrWhiteSpace(xmlComment))
+            {
+                return string.Empty;
+            }
+            // 解析XML注释，提取<member>节点的子节点内容
+            try
+            {
+                var xDoc = System.Xml.Linq.XDocument.Parse(xmlComment);
+                var memberElement = xDoc.Element("member");
+                if (memberElement == null || !memberElement.HasElements)
+                {
+                    return string.Empty;
+                }
+
+                // 创建StringBuilder来构建格式化的注释
+                var formattedComment = new System.Text.StringBuilder();
+
+                // 遍历<member>节点的所有子元素
+                foreach (var child in memberElement.Elements())
+                {
+                    var elementName = child.Name.LocalName;
+                    // 其他标签（如 summary）保持多行格式
+                    formattedComment.AppendLine($"///<{elementName}>");
+                    // 如果元素有文本内容，添加缩进的文本行
+                    if (!string.IsNullOrWhiteSpace(child.Value))
+                    {
+                        foreach (var textLine in child.Value.Trim().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            formattedComment.AppendLine($"///{textLine.Trim()}");
+                        }
+                    }
+                    // 添加结束标签
+                    formattedComment.AppendLine($"///</{elementName}>");
+                }
+
+                return formattedComment.ToString().TrimEnd();
+            }
+            catch (System.Xml.XmlException)
+            {
+                // 如果所有方法都失败，返回空字符串
+                return string.Empty;
+            }
         }
         private static bool IsFirstIdParameter(IMethodSymbol method)
         {

@@ -1,4 +1,7 @@
-﻿namespace ExposeApiDemo
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ExposeApiDemo
 {
     public class WeatherForecast
     {
@@ -10,4 +13,5 @@
 
         public string? Summary { get; set; }
     }
+
 }

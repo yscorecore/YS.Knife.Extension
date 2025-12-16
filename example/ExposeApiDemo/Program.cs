@@ -15,6 +15,13 @@ namespace ExposeApiDemo
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "ExposeApiDemo", Version = "v1" });
+
+                // 启用XML注释
+                var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+                // 启用Swagger注解支持
+                c.EnableAnnotations();
             });
 
             var app = builder.Build();
@@ -30,7 +37,12 @@ namespace ExposeApiDemo
                 "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
             };
             app.MapControllers();
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
+            // 使用Swagger特性丰富文档信息
+            app.MapGet("/weatherforecast", [Swashbuckle.AspNetCore.Annotations.SwaggerOperation(
+                Summary = "获取天气预报",
+                Description = "获取未来5天的天气预报信息，包括日期、温度和天气概况"
+            ), Swashbuckle.AspNetCore.Annotations.SwaggerResponse(200, "成功获取天气预报", typeof(IEnumerable<WeatherForecast>))]
+            (HttpContext httpContext) =>
             {
                 var forecast = Enumerable.Range(1, 5).Select(index =>
                     new WeatherForecast
@@ -47,16 +59,43 @@ namespace ExposeApiDemo
         }
     }
 
+    /// <summary>
+    /// 服务接口1，提供数据获取和修改功能
+    /// </summary>
     public interface IService1
     {
+        /// <summary>
+        /// 根据ID获取数据
+        /// </summary>
+        /// <param name="id">数据ID</param>
+        /// <param name="token">取消令牌</param>
+        /// <returns>数据内容</returns>
         string GetData(int id, CancellationToken token);
 
+        /// <summary>
+        /// 根据ID获取数据（异步版本2）
+        /// </summary>
+        /// <param name="id">数据ID</param>
+        /// <returns>数据内容</returns>
         Task<string> GetData2(int id);
 
+        /// <summary>
+        /// 根据ID获取数据（异步版本3）
+        /// </summary>
+        /// <param name="id">数据ID</param>
+        /// <returns>数据内容</returns>
         ValueTask<string> GetData3(int id);
 
+        /// <summary>
+        /// 修改Abc数据
+        /// </summary>
+        /// <param name="abc">新的Abc内容</param>
+        /// <returns>修改后的数据</returns>
         Task<string> ModifyAbc(string abc);
 
+        /// <summary>
+        /// 创建新数据
+        /// </summary>
         Task CreateNew();
     }
     public interface IService2
