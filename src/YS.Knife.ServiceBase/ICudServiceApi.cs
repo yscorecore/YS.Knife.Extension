@@ -15,4 +15,9 @@ namespace YS.Knife.Service
     {
 
     }
+    public interface ICudServiceApi<T, TKey> : ICudServiceApi<T, T, TKey>
+        where T : class
+    {
+
+    }
 }

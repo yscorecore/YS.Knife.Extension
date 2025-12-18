@@ -1,5 +1,8 @@
 ﻿<Project>
-  <PropertyGroup>
-   
-  </PropertyGroup>
+    <PropertyGroup>
+
+    </PropertyGroup>
+    <ItemGroup>
+        <Using Include="YS.Knife" />
+    </ItemGroup>
 </Project>

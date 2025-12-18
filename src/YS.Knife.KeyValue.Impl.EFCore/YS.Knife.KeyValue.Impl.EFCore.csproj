@@ -5,7 +5,6 @@
   <ItemGroup>
     <ProjectReference Include="..\YS.Knife.KeyValue.Core\YS.Knife.KeyValue.Core.csproj" />
     <ProjectReference Include="..\YS.Knife.KeyValue.Entity.EFCore\YS.Knife.KeyValue.Entity.EFCore.csproj" />
-    <ProjectReference Include="..\YS.Knife.Service.EFCoreBase\YS.Knife.Service.EFCoreBase.csproj" />
   </ItemGroup>
     <ItemGroup>
         <PackageReference Include="YS.Knife.Core" Version="2.0.2" />

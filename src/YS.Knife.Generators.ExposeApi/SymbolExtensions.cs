@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -239,11 +240,60 @@ namespace FlyTiger
                     return string.Empty;
             }
         }
+        public static bool IsEnumerable(this ITypeSymbol typeSymbol)
+        {
+            if (typeSymbol is IArrayTypeSymbol)
+            {
+                return true;
+            }
+
+            if (typeSymbol is INamedTypeSymbol namedSourcePropType)
+            {
+                if (namedSourcePropType.IsGenericType)
+                {
+                    if (namedSourcePropType.ConstructUnboundGenericType().SafeEquals(typeof(IEnumerable<>)))
+                    {
+                        return true;
+                    }
+
+                    if (typeSymbol.AllInterfaces.Any(p =>
+                            p.IsGenericType && p.ConstructUnboundGenericType().SafeEquals(typeof(IEnumerable<>))))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static INamedTypeSymbol? GetItemType(this ITypeSymbol typeSymbol)
+        {
+            if (typeSymbol is IArrayTypeSymbol arrayTypeSymbol)
+            {
+                return arrayTypeSymbol.ElementType as INamedTypeSymbol;
+            }
+
+            if (typeSymbol is INamedTypeSymbol namedTypeSymbol)
+            {
+                return namedTypeSymbol.TypeArguments[0] as INamedTypeSymbol;
+            }
+
+            return null;
+        }
+        public static ITypeSymbol GetNullableType(this ITypeSymbol typeSymbol)
+        {
+            // 处理可空类型
+            if (typeSymbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.IsGenericType && namedTypeSymbol.ConstructedFrom.SpecialType == SpecialType.System_Nullable_T)
+            {
+                return namedTypeSymbol.TypeArguments[0];
+            }
+
+            return typeSymbol;
+        }
         public static bool IsPrimitive(this ITypeSymbol type)
         {
             _ = type ?? throw new ArgumentNullException(nameof(type));
-
-
             switch (type.SpecialType)
             {
                 case SpecialType.System_Boolean:

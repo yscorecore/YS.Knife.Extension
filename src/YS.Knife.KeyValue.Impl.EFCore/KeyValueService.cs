@@ -5,11 +5,10 @@ using YS.Knife.Entity;
 namespace YS.Knife.KeyValue.Impl.EFCore
 {
     [AutoConstructor]
-    [EntityKeyService]
-    public partial class KeyValueService<TKey> : IKeyValueService
-        where TKey : notnull
+    [Service]
+    public partial class KeyValueService : IKeyValueService
     {
-        private readonly IEntityStore<KeyValueEntity<TKey>> keyValueEntityStore;
+        private readonly IEntityStore<KeyValueEntity<Guid>> keyValueEntityStore;
         private readonly KeyValueOptions keyValueOptions;
         public async Task Delete(string key, CancellationToken cancellationToken = default)
         {

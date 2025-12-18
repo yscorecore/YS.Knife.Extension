@@ -2,7 +2,7 @@
 {
     public interface IDeleteApi<TKey>
     {
-        Task Delete(TKey[] keys, CancellationToken token = default);
+        Task Delete(TKey[] ids, CancellationToken token = default);
     }
 
 

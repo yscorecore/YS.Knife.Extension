@@ -10,8 +10,12 @@
       <ProjectReference Include="..\YS.Knife.Data\YS.Knife.Data.csproj" />
       <ProjectReference Include="..\YS.Knife.EntityBase\YS.Knife.EntityBase.csproj" />
       <ProjectReference Include="..\YS.Knife.Extensions\YS.Knife.Extensions.csproj" />
+      <ProjectReference Include="..\YS.Knife.ServiceBase\YS.Knife.ServiceBase.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="YS.Knife.Query.EFCore" Version="0.0.9" />
     </ItemGroup>
 </Project>

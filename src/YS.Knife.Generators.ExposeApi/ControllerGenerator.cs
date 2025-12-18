@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using FlyTiger;
 using Microsoft.CodeAnalysis;
@@ -169,7 +170,7 @@ namespace {namespaceName}");
     this.{serviceName} = {serviceName};
 }}");
 
-            foreach (var method in serviceTypeSymbol.GetMembers().OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.Ordinary))
+            foreach (var method in serviceTypeSymbol.GetAllMembers().OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.Ordinary))
             {
                 codeBuilder.AppendLine();
                 codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method));
@@ -205,11 +206,15 @@ namespace {namespaceName}");
             }
             string GetServiceFieldName(INamedTypeSymbol serviceType)
             {
-                return serviceTypeSymbol.Name.TrimStart('I').ToCamelCase();
+                return serviceTypeSymbol.Name.ToCamelCase();
             }
             string GetControllerName(INamedTypeSymbol serviceType)
             {
-                var name = serviceTypeSymbol.Name.TrimStart('I');
+                var name = serviceTypeSymbol.Name;
+                if (name.StartsWith("I"))
+                {
+                    name = name.Substring(1);
+                }
                 if (name.EndsWith("Service"))
                 {
                     name = name.Substring(0, name.Length - "Service".Length);
@@ -218,68 +223,109 @@ namespace {namespaceName}");
             }
 
         }
+
+        enum MethodParameterType
+        {
+            Route,
+            Query,
+            Body,
+            Special
+        }
         private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method)
         {
             var returnType = method.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             var methodName = method.Name;
-            var argumentList = string.Join(", ", method.Parameters.Select(p => p.Name));
             var httpMethod = GetHttpMethod(method);
+            var noBody = httpMethod == "HttpGet" || httpMethod == "HttpDelete";
+            var comment = GetMethodComment(serviceType, method);
             var firstArgIsId = IsFirstIdParameter(method);
             var route = firstArgIsId ? $"{methodName}/{{id}}" : methodName;
-            var isGetOrDeleted = httpMethod == "HttpGet" || httpMethod == "HttpDelete";
-            var comment = GetMethodComment(serviceType, method);
             var parameters = new List<string>();
+            var args = new List<string>();
+            var newClassLine = string.Empty;
+            Func<IParameterSymbol, string> formatParam = (parameter) => $"{parameter.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)} {parameter.Name}";
+
+            var allParameters = new List<(IParameterSymbol, MethodParameterType)>();
+
             for (var i = 0; i < method.Parameters.Length; i++)
             {
-                var parameter = method.Parameters[i];
-                var item = $"{parameter.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)} {parameter.Name}";
                 if (i == 0 && firstArgIsId)
                 {
-                    parameters.Add($"[FromRoute] {item}");
+                    allParameters.Add((method.Parameters[i], MethodParameterType.Route));
                 }
-                else if (isGetOrDeleted)
+                else if (IsSpecialType(method.Parameters[i].Type))
                 {
-                    // 判断是否为复杂类型（非基本类型），包括可空类型
-                    var typeSymbol = parameter.Type;
-                    // 处理可空类型
-                    if (typeSymbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.IsGenericType && namedTypeSymbol.ConstructedFrom.SpecialType == SpecialType.System_Nullable_T)
-                    {
-                        typeSymbol = namedTypeSymbol.TypeArguments[0];
-                    }
-                    // 检查是否为特殊类型（如 CancellationToken），这些类型不需要 FromQuery
-                    var isSpecialType = false;
-                    if (typeSymbol is INamedTypeSymbol namedType)
-                    {
-                        var typeFullName = namedType.ToDisplayFullString();
-                        isSpecialType = typeFullName == "global::System.Threading.CancellationToken"
-                            || typeFullName == "global::Microsoft.AspNetCore.Http.HttpContext"
-                            || typeFullName == "global::Microsoft.AspNetCore.Http.HttpRequest"
-                            || typeFullName == "global::Microsoft.AspNetCore.Http.HttpResponse"
-                            || typeFullName == "global::System.Security.Claims.ClaimsPrincipal";
-                    }
-                    // 使用 IsPrimitive 方法判断是否为基本类型，非基本类型且非特殊类型则使用 FromQuery
-                    if (!typeSymbol.IsPrimitive() && !isSpecialType)
-                    {
-                        parameters.Add($"[FromQuery] {item}");
-                    }
-                    else
-                    {
-                        parameters.Add(item);
-                    }
+                    allParameters.Add((method.Parameters[i], MethodParameterType.Special));
+                }
+                else if (noBody)
+                {
+                    allParameters.Add((method.Parameters[i], MethodParameterType.Query));
                 }
                 else
                 {
-                    parameters.Add(item);
+                    allParameters.Add((method.Parameters[i], MethodParameterType.Body));
                 }
             }
+
+            var moreThan1Body = allParameters.Count(p => p.Item2 == MethodParameterType.Body) > 1;
+
+            if (!moreThan1Body)
+            {
+                parameters.AddRange(allParameters.Select(p => p.Item2 switch
+                {
+                    MethodParameterType.Route => $"[FromRoute] {formatParam(p.Item1)}",
+                    MethodParameterType.Query => $"[FromQuery] {formatParam(p.Item1)}",
+                    MethodParameterType.Body => $"[FromBody] {formatParam(p.Item1)}",
+                    _ => formatParam(p.Item1)
+                }));
+                args.AddRange(allParameters.Select(p => p.Item1.Name));
+            }
+            else
+            {
+                var bodyParameters = allParameters.Where(p => p.Item2 == MethodParameterType.Body).ToList();
+                var newClassName = $"__{method.Name}_BodyArg";
+                var newClassArgName = "arg";
+                newClassLine = $"public record {newClassName}({string.Join(", ", bodyParameters.Select(t => t.Item1))});";
+                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Route).Select(p => $"[FromRoute] {formatParam(p.Item1)}"));
+                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Query).Select(p => $"[FromQuery] {formatParam(p.Item1)}"));
+                parameters.Add($"[FromBody] {newClassName} {newClassArgName}");
+                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Special).Select(p => $"{formatParam(p.Item1)}"));
+                args.AddRange(allParameters.Select(p => p.Item2 switch
+                {
+                    MethodParameterType.Body => $"{newClassArgName}.{p.Item1.Name}",
+                    _ => p.Item1.Name
+                }));
+            }
+
+
+
+
+
             var paremeterLine = string.Join(", ", parameters);
+            var argumentLine = string.Join(", ", args);
             return $@"{comment}
 [Route(""{route}"")]
 [{httpMethod}]
 public {returnType} {methodName}({paremeterLine})
 {{
-    return this.{instanceName}.{methodName}({argumentList});                    
-}}";
+    return this.{instanceName}.{methodName}({argumentLine});                    
+}}
+
+{newClassLine}
+";
+        }
+        private static bool IsSpecialType(ITypeSymbol typeSymbol)
+        {
+            if (typeSymbol is INamedTypeSymbol namedType)
+            {
+                var typeFullName = namedType.ToDisplayFullString();
+                return typeFullName == "global::System.Threading.CancellationToken"
+                    || typeFullName == "global::Microsoft.AspNetCore.Http.HttpContext"
+                    || typeFullName == "global::Microsoft.AspNetCore.Http.HttpRequest"
+                    || typeFullName == "global::Microsoft.AspNetCore.Http.HttpResponse"
+                    || typeFullName == "global::System.Security.Claims.ClaimsPrincipal";
+            }
+            return false;
         }
         private static string GetHttpMethod(IMethodSymbol method)
         {
