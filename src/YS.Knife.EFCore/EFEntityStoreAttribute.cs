@@ -40,10 +40,10 @@ namespace YS.Knife.EFCore
         }
         private Type GetEntityKeyType()
         {
-           var entityInterface = this.EntityType.GetInterfaces()
-                .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>));
+            var entityInterface = this.EntityType.GetInterfaces()
+                 .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntity<>));
             if (entityInterface != null)
-            { 
+            {
                 return entityInterface.GenericTypeArguments[0];
             }
             return null;

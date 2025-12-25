@@ -1,1 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.EntityBase\YS.Knife.EntityBase.csproj" />
+  </ItemGroup>
+</Project>

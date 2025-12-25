@@ -46,7 +46,7 @@ namespace YS.Knife.KeyValue.Impl.EFCore
             {
                 var str = default(string);
                 var isString = keepString && IsString(value, out str);
-                keyValueEntityStore.Add(new KeyValueEntity<TKey>
+                keyValueEntityStore.Add(new KeyValueEntity<Guid>
                 {
                     Key = key,
                     Value = isString ? str : value.ToJsonText(keyValueOptions.JsonSerializerOptions),

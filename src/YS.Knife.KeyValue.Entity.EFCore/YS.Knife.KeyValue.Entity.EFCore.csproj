@@ -1,1 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.EFCore\YS.Knife.EFCore.csproj" />
+  </ItemGroup>
+</Project>
