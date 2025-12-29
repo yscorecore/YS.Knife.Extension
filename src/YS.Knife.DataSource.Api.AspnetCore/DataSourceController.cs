@@ -21,36 +21,36 @@ namespace YS.Knife.DataSource.Api.AspnetCore
 
 
 
-        [HttpGet]
-        [Route("agg")]
-        public Task<object> Agg([FromQuery] AggQueryInfo queryInfo, CancellationToken cancellationToken)
-        {
-            var datasourceName = GetDatasourceNameFromContext();
-            return dataSourceService.Agg(datasourceName, queryInfo, cancellationToken);
-        }
+        //[HttpGet]
+        //[Route("agg")]
+        //public Task<object> Agg([FromQuery] AggQueryInfo queryInfo, CancellationToken cancellationToken)
+        //{
+        //    var datasourceName = GetDatasourceNameFromContext();
+        //    return dataSourceService.Agg(datasourceName, queryInfo, cancellationToken);
+        //}
 
-        [HttpGet]
-        [Route("list-all")]
-        public Task<List<T>> All([FromQuery] QueryInfo queryInfo, CancellationToken cancellationToken)
-        {
-            var datasourceName = GetDatasourceNameFromContext();
-            return dataSourceService.All<T>(datasourceName, queryInfo, cancellationToken);
-        }
-        [HttpGet]
-        [Route("count")]
-        public Task<long> Count([FromQuery] string filter, CancellationToken cancellationToken)
-        {
-            var datasourceName = GetDatasourceNameFromContext();
-            return dataSourceService.Count(datasourceName, filter, cancellationToken);
-        }
+        //[HttpGet]
+        //[Route("list-all")]
+        //public Task<List<T>> All([FromQuery] QueryInfo queryInfo, CancellationToken cancellationToken)
+        //{
+        //    var datasourceName = GetDatasourceNameFromContext();
+        //    return dataSourceService.All<T>(datasourceName, queryInfo, cancellationToken);
+        //}
+        //[HttpGet]
+        //[Route("count")]
+        //public Task<long> Count([FromQuery] string filter, CancellationToken cancellationToken)
+        //{
+        //    var datasourceName = GetDatasourceNameFromContext();
+        //    return dataSourceService.Count(datasourceName, filter, cancellationToken);
+        //}
 
-        [HttpGet]
-        [Route("find-by-{key}/{value}")]
-        public Task<T> FindBy([FromRoute] string key, [FromRoute] string value, CancellationToken cancellationToken)
-        {
-            var datasourceName = GetDatasourceNameFromContext();
-            return dataSourceService.FindBy<T>(datasourceName, key, value, cancellationToken);
-        }
+        //[HttpGet]
+        //[Route("find-by-{key}/{value}")]
+        //public Task<T> FindBy([FromRoute] string key, [FromRoute] string value, CancellationToken cancellationToken)
+        //{
+        //    var datasourceName = GetDatasourceNameFromContext();
+        //    return dataSourceService.FindBy<T>(datasourceName, key, value, cancellationToken);
+        //}
         private string GetDatasourceNameFromContext()
         {
             return this.HttpContext.GetEndpoint()?.Metadata?.GetMetadata<DataSourceNameAttribute>()?.Name;
