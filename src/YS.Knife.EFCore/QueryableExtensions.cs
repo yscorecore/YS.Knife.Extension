@@ -18,7 +18,6 @@ namespace Microsoft.EntityFrameworkCore
         [CodeException("002", "Already exists '{name}'.")]
         internal static partial Exception EntityAlreadyExists(string name, object id);
 
-
         public static T FindOrThrow<T, TKey>(this IQueryable<T> source, TKey id)
             where T : IEntity<TKey>
             where TKey : notnull
