@@ -84,13 +84,13 @@ Request Timestamp: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
             }
             if (body != null)
             {
-                if (body is HttpContent)
+                if (body is HttpContent httpContent)
                 {
-                    request.Content = (HttpContent)body;
+                    request.Content = httpContent;
                 }
                 else
                 {
-                    request.Content = new StringContent(body.ToJsonText(DefaultJsonOptions), encoding: encoding ?? Encoding.UTF8, mediaType: MediaTypeNames.Application.Json);
+                    request.Content = new StringContent(body.ToJsonText(jsonOptions ?? DefaultJsonOptions), encoding: encoding ?? Encoding.UTF8, mediaType: MediaTypeNames.Application.Json);
                 }
             }
             var response = await client.SendAsync(request);
