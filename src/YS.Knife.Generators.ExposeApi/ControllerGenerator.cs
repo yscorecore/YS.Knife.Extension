@@ -24,7 +24,7 @@ namespace YS.Knife.Generators.ExposeApi
                 "HttpGet", new string[] { "get", "query", "find", "fetch" }
             },
             {
-                "HttpPost", new string[] { "create", "add", "post" }
+                "HttpPost", new string[] { "create", "add", "post", "upload", "save" }
             },
             {
                 "HttpPut", new string[] { "update", "modify" }
@@ -229,6 +229,7 @@ namespace {namespaceName}");
             Route,
             Query,
             Body,
+            Form,
             Special
         }
         private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method)
@@ -240,6 +241,7 @@ namespace {namespaceName}");
             var comment = GetMethodComment(serviceType, method);
             var firstArgIsId = IsFirstIdParameter(method);
             var route = firstArgIsId ? $"{methodName}/{{id}}" : methodName;
+            var hasStreamParameter = method.Parameters.Any(p => p.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::System.IO.Stream");
             var parameters = new List<string>();
             var args = new List<string>();
             var newClassLine = string.Empty;
@@ -257,6 +259,10 @@ namespace {namespaceName}");
                 {
                     allParameters.Add((method.Parameters[i], MethodParameterType.Special));
                 }
+                else if (hasStreamParameter)
+                {
+                    allParameters.Add((method.Parameters[i], MethodParameterType.Form));
+                }
                 else if (noBody)
                 {
                     allParameters.Add((method.Parameters[i], MethodParameterType.Query));
@@ -269,13 +275,14 @@ namespace {namespaceName}");
 
             var moreThan1Body = allParameters.Count(p => p.Item2 == MethodParameterType.Body) > 1;
 
-            if (!moreThan1Body)
+            if (!moreThan1Body || hasStreamParameter)
             {
                 parameters.AddRange(allParameters.Select(p => p.Item2 switch
                 {
                     MethodParameterType.Route => $"[FromRoute] {formatParam(p.Item1)}",
                     MethodParameterType.Query => $"[FromQuery] {formatParam(p.Item1)}",
                     MethodParameterType.Body => $"[FromBody] {formatParam(p.Item1)}",
+                    MethodParameterType.Form => $"[FromForm] {formatParam(p.Item1)}",
                     _ => formatParam(p.Item1)
                 }));
                 args.AddRange(allParameters.Select(p => p.Item1.Name));

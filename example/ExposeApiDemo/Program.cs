@@ -93,6 +93,7 @@ namespace ExposeApiDemo
         /// <returns>修改后的数据</returns>
         Task<string> ModifyAbc(string abc);
 
+        Task UploadFile(Stream file, CancellationToken token);
         /// <summary>
         /// 创建新数据
         /// </summary>
