@@ -282,7 +282,7 @@ namespace {namespaceName}");
                     MethodParameterType.Route => $"[FromRoute] {formatParam(p.Item1)}",
                     MethodParameterType.Query => $"[FromQuery] {formatParam(p.Item1)}",
                     MethodParameterType.Body => $"[FromBody] {formatParam(p.Item1)}",
-                    MethodParameterType.Form => $"[FromForm] {formatParam(p.Item1)}",
+                    MethodParameterType.Form => $"[FromForm] global::Microsoft.AspNetCore.Http.IFormFile {p.Item1.Name}",
                     _ => formatParam(p.Item1)
                 }));
                 args.AddRange(allParameters.Select(p => p.Item1.Name));
