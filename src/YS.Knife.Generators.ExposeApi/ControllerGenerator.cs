@@ -24,10 +24,10 @@ namespace YS.Knife.Generators.ExposeApi
                 "HttpGet", new string[] { "get", "query", "find", "fetch" }
             },
             {
-                "HttpPost", new string[] { "create", "add", "post", "upload", "save" }
+                "HttpPost", new string[] { "create", "add", "post", "upload", "save"}
             },
             {
-                "HttpPut", new string[] { "update", "modify" }
+                "HttpPut", new string[] { "update", "modify", "edit" }
             },
             {
                 "HttpDelete", new string[] { "delete", "remove" }
