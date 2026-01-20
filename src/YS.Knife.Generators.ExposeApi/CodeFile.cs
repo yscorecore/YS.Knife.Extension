@@ -6,7 +6,7 @@ namespace FlyTiger
 {
     class CodeFile
     {
-        public string BasicName { get; set; }
-        public string Content { get; set; }
+        public string BasicName { get; set; } = null!;
+        public string Content { get; set; } = null!;
     }
 }

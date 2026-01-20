@@ -25,12 +25,18 @@
         </AssemblyAttribute>-->
     </ItemGroup>
     <ItemGroup>
-        <Using Include="FlyTiger" />
+        <!--<Using Include="FlyTiger" />
         <PackageReference Include="FlyTiger" Version="[0.*,99)">
            
-        </PackageReference>
+        </PackageReference>-->
     </ItemGroup>
     <ItemGroup>
+        <Using Include="FlyTiger" />
+        <PackageReference Include="FlyTiger" Version="0.0.15" >
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+
         <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

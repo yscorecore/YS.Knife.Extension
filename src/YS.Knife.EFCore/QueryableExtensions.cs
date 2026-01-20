@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
+using FlyTiger;
 using YS.Knife.Entity;
 
 namespace Microsoft.EntityFrameworkCore
@@ -15,11 +16,25 @@ namespace Microsoft.EntityFrameworkCore
         [CodeException("001", "Can not find {name} by id '{id}'.")]
         internal static partial Exception EntityNotFound(string name, object id);
 
-        [CodeException("002", "Already exists '{name}'.")]
+        [CodeException("002", "Already exists '{name}' with id '{id}'.")]
         internal static partial Exception EntityAlreadyExists(string name, object id);
 
-        public static T FindOrThrow<T, TKey>(this IQueryable<T> source, TKey id)
-            where T : IEntity<TKey>
+        [CodeException("003", "Can not find {name}.")]
+        internal static partial Exception EntityNotFound(string name);
+
+        public static T FindOrThrow<T, TKey>(this IQueryable<T> source)
+          where T : IEntity<TKey>
+          where TKey : notnull
+        {
+            return source.FirstOrDefault() ?? throw EntityNotFound(GetEntityName(typeof(T)));
+        }
+        public static async Task<T> FindOrThrowAsync<T>(this IQueryable<T> source, CancellationToken token = default)
+        {
+            return (await source.FirstOrDefaultAsync(token)) ?? throw EntityNotFound(GetEntityName(typeof(T)));
+        }
+
+        public static T FindOrThrow<T, TKey>(this DbSet<T> source, TKey id)
+            where T : class, IEntity<TKey>
             where TKey : notnull
         {
             return source.Where(p => object.Equals(id, p.Id)).FirstOrDefault() ?? throw EntityNotFound(GetEntityName(typeof(T)), id);

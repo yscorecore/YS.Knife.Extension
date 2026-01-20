@@ -8,9 +8,14 @@ using System.Threading.Tasks;
 
 namespace YS.Knife.DataSource
 {
-    [SingletonPattern]
+    //[SingletonPattern]
     public partial class AssemblyDataSourceEntryFinder
     {
+        private AssemblyDataSourceEntryFinder()
+        {
+        }
+        public static AssemblyDataSourceEntryFinder Instance { get; } = new AssemblyDataSourceEntryFinder();
+
         private Lazy<IReadOnlyDictionary<string, DataSourceEntry>> dataSourceEntries = new Lazy<IReadOnlyDictionary<string, DataSourceEntry>>(() => FindAppDomainDataSourceEntries().ToImmutableDictionary(p => p.Name), true);
         public IReadOnlyDictionary<string, DataSourceEntry> All
         {

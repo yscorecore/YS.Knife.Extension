@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -30,7 +30,6 @@
 
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\YS.Knife.Version.Api.AspnetCore\YS.Knife.Version.Api.AspnetCore.csproj" />
         <ProjectReference Include="..\..\src\YS.Knife.Version.Impl.Default\YS.Knife.Version.Impl.Default.csproj" />
         <AssemblyAttribute Include="YS.Knife.Version.BuildTimeAttribute">
             <_Parameter1>$([System.DateTimeOffset]::Now.ToString())</_Parameter1>

@@ -3,6 +3,8 @@
     <ItemGroup>
         <PackageReference Include="Aliyun.OSS.SDK.NetCore" Version="2.13.0" />
         <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+        
+
     </ItemGroup>
 
     <ItemGroup>

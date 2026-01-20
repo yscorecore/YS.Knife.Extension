@@ -1,6 +1,0 @@
-@YS.Knife.Version.Api.AspnetCore_HostAddress = http://localhost:5099
-
-GET {{YS.Knife.Version.Api.AspnetCore_HostAddress}}/api/version/
-Accept: application/json
-
-###

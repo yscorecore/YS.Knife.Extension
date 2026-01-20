@@ -1,9 +1,9 @@
-﻿using YS.Knife;
-using YS.Knife.Time;
+﻿using System;
+using YS.Knife;
+
 namespace ExposeApiDemo
 {
     [ExposeApi(typeof(IService1))]
-    [ExposeApi(typeof(ITimeService), AllowAnonymous = true)]
     public class Program
     {
         public static void Main(string[] args)
@@ -92,8 +92,6 @@ namespace ExposeApiDemo
         /// <param name="abc">新的Abc内容</param>
         /// <returns>修改后的数据</returns>
         Task<string> ModifyAbc(string abc);
-
-        Task UploadFile(Stream file, CancellationToken token);
         /// <summary>
         /// 创建新数据
         /// </summary>
