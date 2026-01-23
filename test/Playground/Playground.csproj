@@ -9,6 +9,12 @@
   
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.Extensions.Json\YS.Knife.Extensions.Json.csproj" />
+  </ItemGroup>
+
+  
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
