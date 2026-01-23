@@ -86,7 +86,7 @@ namespace YS.Knife.AspnetCore.Mvc
                 }
                 else
                 {
-                    return value?.ToString();
+                    return $"{value}";
                 }
             }
         }
