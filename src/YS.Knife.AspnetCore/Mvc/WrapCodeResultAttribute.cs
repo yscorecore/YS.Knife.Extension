@@ -66,8 +66,9 @@ namespace YS.Knife.AspnetCore.Mvc
                 }
                 else
                 {
-                    context.Result = new ObjectResult(CodeResult.FromData($"{obj.StatusCode}", GetBadMessage(obj.Value), obj.Value)) { StatusCode = obj.StatusCode };
-
+                    var res = CodeResult.FromData($"{obj.StatusCode}", GetBadMessage(obj.Value), obj.Value);
+                    context.Result = new ObjectResult(res) { StatusCode = obj.StatusCode };
+                    logger.LogWarning("Wrapping Code result. StatusCode:{statusCode}, Message: {msg}.", obj.StatusCode, res.Message);
                 }
             }
             else if (context.Result is EmptyResult)
