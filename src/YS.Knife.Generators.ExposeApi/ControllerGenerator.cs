@@ -36,6 +36,10 @@ namespace YS.Knife.Generators.ExposeApi
                 "HttpPatch", new string[] { "patch" }
             }
         };
+        private static readonly HashSet<string> RouteFieldNames = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
+        {
+            "id", "name", "key"
+        };
 
         const string AttributeCode = @"using System;
 namespace YS.Knife
@@ -170,7 +174,7 @@ namespace {namespaceName}");
     this.{serviceName} = {serviceName};
 }}");
 
-            foreach (var method in serviceTypeSymbol.GetAllMembers().OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.Ordinary))
+            foreach (var method in serviceTypeSymbol.GetAllMembers().OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.Ordinary && m.IsGenericMethod == false))
             {
                 codeBuilder.AppendLine();
                 codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method));
@@ -239,8 +243,8 @@ namespace {namespaceName}");
             var httpMethod = GetHttpMethod(method);
             var noBody = httpMethod == "HttpGet" || httpMethod == "HttpDelete";
             var comment = GetMethodComment(serviceType, method);
-            var firstArgIsId = IsFirstIdParameter(method);
-            var route = firstArgIsId ? $"{methodName}/{{id}}" : methodName;
+            var firstArgIsRoute = noBody && IsFirstRouteParameter(method);
+            var route = firstArgIsRoute ? $"{methodName}/{{{method.Parameters[0].Name}}}" : methodName;
             var hasStreamParameter = method.Parameters.Any(p => p.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::System.IO.Stream");
             var parameters = new List<string>();
             var args = new List<string>();
@@ -251,7 +255,7 @@ namespace {namespaceName}");
 
             for (var i = 0; i < method.Parameters.Length; i++)
             {
-                if (i == 0 && firstArgIsId)
+                if (i == 0 && firstArgIsRoute)
                 {
                     allParameters.Add((method.Parameters[i], MethodParameterType.Route));
                 }
@@ -384,19 +388,19 @@ public {returnType} {methodName}({paremeterLine})
                     else
                     {
                         // 其他标签（如 summary）保持多行格式
-                        formattedComment.AppendLine($"///<{elementName}>");
+                        formattedComment.AppendLine($"/// <{elementName}>");
 
                         // 如果元素有文本内容，添加缩进的文本行
                         if (!string.IsNullOrWhiteSpace(child.Value))
                         {
                             foreach (var textLine in child.Value.Trim().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
                             {
-                                formattedComment.AppendLine($"///{textLine.Trim()}");
+                                formattedComment.AppendLine($"/// {textLine.Trim()}");
                             }
                         }
 
                         // 添加结束标签
-                        formattedComment.AppendLine($"///</{elementName}>");
+                        formattedComment.AppendLine($"/// </{elementName}>");
                     }
                 }
 
@@ -434,17 +438,17 @@ public {returnType} {methodName}({paremeterLine})
                 {
                     var elementName = child.Name.LocalName;
                     // 其他标签（如 summary）保持多行格式
-                    formattedComment.AppendLine($"///<{elementName}>");
+                    formattedComment.AppendLine($"/// <{elementName}>");
                     // 如果元素有文本内容，添加缩进的文本行
                     if (!string.IsNullOrWhiteSpace(child.Value))
                     {
                         foreach (var textLine in child.Value.Trim().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
                         {
-                            formattedComment.AppendLine($"///{textLine.Trim()}");
+                            formattedComment.AppendLine($"/// {textLine.Trim()}");
                         }
                     }
                     // 添加结束标签
-                    formattedComment.AppendLine($"///</{elementName}>");
+                    formattedComment.AppendLine($"/// </{elementName}>");
                 }
 
                 return formattedComment.ToString().TrimEnd();
@@ -455,11 +459,11 @@ public {returnType} {methodName}({paremeterLine})
                 return string.Empty;
             }
         }
-        private static bool IsFirstIdParameter(IMethodSymbol method)
+        private static bool IsFirstRouteParameter(IMethodSymbol method)
         {
             if (method.Parameters.Length > 1)
             {
-                return method.Parameters[0].Name == "id";
+                return RouteFieldNames.Contains(method.Parameters[0].Name);
             }
             return false;
         }
