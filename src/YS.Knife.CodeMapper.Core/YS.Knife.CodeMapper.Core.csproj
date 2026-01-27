@@ -5,4 +5,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.ServiceBase\YS.Knife.ServiceBase.csproj" />
+  </ItemGroup>
+
 </Project>

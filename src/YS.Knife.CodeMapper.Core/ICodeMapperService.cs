@@ -1,4 +1,6 @@
-﻿namespace YS.Knife.CodeMapper
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace YS.Knife.CodeMapper
 {
     public interface ICodeMapperService
     {
@@ -12,11 +14,4 @@
             return res.Single();
         }
     }
-
-    public record MapperResult<T>(
-        T Data,
-        bool Mapped,
-        string? TargetCode,
-        string? TargetName);
-
 }
