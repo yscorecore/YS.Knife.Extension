@@ -34,6 +34,7 @@ namespace YS.Knife.CodeMapper.Impl.EFCore
                 var newMapperData = tempData.Where(p => !allDataDic.ContainsKey(p.SourceCode))
                     .Select(p => new CodeMapperEntity<Guid>
                     {
+                        Group = group,
                         SourceCode = p.SourceCode,
                         SourceName = p.SourceName,
                     }).ToList();
