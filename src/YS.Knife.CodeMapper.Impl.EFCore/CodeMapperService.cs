@@ -48,7 +48,7 @@ namespace YS.Knife.CodeMapper.Impl.EFCore
             {
                 if (allDataDic.TryGetValue(p.SourceCode, out var d))
                 {
-                    if (d.TargetCode == null)
+                    if (d.TargetCode != null)
                     {
                         return new MapperResult<TData>(p.Data, true, d.TargetCode, d.TargetName);
                     }
