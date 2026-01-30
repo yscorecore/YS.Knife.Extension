@@ -4,6 +4,7 @@ using YS.Knife;
 namespace ExposeApiDemo
 {
     [ExposeApi(typeof(IService1))]
+    [ExposeApi(typeof(MyService))]
     public class Program
     {
         public static void Main(string[] args)
@@ -100,5 +101,17 @@ namespace ExposeApiDemo
     public interface IService2
     {
         void SaveData(string data);
+    }
+
+    public class MyService
+    {
+        private Task SayHello()
+        {
+            return Task.CompletedTask;
+        }
+        public Task SayHelloPublic()
+        {
+            return SayHello();
+        }
     }
 }
