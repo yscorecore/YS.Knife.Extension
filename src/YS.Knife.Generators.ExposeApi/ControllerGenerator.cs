@@ -177,7 +177,7 @@ namespace {namespaceName}");
             foreach (var method in serviceTypeSymbol
                 .GetAllMembers()
                 .OfType<IMethodSymbol>()
-                .Where(m => m.MethodKind == MethodKind.Ordinary && m.IsGenericMethod == false && m.DeclaredAccessibility == Accessibility.Public && m.ContainingType.SpecialType != SpecialType.System_Object))
+                .Where(m => m.MethodKind == MethodKind.Ordinary && m.IsGenericMethod == false && m.DeclaredAccessibility == Accessibility.Public && m.ContainingType.SpecialType != SpecialType.System_Object && !m.IsStatic))
             {
                 codeBuilder.AppendLine();
                 codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method));
