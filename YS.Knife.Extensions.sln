@@ -319,6 +319,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Webhooks.Core", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Webhooks.Impl.Default", "src\YS.Knife.Webhooks.Impl.Default\YS.Knife.Webhooks.Impl.Default.csproj", "{6EED8930-15C8-4C3B-8E4C-94B4D4B59D1D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.KeyValue.Default", "src\YS.Knife.KeyValue.Default\YS.Knife.KeyValue.Default.csproj", "{4B2061F4-F147-4916-8F6A-88C8417A3358}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -801,6 +803,10 @@ Global
 		{6EED8930-15C8-4C3B-8E4C-94B4D4B59D1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EED8930-15C8-4C3B-8E4C-94B4D4B59D1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EED8930-15C8-4C3B-8E4C-94B4D4B59D1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B2061F4-F147-4916-8F6A-88C8417A3358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B2061F4-F147-4916-8F6A-88C8417A3358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B2061F4-F147-4916-8F6A-88C8417A3358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B2061F4-F147-4916-8F6A-88C8417A3358}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -955,6 +961,7 @@ Global
 		{F7A01DC2-9F27-4939-BAED-420B1E64CF2C} = {6C7E5914-CD6B-40F1-BFD7-8FB17E3EAE11}
 		{2517C2CD-47FE-4B61-5788-85E42BACFAEC} = {F7A01DC2-9F27-4939-BAED-420B1E64CF2C}
 		{6EED8930-15C8-4C3B-8E4C-94B4D4B59D1D} = {F7A01DC2-9F27-4939-BAED-420B1E64CF2C}
+		{4B2061F4-F147-4916-8F6A-88C8417A3358} = {B0211214-C5BE-4574-8B2C-D9A3C5D3D5F5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB11BB21-3F5D-42D6-8737-F19C0666F1F8}

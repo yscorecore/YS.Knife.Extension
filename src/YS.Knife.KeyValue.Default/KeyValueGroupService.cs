@@ -2,7 +2,8 @@
 namespace YS.Knife.KeyValue
 {
     [AutoConstructor]
-    public partial class KeyValueGroupService<TGroup>
+    [Service]
+    public partial class KeyValueGroupService<TGroup> :IKeyValueService<TGroup>
         where TGroup : KeyValueGroup
     {
         private readonly TGroup group;

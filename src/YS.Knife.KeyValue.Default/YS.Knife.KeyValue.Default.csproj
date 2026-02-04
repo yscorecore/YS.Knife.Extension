@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\YS.Knife.KeyValue.Core\YS.Knife.KeyValue.Core.csproj" />
-    <ProjectReference Include="..\YS.Knife.KeyValue.Default\YS.Knife.KeyValue.Default.csproj" />
-    <ProjectReference Include="..\YS.Knife.KeyValue.Entity.EFCore\YS.Knife.KeyValue.Entity.EFCore.csproj" />
   </ItemGroup>
     <ItemGroup>
         <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
