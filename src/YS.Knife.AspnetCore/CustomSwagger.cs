@@ -59,7 +59,7 @@ namespace YS.Knife
             }
 
             // 默认生成规则
-            return apiDesc.ActionDescriptor.RouteValues["action"];
+            return apiDesc.ActionDescriptor.RouteValues.TryGetValue("action", out var name) ? name : null;
         }
     }
 }
