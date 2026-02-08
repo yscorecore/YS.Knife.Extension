@@ -1,0 +1,674 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cases>
+  <!-- 简单服务测试 -->
+  <case name="GenerateController_WithSimpleService_GeneratesCorrectController">
+    <input>
+      <code><![CDATA[using System;
+
+public interface IUserService
+{
+    string GetUser(int id);
+}
+
+[YS.Knife.ExposeApi(typeof(IUserService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="UserController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UserController : ControllerBase
+    {
+        private readonly global::IUserService iUserService;
+        public UserController(global::IUserService iUserService)
+        {
+            this.iUserService = iUserService;
+        }
+        [Route("GetUser")]
+        [HttpGet]
+        public string GetUser([FromQuery] int id)
+        {
+            return this.iUserService.GetUser(id);
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- 多个方法测试 -->
+  <case name="GenerateController_WithMultipleMethods_GeneratesAllMethods">
+    <input>
+      <code><![CDATA[using System;
+
+public interface IProductService
+{
+    Product GetProduct(int id);
+    void CreateProduct(Product product);
+    void UpdateProduct(int id, Product product);
+    void DeleteProduct(int id);
+}
+
+public class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+[YS.Knife.ExposeApi(typeof(IProductService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="ProductController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProductController : ControllerBase
+    {
+        private readonly global::IProductService iProductService;
+        public ProductController(global::IProductService iProductService)
+        {
+            this.iProductService = iProductService;
+        }
+        [Route("GetProduct")]
+        [HttpGet]
+        public global::Product GetProduct([FromQuery] int id)
+        {
+            return this.iProductService.GetProduct(id);
+        }
+        [Route("CreateProduct")]
+        [HttpPost]
+        public void CreateProduct([FromBody] global::Product product)
+        {
+            return this.iProductService.CreateProduct(product);
+        }
+        [Route("UpdateProduct")]
+        [HttpPut]
+        public void UpdateProduct([FromBody] __UpdateProduct_BodyArg arg)
+        {
+            return this.iProductService.UpdateProduct(arg.id, arg.product);
+        }
+        public record __UpdateProduct_BodyArg(int id, Product product);
+        [Route("DeleteProduct")]
+        [HttpDelete]
+        public void DeleteProduct([FromQuery] int id)
+        {
+            return this.iProductService.DeleteProduct(id);
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- 自定义路由前缀测试 -->
+  <case name="GenerateController_WithCustomRoutePrefix_UsesCustomRoute">
+    <input>
+      <code><![CDATA[using System;
+
+public interface IOrderService
+{
+    Order GetOrder(int id);
+}
+
+public class Order
+{
+    public int Id { get; set; }
+}
+
+[YS.Knife.ExposeApi(typeof(IOrderService), RoutePrefix = "custom/orders")]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="OrderController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("custom/orders")]
+    public class OrderController : ControllerBase
+    {
+        private readonly global::IOrderService iOrderService;
+        public OrderController(global::IOrderService iOrderService)
+        {
+            this.iOrderService = iOrderService;
+        }
+        [Route("GetOrder")]
+        [HttpGet]
+        public global::Order GetOrder([FromQuery] int id)
+        {
+            return this.iOrderService.GetOrder(id);
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- 允许匿名访问测试 -->
+  <case name="GenerateController_WithAllowAnonymous_AddsAllowAnonymousAttribute">
+    <input>
+      <code><![CDATA[using System;
+
+public interface IPublicService
+{
+    string GetData();
+}
+
+[YS.Knife.ExposeApi(typeof(IPublicService), AllowAnonymous = true)]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="PublicController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    [AllowAnonymous]
+    public class PublicController : ControllerBase
+    {
+        private readonly global::IPublicService iPublicService;
+        public PublicController(global::IPublicService iPublicService)
+        {
+            this.iPublicService = iPublicService;
+        }
+        [Route("GetData")]
+        [HttpGet]
+        public string GetData()
+        {
+            return this.iPublicService.GetData();
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- Task返回类型测试 -->
+  <case name="GenerateController_WithTaskReturnType_PreservesReturnType">
+    <input>
+      <code><![CDATA[using System;
+using System.Threading.Tasks;
+
+public interface IAsyncService
+{
+    Task<string> GetDataAsync();
+    Task SaveDataAsync(string data);
+}
+
+[YS.Knife.ExposeApi(typeof(IAsyncService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="AsyncController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AsyncController : ControllerBase
+    {
+        private readonly global::IAsyncService iAsyncService;
+        public AsyncController(global::IAsyncService iAsyncService)
+        {
+            this.iAsyncService = iAsyncService;
+        }
+        [Route("GetDataAsync")]
+        [HttpGet]
+        public global::System.Threading.Tasks.Task<string> GetDataAsync()
+        {
+            return this.iAsyncService.GetDataAsync();
+        }
+        [Route("SaveDataAsync")]
+        [HttpPost]
+        public global::System.Threading.Tasks.Task SaveDataAsync([FromBody] string data)
+        {
+            return this.iAsyncService.SaveDataAsync(data);
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- 泛型方法测试 -->
+  <case name="GenerateController_WithGenericMethods_SkipsGenericMethods">
+    <input>
+      <code><![CDATA[using System;
+
+public interface IGenericService
+{
+    string GetData();
+    T GetItem<T>();
+}
+
+[YS.Knife.ExposeApi(typeof(IGenericService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="GenericController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class GenericController : ControllerBase
+    {
+        private readonly global::IGenericService iGenericService;
+        public GenericController(global::IGenericService iGenericService)
+        {
+            this.iGenericService = iGenericService;
+        }
+        [Route("GetData")]
+        [HttpGet]
+        public string GetData()
+        {
+            return this.iGenericService.GetData();
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- 服务名称处理测试 - 移除I前缀 -->
+  <case name="GenerateController_WithServiceNameStartingWithI_RemovesPrefix">
+    <input>
+      <code><![CDATA[using System;
+
+public interface ICustomerService
+{
+    Customer GetCustomer(int id);
+}
+
+public class Customer
+{
+    public int Id { get; set; }
+}
+
+[YS.Knife.ExposeApi(typeof(ICustomerService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="CustomerController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CustomerController : ControllerBase
+    {
+        private readonly global::ICustomerService iCustomerService;
+        public CustomerController(global::ICustomerService iCustomerService)
+        {
+            this.iCustomerService = iCustomerService;
+        }
+        [Route("GetCustomer")]
+        [HttpGet]
+        public global::Customer GetCustomer([FromQuery] int id)
+        {
+            return this.iCustomerService.GetCustomer(id);
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- 服务名称处理测试 - 移除Service后缀 -->
+  <case name="GenerateController_WithServiceNameEndingWithService_RemovesSuffix">
+    <input>
+      <code><![CDATA[using System;
+
+public interface UserService
+{
+    User GetUser(int id);
+}
+
+public class User
+{
+    public int Id { get; set; }
+}
+
+[YS.Knife.ExposeApi(typeof(UserService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="UserController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UserController : ControllerBase
+    {
+        private readonly global::UserService userService;
+        public UserController(global::UserService userService)
+        {
+            this.userService = userService;
+        }
+        [Route("GetUser")]
+        [HttpGet]
+        public global::User GetUser([FromQuery] int id)
+        {
+            return this.userService.GetUser(id);
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- 特殊参数测试 - CancellationToken -->
+  <case name="GenerateController_WithCancellationToken_DoesNotBindParameter">
+    <input>
+      <code><![CDATA[using System;
+using System.Threading;
+
+public interface ILongRunningService
+{
+    string ProcessData(CancellationToken cancellationToken);
+}
+
+[YS.Knife.ExposeApi(typeof(ILongRunningService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="LongRunningController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class LongRunningController : ControllerBase
+    {
+        private readonly global::ILongRunningService iLongRunningService;
+        public LongRunningController(global::ILongRunningService iLongRunningService)
+        {
+            this.iLongRunningService = iLongRunningService;
+        }
+        [Route("ProcessData")]
+        [HttpPost]
+        public string ProcessData(global::System.Threading.CancellationToken cancellationToken)
+        {
+            return this.iLongRunningService.ProcessData(cancellationToken);
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- 特殊参数测试 - HttpContext -->
+  <case name="GenerateController_WithHttpContext_DoesNotBindParameter">
+    <input>
+      <code><![CDATA[using System;
+using Microsoft.AspNetCore.Http;
+
+public interface IHttpService
+{
+    string GetRequestInfo(HttpContext context);
+}
+
+[YS.Knife.ExposeApi(typeof(IHttpService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="HttpController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class HttpController : ControllerBase
+    {
+        private readonly global::IHttpService iHttpService;
+        public HttpController(global::IHttpService iHttpService)
+        {
+            this.iHttpService = iHttpService;
+        }
+        [Route("GetRequestInfo")]
+        [HttpGet]
+        public string GetRequestInfo([FromQuery] HttpContext context)
+        {
+            return this.iHttpService.GetRequestInfo(context);
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- HTTP方法命名约定测试 - Get -->
+  <case name="GenerateController_WithMethodStartingWithGet_UsesHttpGet">
+    <input>
+      <code><![CDATA[using System;
+
+public interface IQueryService
+{
+    string GetUserInfo();
+}
+
+[YS.Knife.ExposeApi(typeof(IQueryService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="QueryController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class QueryController : ControllerBase
+    {
+        private readonly global::IQueryService iQueryService;
+        public QueryController(global::IQueryService iQueryService)
+        {
+            this.iQueryService = iQueryService;
+        }
+        [Route("GetUserInfo")]
+        [HttpGet]
+        public string GetUserInfo()
+        {
+            return this.iQueryService.GetUserInfo();
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- HTTP方法命名约定测试 - Post -->
+  <case name="GenerateController_WithMethodStartingWithCreate_UsesHttpPost">
+    <input>
+      <code><![CDATA[using System;
+
+public interface ICreationService
+{
+    string CreateUser(string name);
+}
+
+[YS.Knife.ExposeApi(typeof(ICreationService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="CreationController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CreationController : ControllerBase
+    {
+        private readonly global::ICreationService iCreationService;
+        public CreationController(global::ICreationService iCreationService)
+        {
+            this.iCreationService = iCreationService;
+        }
+        [Route("CreateUser")]
+        [HttpPost]
+        public string CreateUser([FromBody] string name)
+        {
+            return this.iCreationService.CreateUser(name);
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- HTTP方法命名约定测试 - Put -->
+  <case name="GenerateController_WithMethodStartingWithUpdate_UsesHttpPut">
+    <input>
+      <code><![CDATA[using System;
+
+public interface IModificationService
+{
+    string UpdateUser(int id, string name);
+}
+
+[YS.Knife.ExposeApi(typeof(IModificationService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="ModificationController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ModificationController : ControllerBase
+    {
+        private readonly global::IModificationService iModificationService;
+        public ModificationController(global::IModificationService iModificationService)
+        {
+            this.iModificationService = iModificationService;
+        }
+        [Route("UpdateUser")]
+        [HttpPut]
+        public string UpdateUser([FromBody] __UpdateUser_BodyArg arg)
+        {
+            return this.iModificationService.UpdateUser(arg.id, arg.name);
+        }
+        public record __UpdateUser_BodyArg(int id, string name);
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- HTTP方法命名约定测试 - Delete -->
+  <case name="GenerateController_WithMethodStartingWithDelete_UsesHttpDelete">
+    <input>
+      <code><![CDATA[using System;
+
+public interface IRemovalService
+{
+    void DeleteUser(int id);
+}
+
+[YS.Knife.ExposeApi(typeof(IRemovalService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="RemovalController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class RemovalController : ControllerBase
+    {
+        private readonly global::IRemovalService iRemovalService;
+        public RemovalController(global::IRemovalService iRemovalService)
+        {
+            this.iRemovalService = iRemovalService;
+        }
+        [Route("DeleteUser")]
+        [HttpDelete]
+        public void DeleteUser([FromQuery] int id)
+        {
+            return this.iRemovalService.DeleteUser(id);
+        }
+    }
+}]]></code>
+    </output>
+  </case>
+
+  <!-- HTTP方法命名约定测试 - Patch -->
+  <case name="GenerateController_WithMethodStartingWithPatch_UsesHttpPatch">
+    <input>
+      <code><![CDATA[using System;
+
+public interface IPartialUpdateService
+{
+    string PatchUser(int id, string name);
+}
+
+[YS.Knife.ExposeApi(typeof(IPartialUpdateService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+      <code file="PartialUpdateController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PartialUpdateController : ControllerBase
+    {
+        private readonly global::IPartialUpdateService iPartialUpdateService;
+        public PartialUpdateController(global::IPartialUpdateService iPartialUpdateService)
+        {
+            this.iPartialUpdateService = iPartialUpdateService;
+        }
+        [Route("PatchUser")]
+        [HttpPatch]
+        public string PatchUser([FromBody] __PatchUser_BodyArg arg)
+        {
+            return this.iPartialUpdateService.PatchUser(arg.id, arg.name);
+        }
+        public record __PatchUser_BodyArg(int id, string name);
+    }
+}]]></code>
+    </output>
+  </case>
+</cases>

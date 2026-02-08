@@ -28,4 +28,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\YS.Knife.Generators.ExposeApi\YS.Knife.Generators.ExposeApi.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ControllerGeneratorTestCases.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
