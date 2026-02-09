@@ -32,7 +32,7 @@
     </ItemGroup>
     <ItemGroup>
         <Using Include="FlyTiger" />
-        <PackageReference Include="FlyTiger" Version="0.0.15" >
+        <PackageReference Include="FlyTiger" Version="0.0.18" >
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>

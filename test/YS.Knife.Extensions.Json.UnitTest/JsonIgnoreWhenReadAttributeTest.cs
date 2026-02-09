@@ -1,7 +1,7 @@
-﻿using System.Text.Json.Serialization;
-using Xunit;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using FluentAssertions;
-using System.Text.Json;
+using Xunit;
 
 namespace YS.Knife.Extensions.Json.UnitTest
 {
@@ -21,7 +21,7 @@ namespace YS.Knife.Extensions.Json.UnitTest
         {
             public int Id { get; set; }
             public string Name { get; set; }
-            
+
             [JsonIgnoreWhenRead]
             public string IgnoreWhenRead { get; set; }
         }

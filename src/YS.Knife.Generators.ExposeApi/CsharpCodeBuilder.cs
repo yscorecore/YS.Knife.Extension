@@ -7,7 +7,7 @@ namespace FlyTiger
 {
     class CsharpCodeBuilder
     {
-       
+
         private const int TabSize = 4;
         private readonly StringBuilder stringBuilder = new();
         private int depthOfNesting = 0;

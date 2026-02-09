@@ -26,6 +26,17 @@ namespace FlyTiger
 
             Context.AddSource(sourceName, sourceText);
         }
+        private readonly Dictionary<string, int> codeNames = new();
+
+        public string GetUniqueCodeName(string group, string basicName)
+        {
+            var fullName = $"{group}::{basicName}";
+            codeNames.TryGetValue(fullName, out var i);
+            var name = i == 0 ? basicName : $"{basicName}{i + 1}";
+            codeNames[fullName] = i + 1;
+            return name;
+
+        }
     }
-    
+
 }

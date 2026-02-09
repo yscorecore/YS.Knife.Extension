@@ -132,7 +132,7 @@ namespace YS.Knife
             var serviceType = serviceTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
             // 确定控制器名称：服务类型名称 + Controller
-            var controllerName = GetControllerName(serviceTypeSymbol);
+            var controllerName = GetControllerName(serviceTypeSymbol, writer);
 
             // 确定服务名称：服务类型名称的驼峰式命名（首字母小写）
             var serviceName = GetServiceFieldName(serviceTypeSymbol);
@@ -215,20 +215,41 @@ namespace {namespaceName}");
             {
                 return serviceTypeSymbol.Name.ToCamelCase();
             }
-            string GetControllerName(INamedTypeSymbol serviceType)
+            string GetControllerName(INamedTypeSymbol serviceType, CodeWriter codeWriter)
             {
-                var name = serviceTypeSymbol.Name;
-                if (name.StartsWith("I"))
+                var allNames = GetTypeNames(serviceType);
+                var name = allNames[0];
+                if (serviceType.TypeKind == TypeKind.Interface && allNames[0].StartsWith("I"))
                 {
-                    name = name.Substring(1);
+                    allNames[0] = allNames[0].Substring(1);
                 }
-                if (name.EndsWith("Service"))
+                if (allNames[0].EndsWith("Service"))
                 {
-                    name = name.Substring(0, name.Length - "Service".Length);
+                    allNames[0] = allNames[0].Substring(0, allNames[0].Length - "Service".Length);
                 }
-                return $"{name}Controller";
+                var fullName = string.Join("", allNames);
+                var uniqueFullName = codeWriter.GetUniqueCodeName("Controller", fullName);
+                return $"{uniqueFullName}Controller";
             }
-
+            List<string> GetTypeNames(INamedTypeSymbol serviceType)
+            {
+                var res = new List<string>();
+                if (serviceType.IsGenericType)
+                {
+                    var name = serviceTypeSymbol.Name;
+                    var index = name.IndexOf('`');
+                    res.Add(name.Substring(0, index - 1));
+                    foreach (var type in serviceType.TypeArguments.OfType<INamedTypeSymbol>())
+                    {
+                        res.AddRange(GetTypeNames(type));
+                    }
+                }
+                else
+                {
+                    res.Add(serviceType.Name);
+                }
+                return res;
+            }
         }
 
         enum MethodParameterType

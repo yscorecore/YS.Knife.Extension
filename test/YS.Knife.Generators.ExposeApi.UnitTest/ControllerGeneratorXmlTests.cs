@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using YS.Knife.Generators.ExposeApi;
 using Xunit;
+using YS.Knife.Generators.ExposeApi;
 
 namespace YS.Knife.Generators.ExposeApi.UnitTest
 {
@@ -78,7 +78,7 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
         private TestCase LoadTestCase(string caseName)
         {
             var xmlFilePath = Path.Combine(_testDataPath, $"{caseName}.xml");
-            
+
             if (!File.Exists(xmlFilePath))
             {
                 throw new FileNotFoundException($"Test case file '{xmlFilePath}' not found.");
