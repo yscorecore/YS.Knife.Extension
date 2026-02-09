@@ -147,7 +147,7 @@ namespace YS.Knife
 
             var allowAnonymous = GetAllowAnonymous();
 
-            CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder();
+            CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder("CS1591", "CS1573");
 
             codeBuilder.AppendCodeLines($@"using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

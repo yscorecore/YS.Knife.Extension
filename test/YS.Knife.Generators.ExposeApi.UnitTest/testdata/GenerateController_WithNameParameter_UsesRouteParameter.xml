@@ -19,7 +19,8 @@ public class TestController
 }]]></code>
     </input>
     <output>
-        <code file="ItemController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+        <code file="ItemController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace 
 {
