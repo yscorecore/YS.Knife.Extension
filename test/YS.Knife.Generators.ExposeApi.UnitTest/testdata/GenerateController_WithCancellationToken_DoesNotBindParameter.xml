@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+  <input>
+    <code><![CDATA[using System;
+using System.Threading;
+
+public interface ILongRunningService
+{
+    string ProcessData(CancellationToken cancellationToken);
+}
+
+[YS.Knife.ExposeApi(typeof(ILongRunningService))]
+public class TestController
+{
+}
+]]></code>
+  </input>
+  <output>
+    <code file="LongRunningController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class LongRunningController : ControllerBase
+    {
+        private readonly global::ILongRunningService iLongRunningService;
+        public LongRunningController(global::ILongRunningService iLongRunningService)
+        {
+            this.iLongRunningService = iLongRunningService;
+        }
+        [Route("ProcessData")]
+        [HttpPost]
+        public string ProcessData(global::System.Threading.CancellationToken cancellationToken)
+        {
+            return this.iLongRunningService.ProcessData(cancellationToken);
+        }
+    }
+}]]></code>
+  </output>
+</case>

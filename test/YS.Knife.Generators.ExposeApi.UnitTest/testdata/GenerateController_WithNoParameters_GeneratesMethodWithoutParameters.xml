@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public interface IHealthService
+{
+    string GetHealth();
+}
+
+[YS.Knife.ExposeApi(typeof(IHealthService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="HealthController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class HealthController : ControllerBase
+    {
+        private readonly global::IHealthService iHealthService;
+        public HealthController(global::IHealthService iHealthService)
+        {
+            this.iHealthService = iHealthService;
+        }
+        [Route("GetHealth")]
+        [HttpGet]
+        public string GetHealth()
+        {
+            return this.iHealthService.GetHealth();
+        }
+    }
+}]]></code>
+    </output>
+</case>

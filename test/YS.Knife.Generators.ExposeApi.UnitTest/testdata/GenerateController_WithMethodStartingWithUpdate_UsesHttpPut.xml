@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+  <input>
+    <code><![CDATA[using System;
+
+public interface IModificationService
+{
+    string UpdateUser(int id, string name);
+}
+
+[YS.Knife.ExposeApi(typeof(IModificationService))]
+public class TestController
+{
+}
+]]></code>
+  </input>
+  <output>
+    <code file="ModificationController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ModificationController : ControllerBase
+    {
+        private readonly global::IModificationService iModificationService;
+        public ModificationController(global::IModificationService iModificationService)
+        {
+            this.iModificationService = iModificationService;
+        }
+        [Route("UpdateUser")]
+        [HttpPut]
+        public string UpdateUser([FromBody] __UpdateUser_BodyArg arg)
+        {
+            return this.iModificationService.UpdateUser(arg.id, arg.name);
+        }
+        public record __UpdateUser_BodyArg(int id, string name);
+    }
+}]]></code>
+  </output>
+</case>

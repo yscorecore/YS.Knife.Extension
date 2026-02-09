@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public interface IMultiParamService
+{
+    string ProcessData(string name, int value, string description);
+}
+
+[YS.Knife.ExposeApi(typeof(IMultiParamService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="MultiParamController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class MultiParamController : ControllerBase
+    {
+        private readonly global::IMultiParamService iMultiParamService;
+        public MultiParamController(global::IMultiParamService iMultiParamService)
+        {
+            this.iMultiParamService = iMultiParamService;
+        }
+        [Route("ProcessData")]
+        [HttpPost]
+        public string ProcessData([FromBody] __ProcessData_BodyArg arg)
+        {
+            return this.iMultiParamService.ProcessData(arg.name, arg.value, arg.description);
+        }
+        public record __ProcessData_BodyArg(string name, int value, string description);
+    }
+}]]></code>
+    </output>
+</case>

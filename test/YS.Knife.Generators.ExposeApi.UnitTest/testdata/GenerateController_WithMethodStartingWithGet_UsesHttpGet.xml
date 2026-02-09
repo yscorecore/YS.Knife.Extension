@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+  <input>
+    <code><![CDATA[using System;
+
+public interface IQueryService
+{
+    string GetUserInfo();
+}
+
+[YS.Knife.ExposeApi(typeof(IQueryService))]
+public class TestController
+{
+}
+]]></code>
+  </input>
+  <output>
+    <code file="QueryController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class QueryController : ControllerBase
+    {
+        private readonly global::IQueryService iQueryService;
+        public QueryController(global::IQueryService iQueryService)
+        {
+            this.iQueryService = iQueryService;
+        }
+        [Route("GetUserInfo")]
+        [HttpGet]
+        public string GetUserInfo()
+        {
+            return this.iQueryService.GetUserInfo();
+        }
+    }
+}]]></code>
+  </output>
+</case>

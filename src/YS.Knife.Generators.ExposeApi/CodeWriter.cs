@@ -22,7 +22,7 @@ namespace FlyTiger
         public Compilation Compilation { get; private set; }
         public SourceProductionContext Context { get; private set; }
 
-        private Dictionary<string, int> fileNames = new Dictionary<string, int>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly Dictionary<string, int> fileNames = new Dictionary<string, int>(StringComparer.InvariantCultureIgnoreCase);
 
         public void WriteCodeFile(CodeFile codeFile)
         {

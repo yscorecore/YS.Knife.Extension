@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public interface IEntryService
+{
+    Entry GetEntry(string key);
+}
+
+public class Entry
+{
+    public string Key { get; set; }
+}
+
+[YS.Knife.ExposeApi(typeof(IEntryService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="EntryController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class EntryController : ControllerBase
+    {
+        private readonly global::IEntryService iEntryService;
+        public EntryController(global::IEntryService iEntryService)
+        {
+            this.iEntryService = iEntryService;
+        }
+        [Route("GetEntry")]
+        [HttpGet]
+        public global::Entry GetEntry([FromQuery] string key)
+        {
+            return this.iEntryService.GetEntry(key);
+        }
+    }
+}]]></code>
+    </output>
+</case>

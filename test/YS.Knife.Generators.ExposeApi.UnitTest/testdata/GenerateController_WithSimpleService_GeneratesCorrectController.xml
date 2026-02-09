@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public interface ITestService
+{
+    string GetTestData(int id);
+}
+
+[YS.Knife.ExposeApi(typeof(ITestService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="TestController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class TestController : ControllerBase
+    {
+        private readonly global::ITestService iTestService;
+        public TestController(global::ITestService iTestService)
+        {
+            this.iTestService = iTestService;
+        }
+        [Route("GetTestData")]
+        [HttpGet]
+        public string GetTestData([FromQuery] int id)
+        {
+            return this.iTestService.GetTestData(id);
+        }
+    }
+}]]></code>
+    </output>
+</case>

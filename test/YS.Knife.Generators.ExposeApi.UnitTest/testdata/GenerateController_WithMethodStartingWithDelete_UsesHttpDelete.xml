@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+  <input>
+    <code><![CDATA[using System;
+
+public interface IRemovalService
+{
+    void DeleteUser(int id);
+}
+
+[YS.Knife.ExposeApi(typeof(IRemovalService))]
+public class TestController
+{
+}
+]]></code>
+  </input>
+  <output>
+    <code file="RemovalController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class RemovalController : ControllerBase
+    {
+        private readonly global::IRemovalService iRemovalService;
+        public RemovalController(global::IRemovalService iRemovalService)
+        {
+            this.iRemovalService = iRemovalService;
+        }
+        [Route("DeleteUser")]
+        [HttpDelete]
+        public void DeleteUser([FromQuery] int id)
+        {
+            return this.iRemovalService.DeleteUser(id);
+        }
+    }
+}]]></code>
+  </output>
+</case>

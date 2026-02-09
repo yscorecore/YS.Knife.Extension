@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public interface IPersistenceService
+{
+    string SaveData(string data);
+}
+
+[YS.Knife.ExposeApi(typeof(IPersistenceService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="PersistenceController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PersistenceController : ControllerBase
+    {
+        private readonly global::IPersistenceService iPersistenceService;
+        public PersistenceController(global::IPersistenceService iPersistenceService)
+        {
+            this.iPersistenceService = iPersistenceService;
+        }
+        [Route("SaveData")]
+        [HttpPost]
+        public string SaveData([FromBody] string data)
+        {
+            return this.iPersistenceService.SaveData(data);
+        }
+    }
+}]]></code>
+    </output>
+</case>

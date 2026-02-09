@@ -11,13 +11,13 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
 {
     public class ControllerGeneratorXmlTests
     {
-        private readonly string _testCasesPath;
+        private readonly string _testDataPath;
 
         public ControllerGeneratorXmlTests()
         {
             var assemblyLocation = typeof(ControllerGeneratorXmlTests).Assembly.Location ?? string.Empty;
             var directoryName = Path.GetDirectoryName(assemblyLocation) ?? string.Empty;
-            _testCasesPath = Path.Combine(directoryName, "ControllerGeneratorTestCases.xml");
+            _testDataPath = Path.Combine(directoryName, "testdata");
         }
 
         [Theory]
@@ -27,8 +27,8 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
         [InlineData("GenerateController_WithAllowAnonymous_AddsAllowAnonymousAttribute")]
         [InlineData("GenerateController_WithTaskReturnType_PreservesReturnType")]
         [InlineData("GenerateController_WithGenericMethods_SkipsGenericMethods")]
-        [InlineData("GenerateController_WithServiceNameStartingWithI_RemovesPrefix")]
         [InlineData("GenerateController_WithServiceNameEndingWithService_RemovesSuffix")]
+        [InlineData("GenerateController_WithServiceNameStartingWithI_RemovesPrefix")]
         [InlineData("GenerateController_WithCancellationToken_DoesNotBindParameter")]
         [InlineData("GenerateController_WithHttpContext_DoesNotBindParameter")]
         [InlineData("GenerateController_WithMethodStartingWithGet_UsesHttpGet")]
@@ -36,6 +36,25 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
         [InlineData("GenerateController_WithMethodStartingWithUpdate_UsesHttpPut")]
         [InlineData("GenerateController_WithMethodStartingWithDelete_UsesHttpDelete")]
         [InlineData("GenerateController_WithMethodStartingWithPatch_UsesHttpPatch")]
+        [InlineData("GenerateController_WithNoParameters_GeneratesMethodWithoutParameters")]
+        [InlineData("GenerateController_WithVoidReturnType_GeneratesPostMethod")]
+        [InlineData("GenerateController_WithIdParameter_UsesRouteParameter")]
+        [InlineData("GenerateController_WithNameParameter_UsesRouteParameter")]
+        [InlineData("GenerateController_WithKeyParameter_UsesRouteParameter")]
+        [InlineData("GenerateController_WithMultipleRouteParameters_UsesFirstAsRoute")]
+        [InlineData("GenerateController_WithMethodStartingWithQuery_UsesHttpGet")]
+        [InlineData("GenerateController_WithMethodStartingWithFind_UsesHttpGet")]
+        [InlineData("GenerateController_WithMethodStartingWithAdd_UsesHttpPost")]
+        [InlineData("GenerateController_WithMethodStartingWithRemove_UsesHttpDelete")]
+        [InlineData("GenerateController_WithMethodStartingWithModify_UsesHttpPut")]
+        [InlineData("GenerateController_WithMethodStartingWithFetch_UsesHttpGet")]
+        [InlineData("GenerateController_WithMethodStartingWithUpload_UsesHttpPost")]
+        [InlineData("GenerateController_WithMethodStartingWithSave_UsesHttpPost")]
+        [InlineData("GenerateController_WithMethodStartingWithEdit_UsesHttpPut")]
+        [InlineData("GenerateController_WithMethodStartingWithPost_UsesHttpPost")]
+        [InlineData("GenerateController_WithComplexObjectParameter_UsesFromBody")]
+        [InlineData("GenerateController_WithMultipleComplexParameters_CreatesRecordType")]
+        [InlineData("GenerateController_WithMixedParameters_HandlesCorrectly")]
         public async Task GenerateController_FromXml_TestCase(string caseName)
         {
             var testCase = LoadTestCase(caseName);
@@ -58,13 +77,19 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
 
         private TestCase LoadTestCase(string caseName)
         {
-            var xml = XDocument.Load(_testCasesPath);
-            var caseElement = xml.Descendants("case")
-                .FirstOrDefault(c => c.Attribute("name")?.Value == caseName);
+            var xmlFilePath = Path.Combine(_testDataPath, $"{caseName}.xml");
+            
+            if (!File.Exists(xmlFilePath))
+            {
+                throw new FileNotFoundException($"Test case file '{xmlFilePath}' not found.");
+            }
+
+            var xml = XDocument.Load(xmlFilePath);
+            var caseElement = xml.Element("case");
 
             if (caseElement == null)
             {
-                throw new FileNotFoundException($"Test case '{caseName}' not found in XML file.");
+                throw new InvalidOperationException($"Invalid XML format in '{xmlFilePath}'. Root element 'case' not found.");
             }
 
             var inputCode = caseElement.Element("input")?.Element("code")?.Value;

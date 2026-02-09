@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+using Microsoft.AspNetCore.Http;
+
+public interface IFileService
+{
+    string UploadFile(IFormFile file);
+}
+
+[YS.Knife.ExposeApi(typeof(IFileService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+        <code file="FileController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class FileController : ControllerBase
+    {
+        private readonly global::IFileService iFileService;
+        public FileController(global::IFileService iFileService)
+        {
+            this.iFileService = iFileService;
+        }
+        [Route("UploadFile")]
+        [HttpPost]
+        public string UploadFile([FromBody] IFormFile file)
+        {
+            return this.iFileService.UploadFile(file);
+        }
+    }
+}
+]]></code>
+    </output>
+</case>

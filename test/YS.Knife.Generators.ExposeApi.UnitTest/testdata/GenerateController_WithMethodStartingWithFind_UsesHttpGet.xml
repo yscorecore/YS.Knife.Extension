@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public interface ILookupService
+{
+    string FindUser(string email);
+}
+
+[YS.Knife.ExposeApi(typeof(ILookupService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="LookupController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class LookupController : ControllerBase
+    {
+        private readonly global::ILookupService iLookupService;
+        public LookupController(global::ILookupService iLookupService)
+        {
+            this.iLookupService = iLookupService;
+        }
+        [Route("FindUser")]
+        [HttpGet]
+        public string FindUser([FromQuery] string email)
+        {
+            return this.iLookupService.FindUser(email);
+        }
+    }
+}]]></code>
+    </output>
+</case>

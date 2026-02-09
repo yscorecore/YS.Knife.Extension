@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public interface ISearchService
+{
+    string QueryUsers(string keyword);
+}
+
+[YS.Knife.ExposeApi(typeof(ISearchService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="SearchController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class SearchController : ControllerBase
+    {
+        private readonly global::ISearchService iSearchService;
+        public SearchController(global::ISearchService iSearchService)
+        {
+            this.iSearchService = iSearchService;
+        }
+        [Route("QueryUsers")]
+        [HttpGet]
+        public string QueryUsers([FromQuery] string keyword)
+        {
+            return this.iSearchService.QueryUsers(keyword);
+        }
+    }
+}]]></code>
+    </output>
+</case>

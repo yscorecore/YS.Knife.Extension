@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+  <input>
+    <code><![CDATA[using System;
+
+public interface ICreationService
+{
+    string CreateUser(string name);
+}
+
+[YS.Knife.ExposeApi(typeof(ICreationService))]
+public class TestController
+{
+}
+]]></code>
+  </input>
+  <output>
+    <code file="CreationController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CreationController : ControllerBase
+    {
+        private readonly global::ICreationService iCreationService;
+        public CreationController(global::ICreationService iCreationService)
+        {
+            this.iCreationService = iCreationService;
+        }
+        [Route("CreateUser")]
+        [HttpPost]
+        public string CreateUser([FromBody] string name)
+        {
+            return this.iCreationService.CreateUser(name);
+        }
+    }
+}]]></code>
+  </output>
+</case>

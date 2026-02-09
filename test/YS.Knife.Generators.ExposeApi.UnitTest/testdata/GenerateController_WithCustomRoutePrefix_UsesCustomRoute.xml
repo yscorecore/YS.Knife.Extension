@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+  <input>
+    <code><![CDATA[using System;
+
+public interface IOrderService
+{
+    Order GetOrder(int id);
+}
+
+public class Order
+{
+    public int Id { get; set; }
+}
+
+[YS.Knife.ExposeApi(typeof(IOrderService), RoutePrefix = "custom/orders")]
+public class TestController
+{
+}
+]]></code>
+  </input>
+  <output>
+    <code file="OrderController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("custom/orders")]
+    public class OrderController : ControllerBase
+    {
+        private readonly global::IOrderService iOrderService;
+        public OrderController(global::IOrderService iOrderService)
+        {
+            this.iOrderService = iOrderService;
+        }
+        [Route("GetOrder")]
+        [HttpGet]
+        public global::Order GetOrder([FromQuery] int id)
+        {
+            return this.iOrderService.GetOrder(id);
+        }
+    }
+}]]></code>
+  </output>
+</case>

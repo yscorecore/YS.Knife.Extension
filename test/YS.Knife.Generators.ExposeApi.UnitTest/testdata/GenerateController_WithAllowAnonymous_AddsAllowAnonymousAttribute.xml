@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+  <input>
+    <code><![CDATA[using System;
+
+public interface IPublicService
+{
+    string GetData();
+}
+
+[YS.Knife.ExposeApi(typeof(IPublicService), AllowAnonymous = true)]
+public class TestController
+{
+}
+]]></code>
+  </input>
+  <output>
+    <code file="PublicController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    [AllowAnonymous]
+    public class PublicController : ControllerBase
+    {
+        private readonly global::IPublicService iPublicService;
+        public PublicController(global::IPublicService iPublicService)
+        {
+            this.iPublicService = iPublicService;
+        }
+        [Route("GetData")]
+        [HttpGet]
+        public string GetData()
+        {
+            return this.iPublicService.GetData();
+        }
+    }
+}]]></code>
+  </output>
+</case>

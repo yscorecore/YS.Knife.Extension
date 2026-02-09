@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public interface IResourceService
+{
+    Resource GetResource(int id);
+}
+
+public class Resource
+{
+    public int Id { get; set; }
+}
+
+[YS.Knife.ExposeApi(typeof(IResourceService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="ResourceController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ResourceController : ControllerBase
+    {
+        private readonly global::IResourceService iResourceService;
+        public ResourceController(global::IResourceService iResourceService)
+        {
+            this.iResourceService = iResourceService;
+        }
+        [Route("GetResource")]
+        [HttpGet]
+        public global::Resource GetResource([FromQuery] int id)
+        {
+            return this.iResourceService.GetResource(id);
+        }
+    }
+}]]></code>
+    </output>
+</case>

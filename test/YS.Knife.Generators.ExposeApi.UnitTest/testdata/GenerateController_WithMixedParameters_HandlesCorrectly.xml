@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+using System.Threading;
+
+public interface IMixedService
+{
+    string GetData(int id, string filter, CancellationToken cancellationToken);
+}
+
+[YS.Knife.ExposeApi(typeof(IMixedService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+        <code file="MixedController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class MixedController : ControllerBase
+    {
+        private readonly global::IMixedService iMixedService;
+        public MixedController(global::IMixedService iMixedService)
+        {
+            this.iMixedService = iMixedService;
+        }
+        [Route("GetData/{id}")]
+        [HttpGet]
+        public string GetData([FromRoute] int id, [FromQuery] string filter, global::System.Threading.CancellationToken cancellationToken)
+        {
+            return this.iMixedService.GetData(id, filter, cancellationToken);
+        }
+    }
+}
+]]></code>
+    </output>
+</case>

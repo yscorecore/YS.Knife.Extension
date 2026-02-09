@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+  <input>
+    <code><![CDATA[using System;
+using Microsoft.AspNetCore.Http;
+
+public interface IHttpService
+{
+    string GetRequestInfo(HttpContext context);
+}
+
+[YS.Knife.ExposeApi(typeof(IHttpService))]
+public class TestController
+{
+}
+]]></code>
+  </input>
+  <output>
+    <code file="HttpController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class HttpController : ControllerBase
+    {
+        private readonly global::IHttpService iHttpService;
+        public HttpController(global::IHttpService iHttpService)
+        {
+            this.iHttpService = iHttpService;
+        }
+        [Route("GetRequestInfo")]
+        [HttpGet]
+        public string GetRequestInfo([FromQuery] HttpContext context)
+        {
+            return this.iHttpService.GetRequestInfo(context);
+        }
+    }
+}]]></code>
+  </output>
+</case>

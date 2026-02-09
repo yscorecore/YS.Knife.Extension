@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+  <input>
+    <code><![CDATA[using System;
+
+public interface ICustomerService
+{
+    Customer GetCustomer(int id);
+}
+
+public class Customer
+{
+    public int Id { get; set; }
+}
+
+[YS.Knife.ExposeApi(typeof(ICustomerService))]
+public class TestController
+{
+}
+]]></code>
+  </input>
+  <output>
+    <code file="CustomerController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CustomerController : ControllerBase
+    {
+        private readonly global::ICustomerService iCustomerService;
+        public CustomerController(global::ICustomerService iCustomerService)
+        {
+            this.iCustomerService = iCustomerService;
+        }
+        [Route("GetCustomer")]
+        [HttpGet]
+        public global::Customer GetCustomer([FromQuery] int id)
+        {
+            return this.iCustomerService.GetCustomer(id);
+        }
+    }
+}]]></code>
+  </output>
+</case>

@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+  <input>
+    <code><![CDATA[using System;
+
+public interface IProductService
+{
+    Product GetProduct(int id);
+    void CreateProduct(Product product);
+    void UpdateProduct(int id, Product product);
+    void DeleteProduct(int id);
+}
+
+public class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+[YS.Knife.ExposeApi(typeof(IProductService))]
+public class TestController
+{
+}
+]]></code>
+  </input>
+  <output>
+    <code file="ProductController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProductController : ControllerBase
+    {
+        private readonly global::IProductService iProductService;
+        public ProductController(global::IProductService iProductService)
+        {
+            this.iProductService = iProductService;
+        }
+        [Route("GetProduct")]
+        [HttpGet]
+        public global::Product GetProduct([FromQuery] int id)
+        {
+            return this.iProductService.GetProduct(id);
+        }
+        [Route("CreateProduct")]
+        [HttpPost]
+        public void CreateProduct([FromBody] global::Product product)
+        {
+            return this.iProductService.CreateProduct(product);
+        }
+        [Route("UpdateProduct")]
+        [HttpPut]
+        public void UpdateProduct([FromBody] __UpdateProduct_BodyArg arg)
+        {
+            return this.iProductService.UpdateProduct(arg.id, arg.product);
+        }
+        public record __UpdateProduct_BodyArg(int id, Product product);
+        [Route("DeleteProduct")]
+        [HttpDelete]
+        public void DeleteProduct([FromQuery] int id)
+        {
+            return this.iProductService.DeleteProduct(id);
+        }
+    }
+}]]></code>
+  </output>
+</case>

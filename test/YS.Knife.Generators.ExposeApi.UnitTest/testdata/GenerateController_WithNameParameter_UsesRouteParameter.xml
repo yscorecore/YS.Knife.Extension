@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public interface IItemService
+{
+    Item GetItem(string name);
+}
+
+public class Item
+{
+    public string Name { get; set; }
+}
+
+[YS.Knife.ExposeApi(typeof(IItemService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="ItemController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ItemController : ControllerBase
+    {
+        private readonly global::IItemService iItemService;
+        public ItemController(global::IItemService iItemService)
+        {
+            this.iItemService = iItemService;
+        }
+        [Route("GetItem")]
+        [HttpGet]
+        public global::Item GetItem([FromQuery] string name)
+        {
+            return this.iItemService.GetItem(name);
+        }
+    }
+}]]></code>
+    </output>
+</case>

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public interface IComplexObjectService
+{
+    string ProcessData(DataModel model);
+}
+
+public class DataModel
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+}
+
+[YS.Knife.ExposeApi(typeof(IComplexObjectService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="ComplexObjectController.g.cs"><![CDATA[using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ComplexObjectController : ControllerBase
+    {
+        private readonly global::IComplexObjectService iComplexObjectService;
+        public ComplexObjectController(global::IComplexObjectService iComplexObjectService)
+        {
+            this.iComplexObjectService = iComplexObjectService;
+        }
+        [Route("ProcessData")]
+        [HttpPost]
+        public string ProcessData([FromBody] global::DataModel model)
+        {
+            return this.iComplexObjectService.ProcessData(model);
+        }
+    }
+}]]></code>
+    </output>
+</case>
