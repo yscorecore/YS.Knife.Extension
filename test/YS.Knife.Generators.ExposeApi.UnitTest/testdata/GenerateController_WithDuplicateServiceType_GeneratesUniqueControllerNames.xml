@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public class UserGroup
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+public interface IUserService
+{
+    void DoSomething();
+}
+
+[YS.Knife.ExposeApi(typeof(IUserService))]
+[YS.Knife.ExposeApi(typeof(IUserService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+        <code file="UserController.g.cs">
+        <![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UserController : ControllerBase
+    {
+        private readonly global::IUserService iUserService;
+        public UserController(global::IUserService iUserService)
+        {
+            this.iUserService = iUserService;
+        }
+        [Route("DoSomething")]
+        [HttpPost]
+        public void DoSomething()
+        {
+            return this.iUserService.DoSomething();
+        }
+    }
+}
+]]></code>
+        <code file="User2Controller.g.cs">
+            <![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class User2Controller : ControllerBase
+    {
+        private readonly global::IUserService iUserService;
+        public User2Controller(global::IUserService iUserService)
+        {
+            this.iUserService = iUserService;
+        }
+        [Route("DoSomething")]
+        [HttpPost]
+        public void DoSomething()
+        {
+            return this.iUserService.DoSomething();
+        }
+    }
+}
+]]>
+        </code>
+    </output>
+</case>

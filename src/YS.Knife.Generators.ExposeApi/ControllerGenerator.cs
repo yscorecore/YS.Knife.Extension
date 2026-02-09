@@ -189,7 +189,7 @@ namespace {namespaceName}");
 
             writer.WriteCodeFile(new CodeFile
             {
-                BasicName = $"{namespaceName}.{controllerName}",
+                BasicName = string.IsNullOrEmpty(namespaceName) ? controllerName : $"{namespaceName}.{controllerName}",
                 Content = code
             });
 
@@ -236,9 +236,9 @@ namespace {namespaceName}");
                 var res = new List<string>();
                 if (serviceType.IsGenericType)
                 {
-                    var name = serviceTypeSymbol.Name;
-                    var index = name.IndexOf('`');
-                    res.Add(name.Substring(0, index - 1));
+                    var name = serviceType.Name;
+                    // 无论是否包含反引号，都直接使用类型名称
+                    res.Add(name);
                     foreach (var type in serviceType.TypeArguments.OfType<INamedTypeSymbol>())
                     {
                         res.AddRange(GetTypeNames(type));

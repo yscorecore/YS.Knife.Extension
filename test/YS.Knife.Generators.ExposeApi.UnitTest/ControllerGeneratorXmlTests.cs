@@ -55,18 +55,18 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
         [InlineData("GenerateController_WithComplexObjectParameter_UsesFromBody")]
         [InlineData("GenerateController_WithMultipleComplexParameters_CreatesRecordType")]
         [InlineData("GenerateController_WithMixedParameters_HandlesCorrectly")]
-        public async Task GenerateController_FromXml_TestCase(string caseName)
+        [InlineData("GenerateController_WithGenericService_GeneratesCorrectControllerName")]
+        [InlineData("GenerateController_WithDuplicateServiceType_GeneratesUniqueControllerNames")]
+        public void GenerateController_FromXml_TestCase(string caseName)
         {
             var testCase = LoadTestCase(caseName);
-            var generatedCode = await GenerateSourceAsync(testCase.InputCode);
-
-            Assert.NotNull(generatedCode);
-
+            var generatedCode = GenerateSourceAsync(testCase.InputCode);
             foreach (var expectedOutput in testCase.ExpectedOutputs)
             {
                 var normalizedExpected = NormalizeWhitespace(expectedOutput.Code);
-                var normalizedGenerated = NormalizeWhitespace(generatedCode);
-                Assert.Contains(normalizedExpected, normalizedGenerated);
+                generatedCode.Should().ContainKey(expectedOutput.FileName,"should generator file");
+                var normalizedGenerated = NormalizeWhitespace(generatedCode[expectedOutput.FileName]);
+                normalizedGenerated.Should().Be(normalizedExpected);
             }
         }
 
@@ -109,7 +109,7 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
             };
         }
 
-        private async Task<string> GenerateSourceAsync(string source)
+        private Dictionary<string,string> GenerateSourceAsync(string source)
         {
             var generator = new ControllerGenerator();
             var driver = CSharpGeneratorDriver.Create(generator);
@@ -122,7 +122,7 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
 
             var runResult = driver.RunGenerators(compilation);
             var result = runResult.GetRunResult();
-
+            var dic = new Dictionary<string, string>();
             foreach (var tree in result.GeneratedTrees)
             {
                 if (tree.FilePath.EndsWith(".g.cs"))
@@ -130,12 +130,11 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
                     var content = tree.GetText().ToString();
                     if (content.Contains("ControllerBase"))
                     {
-                        return content;
+                        dic[Path.GetFileName(tree.FilePath)] = content;
                     }
                 }
             }
-
-            return string.Empty;
+            return dic;
         }
 
         private class TestCase

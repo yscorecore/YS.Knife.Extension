@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public class UserGroup
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+public interface IKeyValueService<T>
+{
+    T Get(string key);
+    void Set(string key, T value);
+}
+
+[YS.Knife.ExposeApi(typeof(IKeyValueService<UserGroup>))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+        <code file="KeyValueUserGroupController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class KeyValueUserGroupController : ControllerBase
+    {
+        private readonly global::IKeyValueService<global::UserGroup> iKeyValueService;
+        public KeyValueUserGroupController(global::IKeyValueService<global::UserGroup> iKeyValueService)
+        {
+            this.iKeyValueService = iKeyValueService;
+        }
+        [Route("Get")]
+        [HttpGet]
+        public global::UserGroup Get([FromQuery] string key)
+        {
+            return this.iKeyValueService.Get(key);
+        }
+        [Route("Set")]
+        [HttpPost]
+        public void Set([FromBody] __Set_BodyArg arg)
+        {
+            return this.iKeyValueService.Set(arg.key, arg.value);
+        }
+        public record __Set_BodyArg(string key, UserGroup value);
+    }
+}
+]]></code>
+    </output>
+</case>
