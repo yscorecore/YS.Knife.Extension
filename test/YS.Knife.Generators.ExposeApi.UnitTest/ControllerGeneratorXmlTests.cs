@@ -64,7 +64,7 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
             foreach (var expectedOutput in testCase.ExpectedOutputs)
             {
                 var normalizedExpected = NormalizeWhitespace(expectedOutput.Code);
-                generatedCode.Should().ContainKey(expectedOutput.FileName,"should generator file");
+                generatedCode.Should().ContainKey(expectedOutput.FileName, "should generator file");
                 var normalizedGenerated = NormalizeWhitespace(generatedCode[expectedOutput.FileName]);
                 normalizedGenerated.Should().Be(normalizedExpected);
             }
@@ -109,7 +109,7 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
             };
         }
 
-        private Dictionary<string,string> GenerateSourceAsync(string source)
+        private Dictionary<string, string> GenerateSourceAsync(string source)
         {
             var generator = new ControllerGenerator();
             var driver = CSharpGeneratorDriver.Create(generator);
