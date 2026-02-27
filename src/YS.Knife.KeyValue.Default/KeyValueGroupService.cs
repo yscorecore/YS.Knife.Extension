@@ -2,7 +2,7 @@
 namespace YS.Knife.KeyValue
 {
     [AutoConstructor]
-    [Service]
+    [Service(typeof(IKeyValueService<>))]
     public partial class KeyValueGroupService<TGroup> : IKeyValueService<TGroup>
         where TGroup : KeyValueGroup
     {
