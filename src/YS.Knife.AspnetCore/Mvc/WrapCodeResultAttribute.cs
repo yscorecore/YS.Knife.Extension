@@ -15,6 +15,12 @@ namespace YS.Knife.AspnetCore.Mvc
         }
         public void OnException(ExceptionContext context)
         {
+            // 检查 Action 或 Controller 是否有 WrapCodeResultIgnoreAttribute
+            if (context.ActionDescriptor.EndpointMetadata.Any(m => m is WrapCodeResultIgnoreAttribute))
+            {
+                return;
+            }
+
             var originalException = context.Exception;
 
             if (originalException is AggregateException aggregateException && aggregateException.InnerExceptions.Count == 1)
@@ -58,6 +64,12 @@ namespace YS.Knife.AspnetCore.Mvc
 
         public void OnResultExecuting(ResultExecutingContext context)
         {
+            // 检查 Action 或 Controller 是否有 WrapCodeResultIgnoreAttribute
+            if (context.ActionDescriptor.EndpointMetadata.Any(m => m is WrapCodeResultIgnoreAttribute))
+            {
+                return;
+            }
+            
             if (context.Result is ObjectResult obj && obj.Value is not CodeResult)
             {
                 if (IsSuccessCode(obj))
@@ -93,6 +105,12 @@ namespace YS.Knife.AspnetCore.Mvc
         }
 
 
+
+    }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    public sealed class WrapCodeResultIgnoreAttribute : Attribute, IFilterMetadata
+    {
 
     }
 }

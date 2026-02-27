@@ -20,12 +20,25 @@ namespace YS.Knife.AspnetCore.Mvc
             foreach (ControllerModel controller in context.Result.Controllers)
             {
                 var hasAppLevelFilter = HasWrapCodeResultFilter(controller.Application.Filters);
+                var hasAppLevelIgnoreFilter = HasWrapCodeResultIgnoreFilter(controller.Application.Filters);
 
                 var hasControllerLevel = HasWrapCodeResultFilter(controller.Filters);
+                var hasControllerLevelIgnoreFilter = HasWrapCodeResultIgnoreFilter(controller.Filters);
+
+                if (hasAppLevelIgnoreFilter || hasControllerLevelIgnoreFilter)
+                {
+                    continue;
+                }
                 foreach (ActionModel action in controller.Actions)
                 {
 
+                    var hasActionLevelIgnoreFilter = HasWrapCodeResultIgnoreFilter(action.Filters);
                     var hasActionLevel = HasWrapCodeResultFilter(action.Filters);
+                    if (hasActionLevelIgnoreFilter)
+                    {
+                        continue;
+                    }
+
                     if (hasAppLevelFilter || hasControllerLevel || hasActionLevel)
                     {
                         var returnType = GetRuntimeReturnType(action);
@@ -51,7 +64,12 @@ namespace YS.Knife.AspnetCore.Mvc
                     (p is TypeFilterAttribute tf && tf.ImplementationType == typeof(WrapCodeResultAttribute)) ||
                     (p is ServiceFilterAttribute sf && sf.ServiceType == typeof(WrapCodeResultAttribute)));
             }
-
+            bool HasWrapCodeResultIgnoreFilter(IList<IFilterMetadata> filters)
+            {
+                return filters.Any(p => p is WrapCodeResultIgnoreAttribute ||
+                    (p is TypeFilterAttribute tf && tf.ImplementationType == typeof(WrapCodeResultIgnoreAttribute)) ||
+                    (p is ServiceFilterAttribute sf && sf.ServiceType == typeof(WrapCodeResultIgnoreAttribute)));
+            }
             Type GetRuntimeReturnType(ActionModel action)
             {
                 Type returnDataType = action.ActionMethod.ReturnType;
