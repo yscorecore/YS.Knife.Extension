@@ -38,7 +38,7 @@ namespace YS.Knife.Webhooks.Impl.Default
             var response = await _httpClient.SendAsync(request, token);
             var responseReasonPhrase = response.ReasonPhrase;
             var responseText = await response.Content.ReadAsStringAsync(token);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 logger.LogInformation(
                  "Webhook delivery successful. - EventId: {EventId}, URL: {Url}, StatusCode: {StatusCode}",
