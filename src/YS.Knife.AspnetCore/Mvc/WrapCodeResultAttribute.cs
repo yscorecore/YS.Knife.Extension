@@ -69,7 +69,7 @@ namespace YS.Knife.AspnetCore.Mvc
             {
                 return;
             }
-            
+
             if (context.Result is ObjectResult obj && obj.Value is not CodeResult)
             {
                 if (IsSuccessCode(obj))
