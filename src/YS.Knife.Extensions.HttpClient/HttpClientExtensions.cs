@@ -30,6 +30,19 @@ namespace System.Net.Http
             }
             return content;
         }
+        public static async Task<T> SendAsObject<T>(this HttpClient client, HttpMethod method, string baseUrl, string path, object header = default, object param = default, object body = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = null, bool checkStatusCode = true, Func<T, string, Exception> businessExceptionFactory = default)
+        {
+            var content = await client.SendAsString(method, baseUrl, path, header, param, body, encoding, jsonOptions, checkStatusCode);
+            var res = content.AsJsonObject<T>(jsonOptions ?? DefaultJsonOptions);
+            var businessException = businessExceptionFactory?.Invoke(res, content);
+            if (businessException != null)
+            {
+                throw businessException;
+            }
+            return res;
+
+        }
+
         private static HttpRequestException CreateHttpRequestException(
                 HttpResponseMessage response,
                 string content,
@@ -114,10 +127,19 @@ Request Timestamp: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
             return res;
 
         }
+        public static Task<string> DeleteAsString(this HttpClient client, string baseUrl, string path, object header = default, object param = default, object body = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = default, bool checkStatusCode = true)
+        {
+            return client.SendAsString(HttpMethod.Delete, baseUrl, path, header, param, body, encoding, jsonOptions, checkStatusCode);
+
+        }
+        public static Task<T> DeleteAsObject<T>(this HttpClient client, string baseUrl, string path, object header = default, object param = default, object body = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = null, bool checkStatusCode = true, Func<T, string, Exception> businessExceptionFactory = default)
+        {
+            return client.SendAsObject<T>(HttpMethod.Delete, baseUrl, path, header, param, body, encoding, jsonOptions, checkStatusCode, businessExceptionFactory);
+        }
+
         public static Task<string> PostAsString(this HttpClient client, string baseUrl, string path, object header = default, object param = default, object body = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = null, bool checkStatusCode = true)
         {
             return client.SendAsString(HttpMethod.Post, baseUrl, path, header, param, body, encoding, jsonOptions, checkStatusCode);
-
         }
         public static async Task<T> PostAsObject<T>(this HttpClient client, string baseUrl, string path, object header = default, object param = default, object body = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = null, bool checkStatusCode = true, Func<T, string, Exception> businessExceptionFactory = default)
         {
@@ -130,7 +152,25 @@ Request Timestamp: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
             }
             return res;
         }
+        public static Task<string> PutAsString(this HttpClient client, string baseUrl, string path, object header = default, object param = default, object body = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = null, bool checkStatusCode = true)
+        {
+            return client.SendAsString(HttpMethod.Put, baseUrl, path, header, param, body, encoding, jsonOptions, checkStatusCode);
 
+        }
+        public static Task<T> PutAsObject<T>(this HttpClient client, string baseUrl, string path, object header = default, object param = default, object body = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = null, bool checkStatusCode = true, Func<T, string, Exception> businessExceptionFactory = default)
+        {
+            return client.SendAsObject<T>(HttpMethod.Put, baseUrl, path, header, param, body, encoding, jsonOptions, checkStatusCode, businessExceptionFactory);
+        }
+        public static Task<string> PatchAsString(this HttpClient client, string baseUrl, string path, object header = default, object param = default, object body = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = null, bool checkStatusCode = true)
+        {
+            return client.SendAsString(HttpMethod.Patch, baseUrl, path, header, param, body, encoding, jsonOptions, checkStatusCode);
+
+        }
+        public static Task<T> PatchAsObject<T>(this HttpClient client, string baseUrl, string path, object header = default, object param = default, object body = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = null, bool checkStatusCode = true, Func<T, string, Exception> businessExceptionFactory = default)
+        {
+            return client.SendAsObject<T>(HttpMethod.Patch, baseUrl, path, header, param, body, encoding, jsonOptions, checkStatusCode, businessExceptionFactory);
+
+        }
 
         static IEnumerable<KeyValuePair<string, string>> Foreach(object obj)
         {
