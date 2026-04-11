@@ -267,7 +267,7 @@ namespace {namespaceName}");
             var httpMethod = GetHttpMethod(method);
             var noBody = httpMethod == "HttpGet" || httpMethod == "HttpDelete";
             var comment = GetMethodComment(serviceType, method);
-            var firstArgIsRoute = noBody && IsFirstRouteParameter(method);
+            var firstArgIsRoute = IsFirstRouteParameter(method);
             var route = firstArgIsRoute ? $"{methodName}/{{{method.Parameters[0].Name}}}" : methodName;
             var hasStreamParameter = method.Parameters.Any(p => p.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::System.IO.Stream");
             var parameters = new List<string>();
@@ -485,7 +485,7 @@ public {returnType} {methodName}({paremeterLine})
         }
         private static bool IsFirstRouteParameter(IMethodSymbol method)
         {
-            if (method.Parameters.Length > 1)
+            if (method.Parameters.Length > 0)
             {
                 return RouteFieldNames.Contains(method.Parameters[0].Name);
             }
