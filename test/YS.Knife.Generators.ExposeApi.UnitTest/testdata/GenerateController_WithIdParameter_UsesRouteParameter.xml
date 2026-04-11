@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <case>
     <input>
         <code><![CDATA[using System;
@@ -33,9 +33,9 @@ namespace
         {
             this.iResourceService = iResourceService;
         }
-        [Route("GetResource")]
+        [Route("GetResource/{id}")]
         [HttpGet]
-        public global::Resource GetResource([FromQuery] int id)
+        public global::Resource GetResource([FromRoute] int id)
         {
             return this.iResourceService.GetResource(id);
         }

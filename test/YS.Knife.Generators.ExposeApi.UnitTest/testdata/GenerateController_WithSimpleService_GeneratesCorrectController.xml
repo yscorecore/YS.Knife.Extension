@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <case>
     <input>
         <code><![CDATA[using System;
@@ -28,9 +28,9 @@ namespace
         {
             this.iTestService = iTestService;
         }
-        [Route("GetTestData")]
+        [Route("GetTestData/{id}")]
         [HttpGet]
-        public string GetTestData([FromQuery] int id)
+        public string GetTestData([FromRoute] int id)
         {
             return this.iTestService.GetTestData(id);
         }

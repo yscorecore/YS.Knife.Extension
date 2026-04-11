@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <case>
   <input>
     <code><![CDATA[using System;
@@ -29,13 +29,12 @@ namespace
         {
             this.iModificationService = iModificationService;
         }
-        [Route("UpdateUser")]
+        [Route("UpdateUser/{id}")]
         [HttpPut]
-        public string UpdateUser([FromBody] __UpdateUser_BodyArg arg)
+        public string UpdateUser([FromRoute] int id, [FromBody] string name)
         {
-            return this.iModificationService.UpdateUser(arg.id, arg.name);
+            return this.iModificationService.UpdateUser(id, name);
         }
-        public record __UpdateUser_BodyArg(int id, string name);
     }
 }]]></code>
   </output>

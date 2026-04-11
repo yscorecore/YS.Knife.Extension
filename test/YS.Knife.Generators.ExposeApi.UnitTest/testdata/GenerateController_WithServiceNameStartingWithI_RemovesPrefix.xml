@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <case>
   <input>
     <code><![CDATA[using System;
@@ -34,9 +34,9 @@ namespace
         {
             this.iCustomerService = iCustomerService;
         }
-        [Route("GetCustomer")]
+        [Route("GetCustomer/{id}")]
         [HttpGet]
-        public global::Customer GetCustomer([FromQuery] int id)
+        public global::Customer GetCustomer([FromRoute] int id)
         {
             return this.iCustomerService.GetCustomer(id);
         }

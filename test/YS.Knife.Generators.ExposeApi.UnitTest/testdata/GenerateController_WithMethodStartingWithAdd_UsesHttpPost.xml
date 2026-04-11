@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <case>
     <input>
         <code><![CDATA[using System;
@@ -28,9 +28,9 @@ namespace
         {
             this.iInsertionService = iInsertionService;
         }
-        [Route("AddUser")]
+        [Route("AddUser/{name}")]
         [HttpPost]
-        public string AddUser([FromBody] string name)
+        public string AddUser([FromRoute] string name)
         {
             return this.iInsertionService.AddUser(name);
         }

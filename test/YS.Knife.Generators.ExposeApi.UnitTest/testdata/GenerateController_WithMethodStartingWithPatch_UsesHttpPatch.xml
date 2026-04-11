@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <case>
   <input>
     <code><![CDATA[using System;
@@ -29,13 +29,12 @@ namespace
         {
             this.iPartialUpdateService = iPartialUpdateService;
         }
-        [Route("PatchUser")]
+        [Route("PatchUser/{id}")]
         [HttpPatch]
-        public string PatchUser([FromBody] __PatchUser_BodyArg arg)
+        public string PatchUser([FromRoute] int id, [FromBody] string name)
         {
-            return this.iPartialUpdateService.PatchUser(arg.id, arg.name);
+            return this.iPartialUpdateService.PatchUser(id, name);
         }
-        public record __PatchUser_BodyArg(int id, string name);
     }
 }]]></code>
   </output>

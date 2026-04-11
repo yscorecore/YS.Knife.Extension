@@ -36,19 +36,18 @@ namespace
         {
             this.iKeyValueService = iKeyValueService;
         }
-        [Route("Get")]
+        [Route("Get/{key}")]
         [HttpGet]
-        public global::UserGroup Get([FromQuery] string key)
+        public global::UserGroup Get([FromRoute] string key)
         {
             return this.iKeyValueService.Get(key);
         }
-        [Route("Set")]
+        [Route("Set/{key}")]
         [HttpPost]
-        public void Set([FromBody] __Set_BodyArg arg)
+        public void Set([FromRoute] string key, [FromBody] global::UserGroup value)
         {
-            return this.iKeyValueService.Set(arg.key, arg.value);
+            return this.iKeyValueService.Set(key, value);
         }
-        public record __Set_BodyArg(string key, UserGroup value);
     }
 }
 ]]></code>

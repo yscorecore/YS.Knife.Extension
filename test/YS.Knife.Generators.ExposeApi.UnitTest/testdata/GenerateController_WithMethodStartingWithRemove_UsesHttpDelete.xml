@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <case>
     <input>
         <code><![CDATA[using System;
@@ -29,9 +29,9 @@ namespace
         {
             this.iDeletionService = iDeletionService;
         }
-        [Route("RemoveUser")]
+        [Route("RemoveUser/{id}")]
         [HttpDelete]
-        public void RemoveUser([FromQuery] int id)
+        public void RemoveUser([FromRoute] int id)
         {
             return this.iDeletionService.RemoveUser(id);
         }

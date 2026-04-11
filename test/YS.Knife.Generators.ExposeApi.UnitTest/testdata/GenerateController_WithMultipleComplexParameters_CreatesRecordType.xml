@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <case>
     <input>
         <code><![CDATA[using System;
@@ -28,13 +28,13 @@ namespace
         {
             this.iMultiParamService = iMultiParamService;
         }
-        [Route("ProcessData")]
+        [Route("ProcessData/{name}")]
         [HttpPost]
-        public string ProcessData([FromBody] __ProcessData_BodyArg arg)
+        public string ProcessData([FromRoute] string name, [FromBody] __ProcessData_BodyArg arg)
         {
-            return this.iMultiParamService.ProcessData(arg.name, arg.value, arg.description);
+            return this.iMultiParamService.ProcessData(name, arg.value, arg.description);
         }
-        public record __ProcessData_BodyArg(string name, int value, string description);
+        public record __ProcessData_BodyArg(int value, string description);
     }
 }]]></code>
     </output>

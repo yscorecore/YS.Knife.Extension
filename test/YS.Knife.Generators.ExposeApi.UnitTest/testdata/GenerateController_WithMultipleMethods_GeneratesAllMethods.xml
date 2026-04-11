@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <case>
   <input>
     <code><![CDATA[using System;
@@ -38,9 +38,9 @@ namespace
         {
             this.iProductService = iProductService;
         }
-        [Route("GetProduct")]
+        [Route("GetProduct/{id}")]
         [HttpGet]
-        public global::Product GetProduct([FromQuery] int id)
+        public global::Product GetProduct([FromRoute] int id)
         {
             return this.iProductService.GetProduct(id);
         }
@@ -50,16 +50,15 @@ namespace
         {
             return this.iProductService.CreateProduct(product);
         }
-        [Route("UpdateProduct")]
+        [Route("UpdateProduct/{id}")]
         [HttpPut]
-        public void UpdateProduct([FromBody] __UpdateProduct_BodyArg arg)
+        public void UpdateProduct([FromRoute] int id, [FromBody] global::Product product)
         {
-            return this.iProductService.UpdateProduct(arg.id, arg.product);
+            return this.iProductService.UpdateProduct(id, product);
         }
-        public record __UpdateProduct_BodyArg(int id, Product product);
-        [Route("DeleteProduct")]
+        [Route("DeleteProduct/{id}")]
         [HttpDelete]
-        public void DeleteProduct([FromQuery] int id)
+        public void DeleteProduct([FromRoute] int id)
         {
             return this.iProductService.DeleteProduct(id);
         }

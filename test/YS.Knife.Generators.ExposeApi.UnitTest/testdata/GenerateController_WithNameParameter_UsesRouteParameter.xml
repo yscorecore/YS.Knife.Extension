@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <case>
     <input>
         <code><![CDATA[using System;
@@ -33,9 +33,9 @@ namespace
         {
             this.iItemService = iItemService;
         }
-        [Route("GetItem")]
+        [Route("GetItem/{name}")]
         [HttpGet]
-        public global::Item GetItem([FromQuery] string name)
+        public global::Item GetItem([FromRoute] string name)
         {
             return this.iItemService.GetItem(name);
         }

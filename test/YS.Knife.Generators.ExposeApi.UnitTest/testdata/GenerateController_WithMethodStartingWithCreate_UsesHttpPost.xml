@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <case>
   <input>
     <code><![CDATA[using System;
@@ -29,9 +29,9 @@ namespace
         {
             this.iCreationService = iCreationService;
         }
-        [Route("CreateUser")]
+        [Route("CreateUser/{name}")]
         [HttpPost]
-        public string CreateUser([FromBody] string name)
+        public string CreateUser([FromRoute] string name)
         {
             return this.iCreationService.CreateUser(name);
         }
