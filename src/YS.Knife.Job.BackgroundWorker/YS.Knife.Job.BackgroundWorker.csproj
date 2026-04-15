@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+
+
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.EntityBase\YS.Knife.EntityBase.csproj" />
+      <ProjectReference Include="..\YS.Knife.Job.Core\YS.Knife.Job.Core.csproj" />
+    </ItemGroup>
+</Project>

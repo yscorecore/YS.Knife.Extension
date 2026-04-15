@@ -39,6 +39,7 @@ namespace YS.Knife.EnumCode.Impl.Default
         {
             var dis = fieldInfo.GetCustomAttribute<DisplayAttribute>();
             var des = fieldInfo.GetCustomAttribute<DescriptionAttribute>();
+          
             return new CodeInfo
             {
                 Key = Convert.ToInt32(fieldInfo.GetValue(null)),
