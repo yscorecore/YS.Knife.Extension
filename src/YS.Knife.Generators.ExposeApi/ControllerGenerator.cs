@@ -258,8 +258,18 @@ namespace {namespaceName}");
             Query,
             Body,
             Form,
-            Special
+            Special,
+            File,
+            FileProperty,
         }
+        private static Dictionary<string, SpecialType> FormFilePropertys = new Dictionary<string, SpecialType>
+        {
+            ["ContentType"] = SpecialType.System_String,
+            ["ContentDisposition"] = SpecialType.System_String,
+            ["Length"] = SpecialType.System_Int64,
+            ["Name"] = SpecialType.System_String,
+            ["FileName"] = SpecialType.System_String,
+        };
         private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method)
         {
             var returnType = method.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
@@ -269,35 +279,48 @@ namespace {namespaceName}");
             var comment = GetMethodComment(serviceType, method);
             var firstArgIsRoute = IsFirstRouteParameter(method);
             var route = firstArgIsRoute ? $"{methodName}/{{{method.Parameters[0].Name}}}" : methodName;
-            var hasStreamParameter = method.Parameters.Any(p => p.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::System.IO.Stream");
+            var allStreamParameterNames = method.Parameters.Where(p => IsStreamType(p.Type)).Select(p => p.Name).ToList();
+            var hasStreamParameter = allStreamParameterNames.Count > 0;
             var parameters = new List<string>();
             var args = new List<string>();
             var newClassLine = string.Empty;
             Func<IParameterSymbol, string> formatParam = (parameter) => $"{parameter.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)} {parameter.Name}";
 
-            var allParameters = new List<(IParameterSymbol, MethodParameterType)>();
+            var allParameters = new List<(IParameterSymbol, MethodParameterType, string)>();
 
             for (var i = 0; i < method.Parameters.Length; i++)
             {
+                var p = method.Parameters[i];
                 if (i == 0 && firstArgIsRoute)
                 {
-                    allParameters.Add((method.Parameters[i], MethodParameterType.Route));
+                    allParameters.Add((p, MethodParameterType.Route, p.Name));
                 }
-                else if (IsSpecialType(method.Parameters[i].Type))
+                else if (IsSpecialType(p.Type))
                 {
-                    allParameters.Add((method.Parameters[i], MethodParameterType.Special));
+                    allParameters.Add((p, MethodParameterType.Special, p.Name));
                 }
                 else if (hasStreamParameter)
                 {
-                    allParameters.Add((method.Parameters[i], MethodParameterType.Form));
+                    if (allStreamParameterNames.Contains(p.Name))
+                    {
+                        allParameters.Add((p, MethodParameterType.File, $"{p.Name}.OpenReadStream()"));
+                    }
+                    else if (IsFileProperty(p, out var formFile, out var formFileProperty))
+                    {
+                        allParameters.Add((p, MethodParameterType.FileProperty, $"{formFile}.{formFileProperty}"));
+                    }
+                    else
+                    {
+                        allParameters.Add((p, MethodParameterType.Form, p.Name));
+                    }
                 }
                 else if (noBody)
                 {
-                    allParameters.Add((method.Parameters[i], MethodParameterType.Query));
+                    allParameters.Add((p, MethodParameterType.Query, p.Name));
                 }
                 else
                 {
-                    allParameters.Add((method.Parameters[i], MethodParameterType.Body));
+                    allParameters.Add((p, MethodParameterType.Body, p.Name));
                 }
             }
 
@@ -305,15 +328,16 @@ namespace {namespaceName}");
 
             if (!moreThan1Body || hasStreamParameter)
             {
-                parameters.AddRange(allParameters.Select(p => p.Item2 switch
+                parameters.AddRange(allParameters.Where(p => p.Item2 != MethodParameterType.FileProperty).Select(p => p.Item2 switch
                 {
                     MethodParameterType.Route => $"[FromRoute] {formatParam(p.Item1)}",
                     MethodParameterType.Query => $"[FromQuery] {formatParam(p.Item1)}",
                     MethodParameterType.Body => $"[FromBody] {formatParam(p.Item1)}",
-                    MethodParameterType.Form => $"[FromForm] global::Microsoft.AspNetCore.Http.IFormFile {p.Item1.Name}",
+                    MethodParameterType.File => $"[FromForm] global::Microsoft.AspNetCore.Http.IFormFile {p.Item1.Name}",
+                    MethodParameterType.Form => $"[FromForm] {formatParam(p.Item1)}",
                     _ => formatParam(p.Item1)
                 }));
-                args.AddRange(allParameters.Select(p => p.Item1.Name));
+                args.AddRange(allParameters.Select(p => p.Item3));
             }
             else
             {
@@ -327,7 +351,7 @@ namespace {namespaceName}");
                 parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Special).Select(p => $"{formatParam(p.Item1)}"));
                 args.AddRange(allParameters.Select(p => p.Item2 switch
                 {
-                    MethodParameterType.Body => $"{newClassArgName}.{p.Item1.Name}",
+                    MethodParameterType.Body => $"{newClassArgName}.{p.Item3}",
                     _ => p.Item1.Name
                 }));
             }
@@ -348,6 +372,27 @@ public {returnType} {methodName}({paremeterLine})
 
 {newClassLine}
 ";
+
+            bool IsFileProperty(IParameterSymbol typeSymbol, out string formFileName, out string formFilePropertyName)
+            {
+                var pName = typeSymbol.Name;
+                formFileName = formFilePropertyName = string.Empty;
+                foreach (var p in allStreamParameterNames)
+                {
+                    if (pName.StartsWith(p))
+                    {
+                        var left = pName.Substring(p.Length);
+                        if (FormFilePropertys.TryGetValue(left, out var pType) && typeSymbol.Type.SpecialType == pType)
+                        {
+                            formFileName = p;
+                            formFilePropertyName = left;
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
         }
         private static bool IsSpecialType(ITypeSymbol typeSymbol)
         {
@@ -361,6 +406,11 @@ public {returnType} {methodName}({paremeterLine})
                     || typeFullName == "global::System.Security.Claims.ClaimsPrincipal";
             }
             return false;
+        }
+
+        private static bool IsStreamType(ITypeSymbol typeSymbol)
+        {
+            return typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::System.IO.Stream";
         }
         private static string GetHttpMethod(IMethodSymbol method)
         {

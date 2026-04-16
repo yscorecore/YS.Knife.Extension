@@ -113,5 +113,9 @@ namespace ExposeApiDemo
         {
             return SayHello();
         }
+        public Task Upload(Stream upload, string uploadFileName, long uploadLength, string name)
+        {
+            return Task.CompletedTask;
+        }
     }
 }
