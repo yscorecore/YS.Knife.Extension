@@ -21,10 +21,10 @@ namespace YS.Knife.Generators.ExposeApi
         private static readonly Dictionary<string, string[]> HttpMethodRules = new Dictionary<string, string[]>
         {
             {
-                "HttpGet", new string[] { "get", "query", "find", "fetch" }
+                "HttpGet", new string[] { "get", "query", "find", "fetch", "list", "read" }
             },
             {
-                "HttpPost", new string[] { "create", "add", "post", "upload", "save"}
+                "HttpPost", new string[] { "create", "add", "post", "upload", "save", "write"}
             },
             {
                 "HttpPut", new string[] { "update", "modify", "edit" }
@@ -325,8 +325,54 @@ namespace {namespaceName}");
             }
 
             var moreThan1Body = allParameters.Count(p => p.Item2 == MethodParameterType.Body) > 1;
+            if (hasStreamParameter)
+            {
 
-            if (!moreThan1Body || hasStreamParameter)
+
+                var bodyParameters = allParameters.Where(p => p.Item2 == MethodParameterType.File || p.Item2 == MethodParameterType.Form).ToList();
+                var newClassName = $"__{method.Name}_FormArg";
+                var newClassArgName = "arg";
+                newClassLine = $"public record {newClassName}({string.Join(", ", bodyParameters.Select(p => FormatFormProperty(p.Item2, p.Item1)))});";
+                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Route).Select(p => $"[FromRoute] {formatParam(p.Item1)}"));
+                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Query).Select(p => $"[FromQuery] {formatParam(p.Item1)}"));
+                parameters.Add($"[FromForm] {newClassName} {newClassArgName}");
+                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Special).Select(p => $"{formatParam(p.Item1)}"));
+                args.AddRange(allParameters.Select(p => p.Item2 switch
+                {
+                    MethodParameterType.FileProperty => $"{newClassArgName}.{p.Item3}",
+                    MethodParameterType.Form => $"{newClassArgName}.{p.Item3}",
+                    MethodParameterType.File => $"{newClassArgName}.{p.Item3}",
+                    _ => p.Item3
+                }));
+
+
+                string FormatFormProperty(MethodParameterType type, IParameterSymbol parameterSymbol)
+                {
+                    if (type == MethodParameterType.File)
+                    {
+                        return $"global::Microsoft.AspNetCore.Http.IFormFile {parameterSymbol.Name}";
+                    }
+                    else
+                    {
+                        return formatParam(parameterSymbol);
+                    }
+                }
+
+
+                //parameters.AddRange(allParameters.Where(p => p.Item2 != MethodParameterType.FileProperty).Select(p => p.Item2 switch
+                //{
+                //    MethodParameterType.Route => $"[FromRoute] {formatParam(p.Item1)}",
+                //    MethodParameterType.Query => $"[FromQuery] {formatParam(p.Item1)}",
+                //    MethodParameterType.Body => $"[FromBody] {formatParam(p.Item1)}",
+                //    MethodParameterType.File => $"[FromForm] global::Microsoft.AspNetCore.Http.IFormFile {p.Item1.Name}",
+                //    MethodParameterType.Form => $"[FromForm] {formatParam(p.Item1)}",
+                //    _ => formatParam(p.Item1)
+                //}));
+                //args.AddRange(allParameters.Select(p => p.Item3));
+
+            }
+
+            else if (!moreThan1Body)
             {
                 parameters.AddRange(allParameters.Where(p => p.Item2 != MethodParameterType.FileProperty).Select(p => p.Item2 switch
                 {
