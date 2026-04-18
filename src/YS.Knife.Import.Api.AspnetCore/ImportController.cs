@@ -16,8 +16,7 @@ namespace YS.Knife.Import.Api.AspnetCore
         public Task<ImportToken> BeginImport([Required][FromForm] IFormFile file)
         {
             using var stream = file.OpenReadStream();
-            var fileExt = Path.GetExtension(file.FileName);
-            return importService.BeginImport(stream, fileExt);
+            return importService.BeginImport(stream, file.FileName);
         }
         [HttpGet]
         [Route("read-column")]

@@ -28,8 +28,9 @@ namespace YS.Knife.Import.Impl.Base
         }
 
 
-        public async Task<ImportToken> BeginImport(Stream data, string fileExt)
+        public async Task<ImportToken> BeginImport(Stream data, string dataFileName)
         {
+            var fileExt = Path.GetExtension(dataFileName);
             var token = Guid.NewGuid();
             var expiredIn = DateTimeOffset.Now.AddSeconds(importOptions.ExpiredIn);
             var exportInfo = new ImportInfo

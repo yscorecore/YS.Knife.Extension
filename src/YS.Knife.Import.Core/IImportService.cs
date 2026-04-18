@@ -4,7 +4,7 @@ namespace YS.Knife.Import.Abstractions
 {
     public interface IImportService
     {
-        Task<ImportToken> BeginImport(Stream data, string fileExt);
+        Task<ImportToken> BeginImport(Stream data, string dataFileName);
         Task<Dictionary<string, List<Dictionary<string, object>>>> ReadData(Guid token, EntityMetadata[] entityMetadata);
         Task<bool> EndImport(Guid token);
         Task<Dictionary<string, List<ColumnInfo>>> ReadColumns(Guid token);
