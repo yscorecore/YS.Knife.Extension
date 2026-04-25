@@ -10,7 +10,9 @@ namespace YS.Knife
     {
         public static CustomSwagger Instance { get; } = new CustomSwagger();
 
+
         private readonly ConcurrentDictionary<string, List<string>> _schemaNameRepetition = new();
+        private readonly ConcurrentDictionary<string, int> _operationIdRepetition = new();
 
         // borrowed from https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/95cb4d370e08e54eb04cf14e7e6388ca974a686e/src/Swashbuckle.AspNetCore.SwaggerGen/SchemaGenerator/SchemaGeneratorOptions.cs#L44
         private string DefaultSchemaIdSelector(Type modelType)
@@ -40,7 +42,8 @@ namespace YS.Knife
 
             return $"{id}{(index >= 1 ? index.ToString() : string.Empty)}";
         }
-        public string GetOperationId(ApiDescription apiDesc)
+
+        public string GetUniqueOperationId(ApiDescription apiDesc)
         {
             // 优先使用HttpMethod特性指定的Name
             var httpMethodAttribute = apiDesc.ActionDescriptor.EndpointMetadata
@@ -49,17 +52,36 @@ namespace YS.Knife
 
             if (!string.IsNullOrEmpty(httpMethodAttribute?.Name))
             {
-                return httpMethodAttribute.Name;
+                return GetUniqueOperationId(httpMethodAttribute.Name);
             }
 
             // 如果没有指定，则使用方法名
             if (apiDesc.ActionDescriptor is ControllerActionDescriptor actionDescriptor)
             {
-                return actionDescriptor.ActionName;
+
+                return GetUniqueOperationId(actionDescriptor.ActionName);
             }
 
             // 默认生成规则
-            return apiDesc.ActionDescriptor.RouteValues.TryGetValue("action", out var name) ? name : null;
+            return GetUniqueOperationId(apiDesc.ActionDescriptor.RouteValues.TryGetValue("action", out var name) ? name : null);
+        }
+        private string? GetUniqueOperationId(string? defaultId)
+        {
+            if (string.IsNullOrEmpty(defaultId))
+            {
+                return defaultId;
+            }
+
+            if (_operationIdRepetition.TryGetValue(defaultId, out var count))
+            {
+                _operationIdRepetition[defaultId] = count + 1;
+                return $"{defaultId}_{count + 1}";
+            }
+            else
+            {
+                _operationIdRepetition[defaultId] = 1;
+                return defaultId;
+            }
         }
     }
 }
