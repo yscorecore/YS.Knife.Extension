@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
+using System.Text.RegularExpressions;
 using FlyTiger;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -18,28 +19,61 @@ namespace YS.Knife.Generators.ExposeApi
         const string AttributeName = "ExposeApiAttribute";
         internal static string AttributeFullName = $"{NameSpaceName}.{AttributeName}";
 
-        private static readonly Dictionary<string, string[]> HttpMethodRules = new Dictionary<string, string[]>
+        const string ConfigAttributeName = "ExposeApiConfigAttribute";
+        internal static string ConfigAttributeFullName = $"{NameSpaceName}.{ConfigAttributeName}";
+
+        private const string DefaultHttpGetPattern = "^(get|query|find|fetch|list|read)";
+        private const string DefaultHttpPostPattern = "^(create|add|post|upload|save|write)";
+        private const string DefaultHttpPutPattern = "^(update|modify|edit)";
+        private const string DefaultHttpDeletePattern = "^(delete|remove)";
+        private const string DefaultHttpPatchPattern = "^patch";
+
+        private static readonly Dictionary<string, Regex> DefaultHttpMethodRules = new Dictionary<string, Regex>(StringComparer.OrdinalIgnoreCase)
         {
-            {
-                "HttpGet", new string[] { "get", "query", "find", "fetch", "list", "read" }
-            },
-            {
-                "HttpPost", new string[] { "create", "add", "post", "upload", "save", "write"}
-            },
-            {
-                "HttpPut", new string[] { "update", "modify", "edit" }
-            },
-            {
-                "HttpDelete", new string[] { "delete", "remove" }
-            },
-            {
-                "HttpPatch", new string[] { "patch" }
-            }
+            { "HttpGet", new Regex(DefaultHttpGetPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled) },
+            { "HttpPost", new Regex(DefaultHttpPostPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled) },
+            { "HttpPut", new Regex(DefaultHttpPutPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled) },
+            { "HttpDelete", new Regex(DefaultHttpDeletePattern, RegexOptions.IgnoreCase | RegexOptions.Compiled) },
+            { "HttpPatch", new Regex(DefaultHttpPatchPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled) }
         };
         private static readonly HashSet<string> RouteFieldNames = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
         {
             "id", "name", "key"
         };
+
+        const string ConfigAttributeCode = @"using System;
+namespace YS.Knife
+{
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    sealed class ExposeApiConfigAttribute : Attribute
+    {
+        /// <summary>
+        /// HttpGet方法匹配的正则表达式
+        /// </summary>
+        public string HttpGetMatches { get; set; } = """ + DefaultHttpGetPattern + @""";
+
+        /// <summary>
+        /// HttpPost方法匹配的正则表达式
+        /// </summary>
+        public string HttpPostMatches { get; set; } = """ + DefaultHttpPostPattern + @""";
+
+        /// <summary>
+        /// HttpPut方法匹配的正则表达式
+        /// </summary>
+        public string HttpPutMatches { get; set; } = """ + DefaultHttpPutPattern + @""";
+
+        /// <summary>
+        /// HttpDelete方法匹配的正则表达式
+        /// </summary>
+        public string HttpDeleteMatches { get; set; } = """ + DefaultHttpDeletePattern + @""";
+
+        /// <summary>
+        /// HttpPatch方法匹配的正则表达式
+        /// </summary>
+        public string HttpPatchMatches { get; set; } = """ + DefaultHttpPatchPattern + @""";
+    }
+}
+";
 
         const string AttributeCode = @"using System;
 namespace YS.Knife
@@ -51,7 +85,7 @@ namespace YS.Knife
         /// 要注入的服务类型
         /// </summary>
         public Type ServiceType { get; }
-        
+
         /// <summary>
         /// Controller的路由前缀
         /// </summary>
@@ -61,7 +95,7 @@ namespace YS.Knife
         /// 允许匿名访问
         /// </summary>
         public bool AllowAnonymous { get; set; } = false;
-        
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -81,6 +115,7 @@ namespace YS.Knife
             context.RegisterPostInitializationOutput(i =>
             {
                 i.AddSource($"{AttributeFullName}.g.cs", AttributeCode);
+                i.AddSource($"{ConfigAttributeFullName}.g.cs", ConfigAttributeCode);
             });
             // 注册语法接收器
             var classDeclarations = context.SyntaxProvider
@@ -101,7 +136,9 @@ namespace YS.Knife
         private static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classDeclarations, SourceProductionContext context)
         {
             var dynamicApiAttributeType = compilation.GetTypeByMetadataName(AttributeFullName);
+            var configAttributeType = compilation.GetTypeByMetadataName(ConfigAttributeFullName);
 
+            var defaultRules = GetHttpMethodRules(compilation, configAttributeType);
             var codeWriter = new CodeWriter(compilation, context);
             // 查找所有标记了DynamicApiAttribute的类
             foreach (var classDecl in classDeclarations)
@@ -110,16 +147,60 @@ namespace YS.Knife
                 var symbol = semanticModel.GetDeclaredSymbol(classDecl);
                 if (symbol == null)
                     continue;
+                var classConfigAttr = symbol.GetAttributes().FirstOrDefault(a => a.AttributeClass != null && a.AttributeClass.Equals(configAttributeType, SymbolEqualityComparer.Default));
+                var httpMethodRules = classConfigAttr != null
+                    ? GetHttpMethodRulesWithConfig(defaultRules, classConfigAttr)
+                    : defaultRules;
+
                 var attrs = symbol.GetAttributes().Where(p => p.AttributeClass != null && p.AttributeClass.Equals(dynamicApiAttributeType, SymbolEqualityComparer.Default))
                         .ToImmutableList();
                 foreach (var attr in attrs)
                 {
-                    GeneratorController(classDecl, attr, codeWriter);
+                    GeneratorController(classDecl, attr, codeWriter, httpMethodRules);
                 }
             }
 
         }
-        private static void GeneratorController(ClassDeclarationSyntax classDeclarationSyntax, AttributeData attributeData, CodeWriter writer)
+        private static Dictionary<string, Regex> GetHttpMethodRules(Compilation compilation, INamedTypeSymbol configAttributeType)
+        {
+            var rules = new Dictionary<string, Regex>(DefaultHttpMethodRules, StringComparer.OrdinalIgnoreCase);
+
+            var assemblyAttr = compilation.Assembly.GetAttributes().FirstOrDefault(a => a.AttributeClass != null && a.AttributeClass.Equals(configAttributeType, SymbolEqualityComparer.Default));
+            if (assemblyAttr != null)
+            {
+                ApplyConfigAttribute(assemblyAttr, rules);
+            }
+
+            return rules;
+        }
+
+        private static Dictionary<string, Regex> GetHttpMethodRulesWithConfig(Dictionary<string, Regex> defaultRules, AttributeData classConfigAttr)
+        {
+            var rules = new Dictionary<string, Regex>(defaultRules, StringComparer.OrdinalIgnoreCase);
+            ApplyConfigAttribute(classConfigAttr, rules);
+            return rules;
+        }
+
+        private static void ApplyConfigAttribute(AttributeData configAttr, Dictionary<string, Regex> rules)
+        {
+            foreach (var arg in configAttr.NamedArguments)
+            {
+                var key = arg.Key switch
+                {
+                    "HttpGetMatches" => "HttpGet",
+                    "HttpPostMatches" => "HttpPost",
+                    "HttpPutMatches" => "HttpPut",
+                    "HttpDeleteMatches" => "HttpDelete",
+                    "HttpPatchMatches" => "HttpPatch",
+                    _ => arg.Key
+                };
+                if (arg.Value.Value is string pattern && !string.IsNullOrEmpty(pattern))
+                {
+                    rules[key] = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                }
+            }
+        }
+        private static void GeneratorController(ClassDeclarationSyntax classDeclarationSyntax, AttributeData attributeData, CodeWriter writer, Dictionary<string, Regex> httpMethodRules)
         {
             // 获取服务类型
             var serviceTypeSymbol = attributeData.ConstructorArguments[0].Value as INamedTypeSymbol;
@@ -180,7 +261,7 @@ namespace {namespaceName}");
                 .Where(m => m.MethodKind == MethodKind.Ordinary && m.IsGenericMethod == false && m.DeclaredAccessibility == Accessibility.Public && m.ContainingType.SpecialType != SpecialType.System_Object && !m.IsStatic))
             {
                 codeBuilder.AppendLine();
-                codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method));
+                codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method, httpMethodRules));
             }
 
             codeBuilder.EndAllSegments();
@@ -270,11 +351,11 @@ namespace {namespaceName}");
             ["Name"] = SpecialType.System_String,
             ["FileName"] = SpecialType.System_String,
         };
-        private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method)
+        private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method, Dictionary<string, Regex> httpMethodRules)
         {
             var returnType = method.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             var methodName = method.Name;
-            var httpMethod = GetHttpMethod(method);
+            var httpMethod = GetHttpMethod(method, httpMethodRules);
             var noBody = httpMethod == "HttpGet" || httpMethod == "HttpDelete";
             var comment = GetMethodComment(serviceType, method);
             var firstArgIsRoute = IsFirstRouteParameter(method);
@@ -458,13 +539,13 @@ public {returnType} {methodName}({paremeterLine})
         {
             return typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::System.IO.Stream";
         }
-        private static string GetHttpMethod(IMethodSymbol method)
+        private static string GetHttpMethod(IMethodSymbol method, Dictionary<string, Regex> httpMethodRules)
         {
             var hasReturnType = HasReturnType(method.ReturnType);
-            var lowerMethodName = method.Name.ToLower();
-            foreach (var rule in HttpMethodRules)
+            var methodName = method.Name;
+            foreach (var rule in httpMethodRules)
             {
-                if (rule.Value.Any(prefix => lowerMethodName.StartsWith(prefix)))
+                if (rule.Value.IsMatch(methodName))
                 {
                     return rule.Key;
                 }

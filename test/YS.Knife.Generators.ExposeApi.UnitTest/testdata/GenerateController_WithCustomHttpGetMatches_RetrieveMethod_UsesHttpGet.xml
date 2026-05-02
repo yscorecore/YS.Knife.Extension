@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+[assembly: YS.Knife.ExposeApiConfig(HttpGetMatches = "^(get|query|find|fetch|list|read|retrieve)")]
+
+public interface IRetrievalService
+{
+    string RetrieveUser(string id);
+}
+
+[YS.Knife.ExposeApi(typeof(IRetrievalService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="RetrievalController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class RetrievalController : ControllerBase
+    {
+        private readonly global::IRetrievalService iRetrievalService;
+        public RetrievalController(global::IRetrievalService iRetrievalService)
+        {
+            this.iRetrievalService = iRetrievalService;
+        }
+        [Route("RetrieveUser/{id}")]
+        [HttpGet]
+        public string RetrieveUser([FromRoute] string id)
+        {
+            return this.iRetrievalService.RetrieveUser(id);
+        }
+    }
+}]]></code>
+    </output>
+</case>

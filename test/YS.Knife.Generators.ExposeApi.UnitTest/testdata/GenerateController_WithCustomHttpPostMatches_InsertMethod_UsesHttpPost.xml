@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+[assembly: YS.Knife.ExposeApiConfig(HttpPostMatches = "^(create|add|insert)")]
+
+public interface IInsertionService
+{
+    string InsertUser(string name);
+}
+
+[YS.Knife.ExposeApi(typeof(IInsertionService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="InsertionController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class InsertionController : ControllerBase
+    {
+        private readonly global::IInsertionService iInsertionService;
+        public InsertionController(global::IInsertionService iInsertionService)
+        {
+            this.iInsertionService = iInsertionService;
+        }
+        [Route("InsertUser/{name}")]
+        [HttpPost]
+        public string InsertUser([FromRoute] string name)
+        {
+            return this.iInsertionService.InsertUser(name);
+        }
+    }
+}]]></code>
+    </output>
+</case>

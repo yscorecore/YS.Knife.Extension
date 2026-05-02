@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+[assembly: YS.Knife.ExposeApiConfig(HttpGetMatches = "^(get|query|find|fetch|list|read|create)")]
+
+public interface IDataService
+{
+    string CreateUser(string name);
+}
+
+[YS.Knife.ExposeApi(typeof(IDataService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="DataController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class DataController : ControllerBase
+    {
+        private readonly global::IDataService iDataService;
+        public DataController(global::IDataService iDataService)
+        {
+            this.iDataService = iDataService;
+        }
+        [Route("CreateUser/{name}")]
+        [HttpGet]
+        public string CreateUser([FromRoute] string name)
+        {
+            return this.iDataService.CreateUser(name);
+        }
+    }
+}]]></code>
+    </output>
+</case>

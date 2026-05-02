@@ -57,6 +57,10 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
         [InlineData("GenerateController_WithMixedParameters_HandlesCorrectly")]
         [InlineData("GenerateController_WithGenericService_GeneratesCorrectControllerName")]
         [InlineData("GenerateController_WithDuplicateServiceType_GeneratesUniqueControllerNames")]
+        [InlineData("GenerateController_WithCustomHttpPostMatches_InsertMethod_UsesHttpPost")]
+        [InlineData("GenerateController_WithCustomHttpGetMatches_RetrieveMethod_UsesHttpGet")]
+        [InlineData("GenerateController_WithOverriddenHttpGetMatches_CreateMethod_UsesHttpGet")]
+        [InlineData("GenerateController_WithClassLevelConfig_UsesClassConfig")]
         public void GenerateController_FromXml_TestCase(string caseName)
         {
             var testCase = LoadTestCase(caseName);
