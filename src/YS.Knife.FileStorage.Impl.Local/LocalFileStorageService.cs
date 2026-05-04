@@ -67,8 +67,16 @@ namespace YS.Knife.FileStorage.Impl.Local
         }
         private string GetAccessUrl(string key)
         {
-            var request = _httpContextAccessor.HttpContext.Request;
-            return $"{request.Scheme}://{request.Host}{request.PathBase}/{uploadOptions.UploadRootFolder}/{key}".Replace('\\', '/');
+            if (string.IsNullOrEmpty(uploadOptions.PublicPoint))
+            {
+                var request = _httpContextAccessor.HttpContext.Request;
+                return $"{request.Scheme}://{request.Host}{request.PathBase}/{uploadOptions.UploadRootFolder}/{key}".Replace('\\', '/');
+            }
+            else
+            { 
+                return uploadOptions.PublicPoint.JoinUrl(key);
+            }
+            
         }
 
         public Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, FileCategory category, CancellationToken cancellationToken = default)

@@ -4,5 +4,7 @@
     public class UploadOptions
     {
         public string UploadRootFolder { get; set; } = "upload";
+
+        public string PublicPoint { get; set; }
     }
 }
