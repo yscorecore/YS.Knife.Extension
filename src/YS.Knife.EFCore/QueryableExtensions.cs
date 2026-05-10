@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Security.Cryptography;
 using FlyTiger;
 using YS.Knife.Entity;
 
@@ -99,6 +100,73 @@ namespace Microsoft.EntityFrameworkCore
             {
                 throw EntityAlreadyExists(GetEntityName(typeof(T)), value);
             }
+        }
+
+        static MethodInfo GenericMethod = typeof(Enumerable)
+                 .GetMethod(nameof(Enumerable.Contains),
+                  BindingFlags.Static | BindingFlags.Public,
+                  new Type[]
+                  {
+                    typeof(IEnumerable<>).MakeGenericType(Type.MakeGenericMethodParameter(0)),
+                    Type.MakeGenericMethodParameter(0)
+                  });
+
+        public static async Task CheckDuplicateAsync<T, TValue>(IQueryable<T> source, Expression<Func<T, TValue>> prop, params TValue[] values)
+        {
+            var duplicateKey = values.GroupBy(p => p).Where(t => t.Count() > 1)
+                .Select(p => p.Key).FirstOrDefault();
+            if (!object.Equals(duplicateKey, default(TValue)))
+            {
+                throw new Exception("输入的数据重复");
+            }
+           
+            var method = GenericMethod!.MakeGenericMethod(typeof(TValue));
+
+            var containsExpression = Expression.Call(method, Expression.Constant(values), prop.Body);
+            var filter = Expression.Lambda<Func<T, bool>>(containsExpression, prop.Parameters.ToArray());
+            var currents = await source.Where(filter).Select(prop).ToListAsync();
+            if (currents.Count > 0)
+            {
+                throw new Exception("名称重复");
+            }
+        }
+        public static async Task CheckEditDuplicateAsync<T, TId, TValue>(IQueryable<T> source, Expression<Func<T, TValue>> prop, IEnumerable<(TId,TValue)> values)
+            where T : IEntity<TId>
+            where TId : notnull
+        {
+            var duplicateKey = values.GroupBy(p => p.Item2).Where(t => t.Count() > 1)
+               .Select(p => p.Key).FirstOrDefault();
+            if (!object.Equals(duplicateKey, default(TValue)))
+            {
+                throw new Exception("输入的数据重复");
+            }
+            var method = GenericMethod!.MakeGenericMethod(typeof(TValue));
+            var nameValues = values.Select(p => p.Item2).ToHashSet();
+            var containsExpression = Expression.Call(method, Expression.Constant(nameValues), prop.Body);
+            var filter = Expression.Lambda<Func<T, bool>>(containsExpression, prop.Parameters.ToArray());
+
+            var newIdValuePair = Expression.New(typeof(IdValuePair<TId, TValue>));
+
+            var idBind = Expression.Bind(typeof(IdValuePair<TId, TValue>).GetProperty(nameof(IdValuePair<string, string>.Id))!,
+                Expression.Property(prop.Parameters.Single(), typeof(T).GetProperty(nameof(IEntity<string>.Id))!)
+                );
+            var valueBind = Expression.Bind(typeof(IdValuePair<TId, TValue>).GetProperty(nameof(IdValuePair<string, string>.Value))!, prop.Body);
+
+            var memberInit = Expression.MemberInit(newIdValuePair, new[] { idBind, valueBind });
+            var selector = Expression.Lambda<Func<T, IdValuePair<TId, TValue>>>(memberInit, prop.Parameters);
+            var currents = await source.Where(filter).Select(selector).ToListAsync();
+            var editIds = values.Select(p => p.Item1).ToHashSet();
+            var invalidItems = currents.Where(p => !editIds.Contains(p.Id)).ToList();
+            if (invalidItems.Count > 0)
+            {
+                var first = invalidItems.First();
+                throw EntityAlreadyExists(GetEntityName(typeof(T)), first.Id);
+            }
+        }
+        private class IdValuePair<TID, TValue>
+        {
+            public TID Id { get; set; }
+            public TValue Value { get; set; }
         }
 
         private static string GetEntityName(Type type)
