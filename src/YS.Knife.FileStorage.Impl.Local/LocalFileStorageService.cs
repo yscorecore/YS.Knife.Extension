@@ -73,10 +73,10 @@ namespace YS.Knife.FileStorage.Impl.Local
                 return $"{request.Scheme}://{request.Host}{request.PathBase}/{uploadOptions.UploadRootFolder}/{key}".Replace('\\', '/');
             }
             else
-            { 
+            {
                 return uploadOptions.PublicPoint.JoinUrl(key);
             }
-            
+
         }
 
         public Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, FileCategory category, CancellationToken cancellationToken = default)

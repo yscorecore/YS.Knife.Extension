@@ -22,7 +22,7 @@ namespace YS.Knife.Generators.ExposeApi
         const string ConfigAttributeName = "ExposeApiConfigAttribute";
         internal static string ConfigAttributeFullName = $"{NameSpaceName}.{ConfigAttributeName}";
 
-        private const string DefaultHttpGetPattern = "^(get|query|find|fetch|list|read)";
+        private const string DefaultHttpGetPattern = "^(get|query|find|fetch|list)";
         private const string DefaultHttpPostPattern = "^(create|add|post|upload|save|write)";
         private const string DefaultHttpPutPattern = "^(update|modify|edit)";
         private const string DefaultHttpDeletePattern = "^(delete|remove)";
@@ -95,6 +95,16 @@ namespace YS.Knife
         /// 允许匿名访问
         /// </summary>
         public bool AllowAnonymous { get; set; } = false;
+
+        /// <summary>
+        /// 包含的方法名称列表，如果配置则只生成列表中的方法
+        /// </summary>
+        public string[] Includes { get; set; } = Array.Empty<string>();
+
+        /// <summary>
+        /// 排除的方法名称列表，如果配置则忽略列表中的方法
+        /// </summary>
+        public string[] Excludes { get; set; } = Array.Empty<string>();
 
         /// <summary>
         /// 构造函数
@@ -260,6 +270,10 @@ namespace {namespaceName}");
                 .OfType<IMethodSymbol>()
                 .Where(m => m.MethodKind == MethodKind.Ordinary && m.IsGenericMethod == false && m.DeclaredAccessibility == Accessibility.Public && m.ContainingType.SpecialType != SpecialType.System_Object && !m.IsStatic))
             {
+                if (!ShouldGenerateMethod(method.Name, attributeData))
+                {
+                    continue;
+                }
                 codeBuilder.AppendLine();
                 codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method, httpMethodRules));
             }
@@ -291,6 +305,29 @@ namespace {namespaceName}");
                     return (bool)routePrefixArg.Value.Value;
                 }
                 return false;
+            }
+            bool ShouldGenerateMethod(string methodName, AttributeData attrData)
+            {
+                var includesArg = attrData.NamedArguments.FirstOrDefault(arg => arg.Key == "Includes");
+                var excludesArg = attrData.NamedArguments.FirstOrDefault(arg => arg.Key == "Excludes");
+
+                if (includesArg.Key == "Includes" && includesArg.Value.Value != null)
+                {
+                    if (includesArg.Value.Value is string[] includes && includes.Length > 0)
+                    {
+                        return includes.Any(x => string.Equals(x, methodName, StringComparison.OrdinalIgnoreCase));
+                    }
+                }
+
+                if (excludesArg.Key == "Excludes" && excludesArg.Value.Value != null)
+                {
+                    if (excludesArg.Value.Value is string[] excludes && excludes.Length > 0)
+                    {
+                        return !excludes.Any(x => string.Equals(x, methodName, StringComparison.OrdinalIgnoreCase));
+                    }
+                }
+
+                return true;
             }
             string GetServiceFieldName(INamedTypeSymbol serviceType)
             {

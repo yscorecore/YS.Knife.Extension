@@ -65,6 +65,10 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
         {
             var testCase = LoadTestCase(caseName);
             var generatedCode = GenerateSourceAsync(testCase.InputCode);
+            if (generatedCode.Count == 0)
+            {
+                throw new Exception($"No code generated for input: {testCase.InputCode.Substring(0, Math.Min(200, testCase.InputCode.Length))}");
+            }
             foreach (var expectedOutput in testCase.ExpectedOutputs)
             {
                 var normalizedExpected = NormalizeWhitespace(expectedOutput.Code);
@@ -126,6 +130,10 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
 
             var runResult = driver.RunGenerators(compilation);
             var result = runResult.GetRunResult();
+            if (result.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
+            {
+                throw new Exception("Generator error: " + string.Join(", ", result.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).Select(d => d.GetMessage())));
+            }
             var dic = new Dictionary<string, string>();
             foreach (var tree in result.GeneratedTrees)
             {
