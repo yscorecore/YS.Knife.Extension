@@ -558,16 +558,27 @@ public {returnType} {methodName}({paremeterLine})
                 return false;
             }
         }
+        private static readonly HashSet<string> SpecialTypeFullNames = new HashSet<string>
+        {
+            "global::System.Threading.CancellationToken",
+            "global::Microsoft.AspNetCore.Http.HttpContext",
+            "global::Microsoft.AspNetCore.Http.HttpRequest",
+            "global::Microsoft.AspNetCore.Http.HttpResponse",
+            "global::System.Security.Claims.ClaimsPrincipal",
+            "global::System.Security.Principal.IPrincipal",
+            "global::Microsoft.AspNetCore.Http.IFormCollection",
+            "global::Microsoft.AspNetCore.Http.IFormFile",
+            "global::Microsoft.AspNetCore.Http.IFormFileCollection",
+            "global::Microsoft.AspNetCore.Http.IQueryCollection",
+            "global::Microsoft.AspNetCore.Http.IHeaderDictionary"
+        };
+
         private static bool IsSpecialType(ITypeSymbol typeSymbol)
         {
             if (typeSymbol is INamedTypeSymbol namedType)
             {
                 var typeFullName = namedType.ToDisplayFullString();
-                return typeFullName == "global::System.Threading.CancellationToken"
-                    || typeFullName == "global::Microsoft.AspNetCore.Http.HttpContext"
-                    || typeFullName == "global::Microsoft.AspNetCore.Http.HttpRequest"
-                    || typeFullName == "global::Microsoft.AspNetCore.Http.HttpResponse"
-                    || typeFullName == "global::System.Security.Claims.ClaimsPrincipal";
+                return SpecialTypeFullNames.Contains(typeFullName);
             }
             return false;
         }
