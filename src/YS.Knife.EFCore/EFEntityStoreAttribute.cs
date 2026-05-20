@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using YS.Knife.Entity;
 using YS.Knife.Query;
 using YS.Knife.Service;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace YS.Knife.EFCore
 {
@@ -84,7 +85,15 @@ namespace YS.Knife.EFCore
         public async Task Delete(TKey[] ids, CancellationToken token = default)
         {
             var entitys = await _entityStore.Current.FindArrayOrThrowAsync(ids, token);
-            _entityStore.DeleteRange(entitys);
+            if (typeof(ISoftDeleteEntity).IsAssignableFrom(typeof(T)))
+            {
+                entitys.OfType<ISoftDeleteEntity>().ToList().ForEach(p => { p.IsDeleted = true; });
+            }
+            else
+            {
+                _entityStore.DeleteRange(entitys);
+            }
+
             await _entityStore.SaveChangesAsync(token);
         }
 

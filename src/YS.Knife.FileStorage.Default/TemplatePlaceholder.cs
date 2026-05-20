@@ -9,8 +9,8 @@ using System.Xml.Linq;
 namespace YS.Knife.FileStorage
 {
     [AutoConstructor]
-    [SingletonPattern]
-    public partial class TemplatePlaceholder
+    [Service(Lifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton)]
+    public partial class TemplatePlaceholder : ITemplatePlaceholder
     {
         private static readonly Regex _regex = new(@"(?<user>\$)?\{\s*(?<name>\w+)\s*(:(?<fmt>.+?))?\}");
         public string FillPlaceholder(string placeHolder, IDictionary<string, string> userArgs, IDictionary<string, ISystemArgProvider> systemArgs)
@@ -39,9 +39,13 @@ namespace YS.Knife.FileStorage
                         var format = string.IsNullOrEmpty(fmt) ? sysArg.DefaultFormatter : fmt;
                         return FormatValue(sysArg.GetValue(), format);
                     }
+                    else if (userArgs.TryGetValue(name, out var userArg))
+                    {
+                        return FormatValue(userArg, fmt);
+                    }
                     else
                     {
-                        throw new Exception($"System argument '{name}' not found. Support system arguments: [{string.Join(", ", systemArgs.Keys)}].");
+                        throw new Exception($"Argument '{name}' not found. Support arguments: [{string.Join(", ", systemArgs.Keys.Concat(userArgs.Keys))}].");
                     }
                 }
             });

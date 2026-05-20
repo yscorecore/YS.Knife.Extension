@@ -8,7 +8,6 @@ namespace YS.Knife.WebHooks
 {
     public interface IWebHookDeliveryService
     {
-        Task SendEvent<T>
-            (WebhookEvent<T> webhookEvent, WebhookConfig config, CancellationToken token = default);
+        Task SendEvent<T>(WebhookEvent<T> webhookEvent, WebhookConfig config, CancellationToken token = default);
     }
 }

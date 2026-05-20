@@ -7,7 +7,7 @@ namespace YS.Knife.FileStorage
         public string ServiceName { get; set; }
         public string FileFormName { get; set; } = "file";
         [Required(AllowEmptyStrings = false)]
-        public string PathTemplate { get; set; }
+        public string PathTemplate { get; set; } = "${category}/{now:yyyyMMdd}/{guid}${ext}";
         public Dictionary<string, object> Metadata { get; set; }
         public string[] Interceptors { get; set; }
         public long MaxLength { get; set; } = 4 * 1024 * 1024;

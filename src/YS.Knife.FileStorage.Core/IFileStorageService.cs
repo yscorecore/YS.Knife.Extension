@@ -13,4 +13,5 @@ namespace YS.Knife.FileStorage
 
         //Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, FileCategory category, CancellationToken cancellationToken = default);
     }
+
 }
