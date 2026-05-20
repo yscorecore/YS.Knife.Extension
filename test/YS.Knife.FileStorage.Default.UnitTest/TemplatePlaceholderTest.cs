@@ -63,7 +63,7 @@ namespace YS.Knife.FileStorage.Api.AspnetCore.UnitTest
                 .Where(p => typeof(ISystemArgProvider).IsAssignableFrom(p) && p.GetConstructor(Type.EmptyTypes) != null && p.IsDefined(typeof(DictionaryKeyAttribute)))
                 .ToDictionary(p => p.GetCustomAttribute<DictionaryKeyAttribute>().Key, p => Activator.CreateInstance(p) as ISystemArgProvider);
             var userArgs = new Dictionary<string, string>();
-            return TemplatePlaceholder.Instance.FillPlaceholder(placeHolder, userArgs, systemArgs); ;
+            return new TemplatePlaceholder().FillPlaceholder(placeHolder, userArgs, systemArgs); ;
         }
 
 

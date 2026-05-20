@@ -2,7 +2,7 @@
 
 namespace DataItemDemo
 {
-    [ExposeDataItemApi(typeof(IService1), nameof(IService1.GetTaskValue))]
+    //[ExposeDataItemApi(typeof(IService1), nameof(IService1.GetTaskValue))]
     public class Program : YS.Knife.Hosting.KnifeWebHost
     {
         public Program(string[] args) : base(args)
@@ -24,16 +24,5 @@ namespace DataItemDemo
 
 
 
-    }
-    [System.AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
-    sealed class ExposeDataItemApiAttribute : Attribute
-    {
-
-        public ExposeDataItemApiAttribute(Type serviceType, params string[] methods)
-        {
-            this.Methods = methods;
-        }
-        public Type ServiceType { get; set; }
-        public string[] Methods { get; set; }
     }
 }

@@ -1,0 +1,5 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.FileStorage.Default\YS.Knife.FileStorage.Default.csproj" />
+  </ItemGroup>
+</Project>
