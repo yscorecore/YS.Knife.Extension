@@ -119,7 +119,7 @@ namespace Microsoft.EntityFrameworkCore
             {
                 throw new Exception("输入的数据重复");
             }
-           
+
             var method = GenericMethod!.MakeGenericMethod(typeof(TValue));
 
             var containsExpression = Expression.Call(method, Expression.Constant(values), prop.Body);
@@ -130,7 +130,7 @@ namespace Microsoft.EntityFrameworkCore
                 throw new Exception("名称重复");
             }
         }
-        public static async Task CheckEditDuplicateAsync<T, TId, TValue>(IQueryable<T> source, Expression<Func<T, TValue>> prop, IEnumerable<(TId,TValue)> values)
+        public static async Task CheckEditDuplicateAsync<T, TId, TValue>(IQueryable<T> source, Expression<Func<T, TValue>> prop, IEnumerable<(TId, TValue)> values)
             where T : IEntity<TId>
             where TId : notnull
         {
