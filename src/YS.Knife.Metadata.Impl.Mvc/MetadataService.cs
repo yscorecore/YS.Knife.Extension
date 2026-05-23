@@ -46,7 +46,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
             }
             return metadataInfo;
         }
-        public Task<List<string>> ListAllNames(CancellationToken cancellationToken = default)
+        public Task<List<string>> ListAll(CancellationToken cancellationToken = default)
         {
             return Task.FromResult(metadataOptions.Value.Metas.Keys.ToList());
         }

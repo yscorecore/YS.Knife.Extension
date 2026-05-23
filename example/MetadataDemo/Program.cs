@@ -5,6 +5,7 @@ using YS.Knife.Metadata;
 
 namespace MetadataDemo
 {
+    [YS.Knife.ExposeApi(typeof(IMetadataService))]
     public class Program : YS.Knife.Hosting.KnifeWebHost
     {
         public Program(string[] args) : base(args)
@@ -19,6 +20,7 @@ namespace MetadataDemo
     [DisplayName("日度报表")]
     public record ReportInfo
     {
+        [Display(Name = "报表Id", Description = "报表Id描述", Order = 100)]
         [DisplayName("报表Id")]
         [ScaffoldColumn(false)]
         public Guid Id { get; set; }

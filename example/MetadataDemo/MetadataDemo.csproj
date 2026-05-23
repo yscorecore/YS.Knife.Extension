@@ -15,8 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\YS.Knife.Metadata.Api\YS.Knife.Metadata.Api.AspnetCore.csproj" />
     <ProjectReference Include="..\..\src\YS.Knife.Metadata.Impl.Mvc\YS.Knife.Metadata.Impl.Mvc.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Generators.ExposeApi\YS.Knife.Generators.ExposeApi.csproj">
+        <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+        <OutputItemType>Analyzer</OutputItemType>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

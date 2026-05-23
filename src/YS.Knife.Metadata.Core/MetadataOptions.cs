@@ -4,12 +4,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
+//using Microsoft.Extensions.Options;
 
 namespace YS.Knife.Metadata
 {
 
-    [Options]
+    //[Options]
     public class MetadataOptions
     {
         public IDictionary<string, Type> Metas { get; } = new Dictionary<string, Type>();

@@ -2,7 +2,7 @@
 {
     public interface IMetadataService
     {
-        Task<List<string>> ListAllNames(CancellationToken cancellationToken = default);
+        Task<List<string>> ListAll(CancellationToken cancellationToken = default);
 
         Task<MetadataInfo> GetMetadataInfo(string name, CancellationToken cancellationToken = default);
     }

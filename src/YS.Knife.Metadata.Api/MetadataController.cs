@@ -17,9 +17,9 @@ namespace YS.Knife.Metadata.Api
         }
         [HttpGet]
         [Route("list-all")]
-        public Task<List<string>> ListAllNames(CancellationToken cancellationToken = default)
+        public Task<List<string>> ListAll(CancellationToken cancellationToken = default)
         {
-            return metadataService.ListAllNames(cancellationToken);
+            return metadataService.ListAll(cancellationToken);
         }
     }
 }
