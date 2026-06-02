@@ -60,5 +60,22 @@ namespace System
                 _ => text
             };
         }
+        /// <summary>
+        /// 将字符串截断到指定最大长度。若原字符串长度小于等于最大长度，则返回原字符串。
+        /// </summary>
+        /// <param name="input">要处理的字符串（可为 null）</param>
+        /// <param name="maxLength">最大允许的字符数（必须 >= 0）</param>
+        /// <returns>截断后的字符串或原字符串</returns>
+        /// <exception cref="ArgumentException">当 maxLength 为负数时抛出</exception>
+        public static string Truncate(this string input, int maxLength)
+        {
+            if (maxLength < 0)
+                throw new ArgumentException("Max length cannot be negative.", nameof(maxLength));
+
+            if (string.IsNullOrEmpty(input) || input.Length <= maxLength)
+                return input;
+
+            return input.Substring(0, maxLength);
+        }
     }
 }
