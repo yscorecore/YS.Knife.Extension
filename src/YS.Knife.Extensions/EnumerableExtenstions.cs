@@ -5,6 +5,14 @@ namespace System.Linq
 {
     public static class EnumerableExtenstions
     {
+        public static List<T> AsList<T>(this T source)
+        {
+            return new List<T> { source };
+        }
+        public static T[] AsArray<T>(this T source)
+        {
+            return new T[] { source };
+        }
         public static IEnumerable<T> OrderBySequence<T>(this IEnumerable<T> source, IEnumerable<T> sortData)
         {
             return source.OrderBySequence(p => p, sortData);
