@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="YS.Knife.Hosting" Version="2.0.2" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.Wechat.MiniProgram\YS.Knife.Wechat.MiniProgram.csproj" />
+  </ItemGroup>
+</Project>
