@@ -337,8 +337,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Wechat.MiniProgram
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wechat", "Wechat", "{5472C294-CFBF-4726-B3C5-1710A94D42DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Wechat.MiniProgram.Core", "src\YS.Knife.Wechat.MiniProgram.Core\YS.Knife.Wechat.MiniProgram.Core.csproj", "{CCEB6878-3BB3-4BBE-9ED4-4770961E4956}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -845,10 +843,6 @@ Global
 		{A74D561E-6176-4ABC-BD76-EC35D93775EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A74D561E-6176-4ABC-BD76-EC35D93775EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A74D561E-6176-4ABC-BD76-EC35D93775EE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CCEB6878-3BB3-4BBE-9ED4-4770961E4956}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CCEB6878-3BB3-4BBE-9ED4-4770961E4956}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CCEB6878-3BB3-4BBE-9ED4-4770961E4956}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CCEB6878-3BB3-4BBE-9ED4-4770961E4956}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1012,7 +1006,6 @@ Global
 		{467FCB54-3CAA-48BA-A127-08537CFA7CF5} = {73DFD123-C300-44AA-9827-1A23A27A0FD8}
 		{A74D561E-6176-4ABC-BD76-EC35D93775EE} = {5472C294-CFBF-4726-B3C5-1710A94D42DF}
 		{5472C294-CFBF-4726-B3C5-1710A94D42DF} = {9D50B35B-1EAA-4620-B0A6-245456051247}
-		{CCEB6878-3BB3-4BBE-9ED4-4770961E4956} = {73DFD123-C300-44AA-9827-1A23A27A0FD8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB11BB21-3F5D-42D6-8737-F19C0666F1F8}
