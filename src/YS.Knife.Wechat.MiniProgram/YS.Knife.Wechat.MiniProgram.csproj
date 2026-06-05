@@ -10,5 +10,6 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\YS.Knife.Extensions.HttpClient\YS.Knife.Extensions.HttpClient.csproj" />
+      <ProjectReference Include="..\YS.Knife.TokenMan.Core\YS.Knife.TokenMan.Core.csproj" />
     </ItemGroup>
 </Project>

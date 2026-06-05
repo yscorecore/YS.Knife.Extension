@@ -26,7 +26,7 @@ namespace YS.Knife.Wechat.MiniProgram.IntegrationTest
         public async Task ShouldThrowErrorWhenGetUnlimitedQrCodeWithInvalidAccesstoken()
         {
             var client = this.GetService<WechatClient>();
-            Func<Task<Stream>> act = () => client.GetUnlimited("abc", new WechatClient.GetWxacodeunlimitRequest
+            Func<Task<Stream>> act = () => client.GetUnlimited("abc", new GetWxacodeunlimitRequest
             {
                 Scene = "abc",
                 Page = "abc",
@@ -39,7 +39,7 @@ namespace YS.Knife.Wechat.MiniProgram.IntegrationTest
         {
             var client = this.GetService<WechatClient>();
             var token = await client.GetAccessToken(TestWechatAppId, TestWechatAppSecret);
-            var imgStream = await client.GetUnlimited(token.AccessToken, new WechatClient.GetWxacodeunlimitRequest
+            var imgStream = await client.GetUnlimited(token.AccessToken, new GetWxacodeunlimitRequest
             {
                 Scene = "abc",
                 Page = "abc",

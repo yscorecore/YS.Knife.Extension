@@ -4,6 +4,8 @@
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.Lock.Impl.Memory\YS.Knife.Lock.Impl.Memory.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.TokenMan.Impl.Default\YS.Knife.TokenMan.Impl.Default.csproj" />
     <ProjectReference Include="..\..\src\YS.Knife.Wechat.MiniProgram\YS.Knife.Wechat.MiniProgram.csproj" />
   </ItemGroup>
 </Project>
