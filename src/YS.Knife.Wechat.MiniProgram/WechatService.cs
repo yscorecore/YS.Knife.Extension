@@ -19,6 +19,17 @@ namespace YS.Knife.Wechat.MiniProgram
         {
             return client.Code2Session(options.AppId, options.AppSecret, jscode);
         }
+
+        public async Task<GenerateUrlLinkResponse> GenerateUrlLink(GenerateUrlLinkRequest request)
+        {
+            var accessToken = await tokenManager.GetAccessToken();
+            return await client.GenerateUrlLink(accessToken, request with { EnvVersion = options.Env });
+        }
+        public async Task<WechatResponse> NotificationMessage<T>(WechatNotificationMessage<T> body)
+        {
+            var accessToken = await tokenManager.GetAccessToken();
+            return await client.NotificationMessage(accessToken, body);
+        }
         public async Task<Stream> GetUnlimited(string scene, string page = null, bool checkPage = false, bool isHyaline = false)
         {
             var accessToken = await tokenManager.GetAccessToken();
