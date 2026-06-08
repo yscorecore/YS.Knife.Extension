@@ -83,6 +83,6 @@ namespace YS.Knife.Wechat.MiniProgram
         {
             return this.PostAsObject<GenerateUrlLinkResponse>("/wxa/generate_urllink", new { access_token = accessToken }, request);
         }
-     
+
     }
 }

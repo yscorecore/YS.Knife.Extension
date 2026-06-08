@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -91,7 +91,7 @@ namespace YS.Knife.AI.Impl.Default
             // 排除系统程序集中的类型（例如 System.Object, System.Collections.Generic.List<> 等）
             var systemAssemblyNames = new[] { "mscorlib", "System.Private.CoreLib", "System", "System.Runtime" };
             string? assemblyName = type.Assembly.GetName().Name;
-            if (assemblyName ==null || systemAssemblyNames.Contains(assemblyName))
+            if (assemblyName == null || systemAssemblyNames.Contains(assemblyName))
                 return false;
 
             // 只处理类或结构体（接口也可以，但实际使用较少，按需调整）
@@ -156,26 +156,26 @@ namespace YS.Knife.AI.Impl.Default
                 {
                     var displayAttr = prop.GetCustomAttribute<DisplayAttribute>();
                     if (displayAttr != null)
-                        {
-                            var displayParams = new List<string>();
-                            if (!string.IsNullOrEmpty(displayAttr.Name))
-                                displayParams.Add($"Name = \"{EscapeString(displayAttr.Name)}\"");
-                            if (!string.IsNullOrEmpty(displayAttr.Description))
-                                displayParams.Add($"Description = \"{EscapeString(displayAttr.Description)}\"");
-                            var order = displayAttr.GetOrder();
-                            if (order != null)
-                                displayParams.Add($"Order = {order}");
-                            if (!string.IsNullOrEmpty(displayAttr.GroupName))
-                                displayParams.Add($"GroupName = \"{EscapeString(displayAttr.GroupName)}\"");
-                            string displayCode = displayParams.Count > 0
-                                ? $"[Display({string.Join(", ", displayParams)})]"
-                                : "[Display]";
-                            sb.AppendLine($"        {displayCode}");
-                        }
+                    {
+                        var displayParams = new List<string>();
+                        if (!string.IsNullOrEmpty(displayAttr.Name))
+                            displayParams.Add($"Name = \"{EscapeString(displayAttr.Name)}\"");
+                        if (!string.IsNullOrEmpty(displayAttr.Description))
+                            displayParams.Add($"Description = \"{EscapeString(displayAttr.Description)}\"");
+                        var order = displayAttr.GetOrder();
+                        if (order != null)
+                            displayParams.Add($"Order = {order}");
+                        if (!string.IsNullOrEmpty(displayAttr.GroupName))
+                            displayParams.Add($"GroupName = \"{EscapeString(displayAttr.GroupName)}\"");
+                        string displayCode = displayParams.Count > 0
+                            ? $"[Display({string.Join(", ", displayParams)})]"
+                            : "[Display]";
+                        sb.AppendLine($"        {displayCode}");
+                    }
                 }
 
-                    // DisplayAttribute
-              
+                // DisplayAttribute
+
 
                 // 属性本身
                 string propertyTypeName = GetFriendlyTypeName(prop.PropertyType);

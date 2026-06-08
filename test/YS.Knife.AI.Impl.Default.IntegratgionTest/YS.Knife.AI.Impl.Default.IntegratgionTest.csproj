@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <Content Include="Images\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+   
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\YS.Knife.AI.Impl.Default\YS.Knife.AI.Impl.Default.csproj" />
     <ProjectReference Include="..\..\src\YS.Knife.AI.Providers.OpenAI\YS.Knife.AI.Providers.OpenAI.csproj" />
       <PackageReference Include="YS.Knife.Hosting" Version="2.0.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Images\1.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Page>
   </ItemGroup>
 </Project>

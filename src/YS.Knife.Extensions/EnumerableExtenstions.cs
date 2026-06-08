@@ -68,7 +68,10 @@ namespace System.Linq
             }
             return false;
         }
-
+        public static IEnumerable<TSource> ConcatItems<TSource>(this IEnumerable<TSource> first, params TSource[] items)
+        {
+            return first.Concat(items ?? Array.Empty<TSource>());
+        }
     }
 
 }

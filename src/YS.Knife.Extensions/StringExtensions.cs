@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace System
 {
@@ -76,6 +77,11 @@ namespace System
                 return input;
 
             return input.Substring(0, maxLength);
+        }
+        private static readonly Regex Base64Regex = new(@"^[A-Za-z0-9+/]*={0,2}$");
+        public static bool IsValidBase64Strict(this string input)
+        {
+            return !string.IsNullOrEmpty(input) && input.Length % 4 == 0 && Base64Regex.IsMatch(input);
         }
     }
 }

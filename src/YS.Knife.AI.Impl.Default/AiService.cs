@@ -21,14 +21,14 @@ namespace YS.Knife.AI.Impl.Default
 
         [CodeException("AI001", "AI provider {name} not found.")]
         private partial Exception CreateProviderNotFoundException(string name);
-        public async Task<T> RecognizeImageAsObject<T>(string imageUrlOrBase64, string provider, string model, string prompt, CancellationToken cancellationToken = default)
+        public async Task<T> RecognizeImageAsObject<T>(AiInputData[] inputs, string provider, string model, string prompt, CancellationToken cancellationToken = default)
              where T : class, new()
         {
             if (providers.TryGetValue(provider, out var providerService))
             {
                 var fullPrompt = GetFullPromptForObject<T>(prompt, model);
                 logger.LogInformation("Recognizing image with provider {provider}, model {model}, prompt {prompt}", provider, model, fullPrompt);
-                var content = await providerService.RecognizeImage(imageUrlOrBase64, model, fullPrompt, cancellationToken);
+                var content = await providerService.RecognizeImage(inputs, model, fullPrompt, cancellationToken);
                 logger.LogInformation("Received response from provider {provider}: {content}", provider, content);
                 return ParseResultJson<T>(content);
             }
@@ -37,14 +37,14 @@ namespace YS.Knife.AI.Impl.Default
                 throw CreateProviderNotFoundException(provider);
             }
         }
-        public async Task<T[]> RecognizeImageAsArray<T>(string imageUrlOrBase64, string provider, string model, string prompt, CancellationToken cancellationToken = default)
+        public async Task<T[]> RecognizeImageAsArray<T>(AiInputData[] inputs, string provider, string model, string prompt, CancellationToken cancellationToken = default)
              where T : class, new()
         {
             if (providers.TryGetValue(provider, out var providerService))
             {
                 var fullPrompt = GetFullPromptForArray<T>(prompt, model);
                 logger.LogInformation("Recognizing image with provider {provider}, model {model}, prompt {prompt}", provider, model, fullPrompt);
-                var content = await providerService.RecognizeImage(imageUrlOrBase64, model, fullPrompt, cancellationToken);
+                var content = await providerService.RecognizeImage(inputs, model, fullPrompt, cancellationToken);
                 logger.LogInformation("Received response from provider {provider}: {content}", provider, content);
                 return ParseResultJson<T[]>(content);
             }

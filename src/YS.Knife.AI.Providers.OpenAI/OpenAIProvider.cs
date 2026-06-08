@@ -50,71 +50,32 @@ namespace YS.Knife.AI.Providers.OpenAI
             }
         }
 
-        public async Task<string> RecognizeImage(string imageUrlOrBase64, string model, string prompt, CancellationToken cancellationToken = default)
+        public async Task<string> RecognizeImage(AiInputData[] inputs, string model, string prompt, CancellationToken cancellationToken = default)
         {
-            var imageSource = DetermineImageSource(imageUrlOrBase64);
             ChatClient chatClient = _client.GetChatClient(model);
-
-            List<ChatMessage> messages = new List<ChatMessage>();
-
-            if (imageSource == ImageSource.Base64)
+            List<ChatMessage> messages = new List<ChatMessage>
             {
-                // Remove data:image/...;base64, prefix if present
-                string base64Data = imageUrlOrBase64;
-                if (base64Data.Contains(','))
-                {
-                    base64Data = base64Data.Split(',')[1];
-                }
-
-                messages.Add(new UserChatMessage(
-                    ChatMessageContentPart.CreateImagePart(BinaryData.FromBytes(Convert.FromBase64String(base64Data)), "image/png"),
-                    ChatMessageContentPart.CreateTextPart(prompt)));
-            }
-            else
-            {
-                messages.Add(new UserChatMessage(
-                    ChatMessageContentPart.CreateImagePart(new Uri(imageUrlOrBase64)),
-                    ChatMessageContentPart.CreateTextPart(prompt)));
-            }
-
+                new UserChatMessage(inputs.Select(ConvertToConent).ConcatItems(ChatMessageContentPart.CreateTextPart(prompt)))
+            };
             ClientResult<ChatCompletion> result = await chatClient.CompleteChatAsync(messages, cancellationToken: cancellationToken);
             return result.Value.Content[0].Text;
         }
 
-        private static ImageSource DetermineImageSource(string input)
+        ChatMessageContentPart ConvertToConent(AiInputData input)
         {
-            if (string.IsNullOrWhiteSpace(input))
+            var mediaType = input.MediaType;
+            return input.Type switch
             {
-                throw new ArgumentException("Image input cannot be null or empty.", nameof(input));
-            }
+                AiDataType.Stream => ChatMessageContentPart.CreateImagePart(BinaryData.FromStream((Stream)input.Data), input.MediaType),
+                AiDataType.Url => ChatMessageContentPart.CreateImagePart(new Uri((string)input.Data)),
+                AiDataType.Base64 => ChatMessageContentPart.CreateImagePart(BinaryData.FromBytes(Convert.FromBase64String((string)input.Data)), input.MediaType),
+                AiDataType.ByteArray => ChatMessageContentPart.CreateImagePart(BinaryData.FromBytes((byte[])input.Data), input.MediaType),
+                _ => throw new NotSupportedException($"Unsupported AiDataType: {input.Type}")
+            };
 
-            // Base64 images typically have data:image/...;base64,... format or just base64 string
-            if (input.StartsWith("data:", StringComparison.OrdinalIgnoreCase) ||
-                (input.Length > 100 && !input.Contains("://") && IsBase64String(input)))
-            {
-                return ImageSource.Base64;
-            }
-
-            return ImageSource.Url;
         }
 
-        private static bool IsBase64String(string input)
-        {
-            try
-            {
-                Convert.FromBase64String(input);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
 
-        private enum ImageSource
-        {
-            Url,
-            Base64
-        }
+
     }
 }
