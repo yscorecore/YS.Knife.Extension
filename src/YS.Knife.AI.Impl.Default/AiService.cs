@@ -19,11 +19,14 @@ namespace YS.Knife.AI.Impl.Default
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 
+        [CodeException("AI002", "Invalid provider name: '{name}'. Please use the format provider-name::model-name (e.g., openai::gpt-4, anthropic::claude-3")]
+        private partial Exception InvalidModelProviderName(string name);
         [CodeException("AI001", "AI provider {name} not found.")]
         private partial Exception CreateProviderNotFoundException(string name);
-        public async Task<T> RecognizeImageAsObject<T>(AiInputData[] inputs, string provider, string model, string prompt, CancellationToken cancellationToken = default)
+        public async Task<T> RecognizeImageAsObject<T>(AiInputData[] inputs, string modelProviderName, string prompt, CancellationToken cancellationToken = default)
              where T : class, new()
         {
+            var (provider, model) = ParseModelName(modelProviderName);
             if (providers.TryGetValue(provider, out var providerService))
             {
                 var fullPrompt = GetFullPromptForObject<T>(prompt, model);
@@ -37,9 +40,24 @@ namespace YS.Knife.AI.Impl.Default
                 throw CreateProviderNotFoundException(provider);
             }
         }
-        public async Task<T[]> RecognizeImageAsArray<T>(AiInputData[] inputs, string provider, string model, string prompt, CancellationToken cancellationToken = default)
+        private (string Provider, string Model) ParseModelName(string modelProviderName)
+        {
+            var index = modelProviderName.IndexOf("::");
+            if (index <= 0)
+            {
+                throw InvalidModelProviderName(modelProviderName);
+            }
+            else
+            {
+                var provider = modelProviderName[..index];
+                var modelName = modelProviderName[(index + 2)..];
+                return (provider, modelName);
+            }
+        }
+        public async Task<T[]> RecognizeImageAsArray<T>(AiInputData[] inputs, string modelProviderName, string prompt, CancellationToken cancellationToken = default)
              where T : class, new()
         {
+            var (provider, model) = ParseModelName(modelProviderName);
             if (providers.TryGetValue(provider, out var providerService))
             {
                 var fullPrompt = GetFullPromptForArray<T>(prompt, model);

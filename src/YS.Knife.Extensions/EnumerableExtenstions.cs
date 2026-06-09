@@ -13,6 +13,15 @@ namespace System.Linq
         {
             return new T[] { source };
         }
+        public static T RandomOne<T>(this ICollection<T> source)
+        {
+            var count = source.Count;
+            if (count == 0)
+            {
+                throw new InvalidOperationException("Sequence contains no elements");
+            }
+            return source.ElementAt(Random.Shared.Next(count));
+        }
         public static IEnumerable<T> OrderBySequence<T>(this IEnumerable<T> source, IEnumerable<T> sortData)
         {
             return source.OrderBySequence(p => p, sortData);

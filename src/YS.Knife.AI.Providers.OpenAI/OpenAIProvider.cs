@@ -8,51 +8,91 @@ using YS.Knife.AI.Core;
 
 namespace YS.Knife.AI.Providers.OpenAI
 {
+
+    internal interface IProviderOptions
+    {
+        string ApiKey { get; set; }
+        string? BaseUrl { get; set; }
+        string[]? Models { get; set; }
+        string? Organization { get; set; }
+    }
+
     [Options]
-    public class OpenAIOptions
+    public class ProviderOptions : IProviderOptions
     {
         [Required]
         public string ApiKey { get; set; } = string.Empty;
         public string? BaseUrl { get; set; }
         public string? Organization { get; set; }
+        public string[]? Models { get; set; } = null;
+    }
+    [Options]
+    public class OpenAIOptions : Dictionary<string, ProviderOptions>, IProviderOptions
+    {
+        public string ApiKey { get; set; } = string.Empty;
+        public string? BaseUrl { get; set; }
+        public string? Organization { get; set; }
+        public string[]? Models { get; set; } = null;
     }
 
     [Service]
     [AutoConstructor]
     [DictionaryKey("openai")]
+    [CodeExceptions]
     public partial class OpenAIProvider : IAiProviderService
     {
-        [AutoConstructorIgnore]
-        private OpenAIClient _client;
 
-        private readonly OpenAIOptions _options;
-
-        [AutoConstructorInitialize]
-        private void InitClient()
+        private readonly OpenAIOptions openAIOptions;
+        [CodeException("AI002", "Can not find section: '{name}'")]
+        internal partial Exception CanNotFindSection(string name);
+        private (OpenAIClient, ChatClient) InitClient(string modelName)
         {
-            var options = this._options;
-            ApiKeyCredential credential = new ApiKeyCredential(options.ApiKey);
-
-            if (!string.IsNullOrWhiteSpace(options.BaseUrl))
+            var index = modelName.IndexOf("/");
+            if (index <= 0)
             {
-                // 使用自定义 base URL
-                OpenAIClientOptions clientOptions = new OpenAIClientOptions
-                {
-                    Endpoint = new Uri(options.BaseUrl),
-                };
-
-                _client = new OpenAIClient(credential, clientOptions);
+                return CreateClient(modelName, this.openAIOptions);
             }
             else
             {
-                // 使用默认的 OpenAI base URL
-                _client = new OpenAIClient(credential);
+                var provider = modelName[..index];
+                var model = modelName[(index + 1)..];
+                if (this.openAIOptions.TryGetValue(provider, out var options))
+                {
+                    return CreateClient(model, options);
+                }
+                else
+                {
+                    throw CanNotFindSection(provider);
+                }
             }
+            (OpenAIClient, ChatClient) CreateClient(string modelName, IProviderOptions options)
+            {
+                var credential = new ApiKeyCredential(options.ApiKey);
+                if (!string.IsNullOrWhiteSpace(options.BaseUrl))
+                {
+                    // 使用自定义 base URL
+                    OpenAIClientOptions clientOptions = new OpenAIClientOptions
+                    {
+                        Endpoint = new Uri(options.BaseUrl),
+                    };
+
+                    var openAiClient = new OpenAIClient(credential, clientOptions);
+                    return (openAiClient, openAiClient.GetChatClient(modelName));
+                }
+                else
+                {
+                    // 使用默认的 OpenAI base URL
+                    var openAiClient = new OpenAIClient(credential);
+                    return (openAiClient, openAiClient.GetChatClient(modelName));
+                }
+            }
+
         }
 
-        public async Task<string> RecognizeImage(AiInputData[] inputs, string model, string prompt, CancellationToken cancellationToken = default)
+
+        public async Task<string> RecognizeImage(AiInputData[] inputs, string modelName, string prompt, CancellationToken cancellationToken = default)
         {
-            ChatClient chatClient = _client.GetChatClient(model);
+            var (openaiClient, chatClient) = InitClient(modelName);
             List<ChatMessage> messages = new List<ChatMessage>
             {
                 new UserChatMessage(inputs.Select(ConvertToConent).ConcatItems(ChatMessageContentPart.CreateTextPart(prompt)))
