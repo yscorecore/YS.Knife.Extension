@@ -15,6 +15,9 @@ namespace YS.Knife.EnumCode.Loader.Entity.EFCore
         public int Key { get; set; }
         [StringLength(32)]
         public string Name { get; set; } = null!;
+
+        [StringLength(64)]
+        public string Display { get; set; } = null!;
         [StringLength(256)]
         public string? Description { get; set; }
         [StringLength(64)]
