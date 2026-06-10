@@ -1,6 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\YS.Knife.EnumCode.Core\YS.Knife.EnumCode.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.Extensions\YS.Knife.Extensions.csproj" />
   </ItemGroup>
     <ItemGroup>
         <Using Include="YS.Knife" />

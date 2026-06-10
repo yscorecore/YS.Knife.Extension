@@ -1,4 +1,5 @@
-﻿using static YS.Knife.EnumCode.IEnumCodeService;
+﻿using System;
+using static YS.Knife.EnumCode.IEnumCodeService;
 namespace YS.Knife.EnumCode.Impl.Default
 {
 
@@ -7,32 +8,27 @@ namespace YS.Knife.EnumCode.Impl.Default
     public partial class EnumCodeService : IEnumCodeService
     {
         private readonly IEnumerable<ICodeLoader> loaders;
+        private readonly EnumCodeOptions options;
         public async Task<Dictionary<string, List<CodeInfo>>> GetAllCodes()
         {
-            Dictionary<string, List<CodeInfo>> all = null;
+            Dictionary<string, List<CodeInfo>> all = new Dictionary<string, List<CodeInfo>>();
             foreach (var loader in loaders.OrderBy(p => p.Priority))
             {
                 var codes = await loader.AllCodes();
-                if (all == null)
+                foreach (var code in codes)
                 {
-                    all = codes;
-                }
-                else
-                {
-                    foreach (var code in codes)
+                    var key = code.Key.WithStyle(options.NameStyle);
+                    if (all.TryGetValue(key, out var current))
                     {
-                        if (all.TryGetValue(code.Key, out var current))
-                        {
-                            all[code.Key] = MergeCodes(current, code.Value);
-                        }
-                        else
-                        {
-                            all[code.Key] = code.Value;
-                        }
+                        all[key] = MergeCodes(current, code.Value);
+                    }
+                    else
+                    {
+                        all[key] = code.Value;
                     }
                 }
             }
-            return all ?? new Dictionary<string, List<IEnumCodeService.CodeInfo>>();
+            return all;
         }
         private List<CodeInfo> MergeCodes(List<CodeInfo> first, List<CodeInfo> second)
         {

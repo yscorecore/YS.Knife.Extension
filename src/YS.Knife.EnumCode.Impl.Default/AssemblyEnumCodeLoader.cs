@@ -30,7 +30,7 @@ namespace YS.Knife.EnumCode.Impl.Default
         {
             return options.Assemblies.Select(p => Assembly.Load(p))
                  .SelectMany(p => p.GetTypes().Where(x => x.IsEnum && x.IsPublic))
-                  .ToDictionary(p => p.Name.ToLowerInvariant(), p => LoadEnumTypeCodes(p));
+                  .ToDictionary(p => p.Name, p => LoadEnumTypeCodes(p), StringComparer.InvariantCultureIgnoreCase);
         }
         List<CodeInfo> LoadEnumTypeCodes(Type enumType)
         {
