@@ -9,6 +9,7 @@ namespace YS.Knife.EnumCode
 {
     public interface ICodeLoader
     {
+        int Priority { get; }
         Task<Dictionary<string, List<IEnumCodeService.CodeInfo>>> AllCodes();
     }
 

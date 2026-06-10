@@ -18,6 +18,8 @@ namespace YS.Knife.EnumCode.Impl.Default
         [AutoConstructorIgnore]
         private Lazy<Dictionary<string, List<CodeInfo>>> cache;
 
+        public int Priority => 0;
+
         [AutoConstructorInitialize]
         void Init()
         {
