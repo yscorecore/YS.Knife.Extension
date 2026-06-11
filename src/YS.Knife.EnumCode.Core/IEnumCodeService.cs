@@ -18,7 +18,7 @@ namespace YS.Knife.EnumCode
             public string Group { get; set; }
             [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
             public int Order { get; set; }
+
         }
     }
-
 }

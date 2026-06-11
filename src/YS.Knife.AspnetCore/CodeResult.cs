@@ -4,9 +4,12 @@ namespace YS.Knife
 {
     public record CodeResult
     {
+        [JsonPropertyOrder(2)]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Dictionary<string, object> Errors { get; set; }
+        [JsonPropertyOrder(0)]
         public string Code { get; set; }
+        [JsonPropertyOrder(1)]
         public string Message { get; set; }
         public static CodeResult FromCode(string code, string message)
         {
@@ -56,6 +59,7 @@ namespace YS.Knife
 
     public record CodeResult<T> : CodeResult
     {
+        [JsonPropertyOrder(3)]
         public T Data { get; set; }
     }
 

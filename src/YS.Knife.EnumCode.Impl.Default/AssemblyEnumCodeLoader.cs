@@ -14,7 +14,7 @@ namespace YS.Knife.EnumCode.Impl.Default
     [Service(Lifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton)]
     public partial class AssemblyEnumCodeLoader : ICodeLoader
     {
-        private readonly AssemblyEnumCodeOptions options;
+        private readonly EnumCodeOptions options;
         [AutoConstructorIgnore]
         private Lazy<Dictionary<string, List<CodeInfo>>> cache;
 
@@ -23,35 +23,10 @@ namespace YS.Knife.EnumCode.Impl.Default
         [AutoConstructorInitialize]
         void Init()
         {
-            cache = new Lazy<Dictionary<string, List<CodeInfo>>>(() => LoadDataInternal(), true);
+            cache = new Lazy<Dictionary<string, List<CodeInfo>>>(() => AssemblyEnumCodes.Instance.LoadAssemblyEnumCodes(options.Assemblies), true);
         }
 
-        Dictionary<string, List<CodeInfo>> LoadDataInternal()
-        {
-            return options.Assemblies.Select(p => Assembly.Load(p))
-                 .SelectMany(p => p.GetTypes().Where(x => x.IsEnum && x.IsPublic))
-                  .ToDictionary(p => p.Name, p => LoadEnumTypeCodes(p), StringComparer.InvariantCultureIgnoreCase);
-        }
-        List<CodeInfo> LoadEnumTypeCodes(Type enumType)
-        {
-            return enumType.GetFields(BindingFlags.Static | BindingFlags.Public).Select(p => CreateCodeInfoFromEnumField(p))
-                .OrderBy(p => p.Order).ToList();
-        }
-        CodeInfo CreateCodeInfoFromEnumField(FieldInfo fieldInfo)
-        {
-            var dis = fieldInfo.GetCustomAttribute<DisplayAttribute>();
-            var des = fieldInfo.GetCustomAttribute<DescriptionAttribute>();
-            return new CodeInfo
-            {
-                Key = Convert.ToInt32(fieldInfo.GetValue(null)),
-                Name = fieldInfo.Name,
-                Display = dis?.Name ?? des?.Description ?? fieldInfo.Name,
-                Description = dis?.Description,
-                Group = dis?.GroupName,
-                Order = dis?.Order ?? 0
-            };
-        }
-
+      
         public Task<Dictionary<string, List<CodeInfo>>> AllCodes()
         {
             return Task.FromResult(cache.Value);
