@@ -26,7 +26,7 @@ namespace YS.Knife.EnumCode.Impl.Default
             cache = new Lazy<Dictionary<string, List<CodeInfo>>>(() => AssemblyEnumCodes.Instance.LoadAssemblyEnumCodes(options.Assemblies), true);
         }
 
-      
+
         public Task<Dictionary<string, List<CodeInfo>>> AllCodes()
         {
             return Task.FromResult(cache.Value);

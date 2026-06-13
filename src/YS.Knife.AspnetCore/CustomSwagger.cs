@@ -13,6 +13,7 @@ namespace YS.Knife
 
         private readonly ConcurrentDictionary<string, List<string>> _schemaNameRepetition = new();
         private readonly ConcurrentDictionary<string, int> _operationIdRepetition = new();
+        private readonly ConcurrentDictionary<ApiDescription, string> operationIdCache = new ConcurrentDictionary<ApiDescription, string>();
 
         // borrowed from https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/95cb4d370e08e54eb04cf14e7e6388ca974a686e/src/Swashbuckle.AspNetCore.SwaggerGen/SchemaGenerator/SchemaGeneratorOptions.cs#L44
         private string DefaultSchemaIdSelector(Type modelType)
@@ -44,6 +45,10 @@ namespace YS.Knife
         }
 
         public string GetUniqueOperationId(ApiDescription apiDesc)
+        {
+            return operationIdCache.GetOrAdd(apiDesc, GetUniqueOperationIdInternal);
+        }
+        private string GetUniqueOperationIdInternal(ApiDescription apiDesc)
         {
             // 优先使用HttpMethod特性指定的Name
             var httpMethodAttribute = apiDesc.ActionDescriptor.EndpointMetadata

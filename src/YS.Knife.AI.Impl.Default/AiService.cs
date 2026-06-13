@@ -75,7 +75,7 @@ namespace YS.Knife.AI.Impl.Default
         {
             return @$"{prompt}
 ---------------
-不需要思考过程，直接输出结果，要求输出json字符串，json字符串要能被反序列化为以下c#类型，字段名称使用小驼峰命名法。
+不需要思考过程，直接输出结果，要求输出单个对象的json字符串，json字符串要能被反序列化为以下c#类型，字段名称使用小驼峰命名法。
 ```csharp
 {classDefinitionGenerator.GetClassDefinition(typeof(T))}
 ```
