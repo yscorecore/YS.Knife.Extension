@@ -84,8 +84,9 @@ namespace YS.Knife.DataSource.Core.Impl
             var res = await GetDataSourceFunc(name)(serviceProvider, new LimitQueryInfo
             {
                 Filter = filter,
+                CountAll = false
             }, cancellationToken);
-            return res.TotalCount;
+            return res.TotalCount ?? 0;
         }
 
         public async Task<object> FindBy(string name, string key, string value, CancellationToken cancellationToken = default)

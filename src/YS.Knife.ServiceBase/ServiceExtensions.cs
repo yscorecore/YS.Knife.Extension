@@ -38,6 +38,7 @@ namespace YS.Knife.Service
             {
                 Filter = $"{nameof(IIdDto<TKey>.Id)} =='{key}'",
                 Limit = 2,
+                CountAll = false
             }, cancellationToken);
             return res.Items.SingleOrDefault();
         }
@@ -47,8 +48,9 @@ namespace YS.Knife.Service
             {
                 Filter = filter,
                 Limit = 0,
+                CountAll = true,
             }, cancellationToken);
-            return res.TotalCount;
+            return res.TotalCount ?? 0;
         }
     }
 
