@@ -80,6 +80,15 @@
                 Data = bytes
             };
         }
+        public static AiInputData FromStreamBody(StreamBody streamBody)
+        {
+            return new AiInputData
+            {
+                MediaType = streamBody.ContentType,
+                Type = AiDataType.Stream,
+                Data = streamBody.Stream
+            };
+        }
 
     }
 }

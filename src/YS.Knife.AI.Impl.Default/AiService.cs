@@ -100,5 +100,73 @@ namespace YS.Knife.AI.Impl.Default
             }
             return validJson.AsJsonObject<T>(jsonSerializerOptions);
         }
+
+        public async Task<T> RecognizeDocumentAsObject<T>(AiInputData[] inputs, string modelProviderName, string prompt, CancellationToken cancellationToken = default) where T : class, new()
+        {
+            var (provider, model) = ParseModelName(modelProviderName);
+            if (providers.TryGetValue(provider, out var providerService))
+            {
+                var fullPrompt = GetFullPromptForObject<T>(prompt, model);
+                logger.LogInformation("Recognizing document with provider {provider}, model {model}, prompt {prompt}", provider, model, fullPrompt);
+                var content = await providerService.RecognizeDocument(inputs, model, fullPrompt, cancellationToken);
+                logger.LogInformation("Received response from provider {provider}: {content}", provider, content);
+                return ParseResultJson<T>(content);
+            }
+            else
+            {
+                throw CreateProviderNotFoundException(provider);
+            }
+        }
+
+        public async Task<T[]> RecognizeDocumentAsArray<T>(AiInputData[] inputs, string modelProviderName, string prompt, CancellationToken cancellationToken = default) where T : class, new()
+        {
+            var (provider, model) = ParseModelName(modelProviderName);
+            if (providers.TryGetValue(provider, out var providerService))
+            {
+                var fullPrompt = GetFullPromptForArray<T>(prompt, model);
+                logger.LogInformation("Recognizing document with provider {provider}, model {model}, prompt {prompt}", provider, model, fullPrompt);
+                var content = await providerService.RecognizeDocument(inputs, model, fullPrompt, cancellationToken);
+                logger.LogInformation("Received response from provider {provider}: {content}", provider, content);
+                return ParseResultJson<T[]>(content);
+            }
+            else
+            {
+                throw CreateProviderNotFoundException(provider);
+            }
+        }
+
+        public async Task<T> ChatAsObject<T>(string modelProviderName, string prompt, CancellationToken cancellationToken = default) where T : class, new()
+        {
+            var (provider, model) = ParseModelName(modelProviderName);
+            if (providers.TryGetValue(provider, out var providerService))
+            {
+                var fullPrompt = GetFullPromptForObject<T>(prompt, model);
+                logger.LogInformation("Chat with provider {provider}, model {model}, prompt {prompt}", provider, model, fullPrompt);
+                var content = await providerService.Chat(model, fullPrompt, cancellationToken);
+                logger.LogInformation("Received response from provider {provider}: {content}", provider, content);
+                return ParseResultJson<T>(content);
+            }
+            else
+            {
+                throw CreateProviderNotFoundException(provider);
+            }
+        }
+
+        public async Task<T[]> ChatAsArray<T>(string modelProviderName, string prompt, CancellationToken cancellationToken = default) where T : class, new()
+        {
+            var (provider, model) = ParseModelName(modelProviderName);
+            if (providers.TryGetValue(provider, out var providerService))
+            {
+                var fullPrompt = GetFullPromptForArray<T>(prompt, model);
+                logger.LogInformation("Chat with provider {provider}, model {model}, prompt {prompt}", provider, model, fullPrompt);
+                var content = await providerService.Chat(model, fullPrompt, cancellationToken);
+                logger.LogInformation("Received response from provider {provider}: {content}", provider, content);
+                return ParseResultJson<T[]>(content);
+            }
+            else
+            {
+                throw CreateProviderNotFoundException(provider);
+            }
+        }
     }
 }

@@ -26,7 +26,8 @@ namespace YS.Knife.AI.Impl.Default.IntegratgionTest
         //private const string AliApiKey = "xxxxx";
         [InjectConfiguration("OpenAI:Ali:BaseUrl")]
         private const string AliBaseUrl = "https://dashscope.aliyuncs.com/compatible-mode/v1";
-
+        [InjectConfiguration("OpenAI:Ali:UploadFilePurpose")]
+        private const string AliUploadFilePurpose = "file-extract";
         //[InjectConfiguration("OpenAI:Zijie:ApiKey")]
         //private const string ZJApiKey = "xxxx";
         [InjectConfiguration("OpenAI:Zijie:BaseUrl")]
@@ -65,6 +66,21 @@ namespace YS.Knife.AI.Impl.Default.IntegratgionTest
         //    outputHelper.WriteLine("Model: {0}, Time taken: {1}", model, stopwatch.Elapsed);
         //    result.Length.Should().Be(10);
         //}
+        //[Fact]
+        //public async Task ShouldReturnJsonArrayWhenInputExcel()
+        //{
+        //    var aiService = this.GetService<IAiService>();
+        //    var data = AiInputData.From("Images/菜品管理.xlsx");
+        //    var models = new[] { "openai::Ali/qwen-long" };
+        //    var model = "openai::Ali/qwen-long";
+        //    var stopwatch = new Stopwatch();
+        //    stopwatch.Start();
+
+        //    var result = await aiService.RecognizeDocumentAsArray<AiResult3>(data.AsArray(), model, "请将文档中的内容识别为结构化的信息,包含菜品名称和菜品分类等信息");
+        //    stopwatch.Stop();
+        //    outputHelper.WriteLine("Model: {0}, Time taken: {1}", model, stopwatch.Elapsed);
+        //    result.Length.Should().Be(119);
+        //}
         private class AiResult
         {
             [Description("是否有异常")]
@@ -79,6 +95,24 @@ namespace YS.Knife.AI.Impl.Default.IntegratgionTest
 
             [Description("随礼人")]
             public string UserName { get; set; }
+        }
+        private record AiResult3
+        {
+            [Description("菜品名称")]
+            public string Name { get; set; }
+            [Description("菜品分类")]
+            public string Category { get; set; }
+            [Description("菜品类型")]
+            public string Kind { get; set; }
+            [Description("食材名称")]
+            public string MaterialName { get; set; }
+
+            [Description("人均带量")]
+            public decimal Amount { get; set; }
+            [Description("适用餐次")]
+            public string[] MealKinds { get; set; }
+            [Description("适用季节")]
+            public string[] Seasons { get; set; }
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Data;
 using System.Net.Mime;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using YS.Knife;
 
 namespace System.Net.Http
 {
@@ -174,13 +176,17 @@ Request Timestamp: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
 
         static IEnumerable<KeyValuePair<string, string>> Foreach(object obj)
         {
+            return ForeachAsObj(obj).Select(p => new KeyValuePair<string, string>(p.Key, FormatValue(p.Value)));
+        }
+        static IEnumerable<KeyValuePair<string, object>> ForeachAsObj(object obj)
+        {
             if (obj != null)
             {
                 if (obj is IDictionary dic)
                 {
                     foreach (var key in dic.Keys)
                     {
-                        yield return new KeyValuePair<string, string>($"{key}", FormatValue(dic[key]));
+                        yield return new KeyValuePair<string, object>($"{key}", dic[key]);
                     }
                 }
                 else
@@ -190,7 +196,7 @@ Request Timestamp: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
                         if (p.CanRead)
                         {
                             var val = p.GetValue(obj);
-                            yield return new KeyValuePair<string, string>(p.Name, FormatValue(val));
+                            yield return new KeyValuePair<string, object>(p.Name, val);
                         }
                     }
                 }
@@ -213,6 +219,57 @@ Request Timestamp: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
             else
             {
                 return value?.ToString() ?? string.Empty;
+            }
+        }
+
+        public static Task<string> PostFormAsString(this HttpClient client, string baseUrl, string path, object header = default, object param = default, object form = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = null, bool checkStatusCode = true)
+        {
+            var formBody = CreateFormDataContent(form, encoding);
+            return client.PostAsString(baseUrl, path, header, param, formBody, encoding, jsonOptions, checkStatusCode);
+        }
+        public static Task<T> PostFormAsObject<T>(this HttpClient client, string baseUrl, string path, object header = default, object param = default, object form = default, Encoding encoding = default, JsonSerializerOptions jsonOptions = null, bool checkStatusCode = true, Func<T, string, Exception> businessExceptionFactory = default)
+        {
+            var formBody = CreateFormDataContent(form, encoding);
+            return client.PostAsObject<T>(baseUrl, path, header, param, formBody, encoding, jsonOptions, checkStatusCode, businessExceptionFactory);
+        }
+        private static HttpContent CreateFormDataContent(object form, Encoding encoding)
+        {
+            var multiPart = new MultipartFormDataContent();
+            foreach (var (key, value) in ForeachAsObj(form))
+            {
+                // 字符串虽然是 IEnumerable<char>，但应视为单一值，  所以先排除 string 和 byte[]
+                if (value is not string && value is not byte[] && value is IEnumerable enumerable)
+                {
+                    foreach (var item in enumerable)
+                    {
+                        AddItem(multiPart, key, item, encoding);
+                    }
+                }
+                else
+                {
+                    AddItem(multiPart, key, value, encoding);
+                }
+            }
+
+            return multiPart;
+            static void AddItem(MultipartFormDataContent multiPart, string key, object value, Encoding encoding)
+            {
+                if (value is StreamBody sb)
+                {
+                    multiPart.Add(new StreamContent(sb.Stream), key, sb.FileName);
+                }
+                else if (value is Stream st)
+                {
+                    multiPart.Add(new StreamContent(st), key);
+                }
+                else if (value is byte[] by)
+                {
+                    multiPart.Add(new ByteArrayContent(by), key);
+                }
+                else
+                {
+                    multiPart.Add(new StringContent(FormatValue(value), encoding), key);
+                }
             }
         }
     }

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace YS.Knife
 {
     public static class ContentTypeMappings
     {
         //https://github.com/dotnet/aspnetcore/blob/main/src/Components/WebView/WebView/src/FileExtensionContentTypeProvider.cs
-        private static readonly Dictionary<string, string> Dics = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> ExtDics = new Dictionary<string, string>
         {
                 { ".323", "text/h323" },
                 { ".3g2", "video/3gpp2" },
@@ -394,6 +395,12 @@ namespace YS.Knife
                 { ".z", "application/x-compress" },
                 { ".zip", "application/x-zip-compressed" },
         };
+        private static readonly Dictionary<string, string> MediaTypeDics = new Dictionary<string, string>();
+        static ContentTypeMappings()
+        {
+            MediaTypeDics = ExtDics.ToLookup(p => p.Value)
+                .ToDictionary(p => p.Key, p => p.Select(t => t.Key).First());
+        }
 
         public static string GetContentTypeByFileName(string fileName)
         {
@@ -401,9 +408,17 @@ namespace YS.Knife
         }
         public static string GetContentTypeByExtensionName(string ext)
         {
-            if (ext != null && Dics.TryGetValue(ext, out var contentType))
+            if (ext != null && ExtDics.TryGetValue(ext, out var contentType))
             {
                 return contentType;
+            }
+            return string.Empty;
+        }
+        public static string GetExtNameByContentType(string contentType)
+        {
+            if (contentType != null && MediaTypeDics.TryGetValue(contentType, out var extName))
+            {
+                return extName;
             }
             return string.Empty;
         }

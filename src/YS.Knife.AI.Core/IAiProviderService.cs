@@ -3,5 +3,9 @@
     public interface IAiProviderService
     {
         Task<string> RecognizeImage(AiInputData[] inputs, string model, string prompt, CancellationToken cancellationToken = default);
+
+        Task<string> RecognizeDocument(AiInputData[] inputs, string model, string prompt, CancellationToken cancellationToken = default);
+
+        Task<string> Chat(string model, string prompt, CancellationToken cancellationToken = default);
     }
 }
