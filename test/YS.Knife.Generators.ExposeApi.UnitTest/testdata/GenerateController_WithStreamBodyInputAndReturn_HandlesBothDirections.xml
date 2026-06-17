@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+using System.IO;
+
+namespace YS.Knife
+{
+    public class StreamBody : IDisposable
+    {
+        public Stream Stream { get; set; }
+        public string ContentType { get; set; }
+        public string FileName { get; set; }
+        public long Length { get; set; }
+
+        public static StreamBody FromStream(Stream stream, string contentType, string fileName, long length, bool autoSeekBegin = true)
+        {
+            return new StreamBody { Stream = stream, ContentType = contentType, FileName = fileName, Length = length };
+        }
+
+        public void Dispose() { }
+    }
+}
+
+public interface IProcessFileService
+{
+    YS.Knife.StreamBody ProcessFile(YS.Knife.StreamBody file, string watermark);
+}
+
+[YS.Knife.ExposeApi(typeof(IProcessFileService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+        <code file="ProcessFileController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProcessFileController : ControllerBase
+    {
+        private readonly global::IProcessFileService iProcessFileService;
+        public ProcessFileController(global::IProcessFileService iProcessFileService)
+        {
+            this.iProcessFileService = iProcessFileService;
+        }
+
+        [Route("ProcessFile")]
+        [HttpPost]
+        public global::Microsoft.AspNetCore.Mvc.IActionResult ProcessFile([FromForm] __ProcessFile_FormArg arg)
+        {
+            using var __sb_file = YS.Knife.StreamBody.FromStream(arg.file.OpenReadStream(), arg.file.ContentType, arg.file.FileName, arg.file.Length);
+            var __sb_result = this.iProcessFileService.ProcessFile(__sb_file, arg.watermark);
+            this.HttpContext.Response.RegisterForDispose(__sb_result);
+            return this.File(__sb_result.Stream, __sb_result.ContentType, __sb_result.FileName);
+        }
+
+        public record __ProcessFile_FormArg(global::Microsoft.AspNetCore.Http.IFormFile file, string watermark);
+    }
+}
+]]></code>
+    </output>
+</case>

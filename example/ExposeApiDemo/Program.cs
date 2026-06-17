@@ -5,6 +5,7 @@ namespace ExposeApiDemo
 {
     [ExposeApi(typeof(IService1))]
     [ExposeApi(typeof(MyService))]
+    [ExposeApi(typeof(FileService))]
     public class Program
     {
         public static void Main(string[] args)
@@ -12,6 +13,7 @@ namespace ExposeApiDemo
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddMvc();
+            builder.Services.AddScoped<FileService>();
             // Add Swagger services with explicit configuration
             builder.Services.AddSwaggerGen(c =>
             {
@@ -116,6 +118,43 @@ namespace ExposeApiDemo
         public Task Upload(Stream upload, string uploadFileName, long uploadLength, string name)
         {
             return Task.CompletedTask;
+        }
+    }
+    
+    public class FileService
+    {
+        public void UploadFile(StreamBody file)
+        {
+
+        }
+        public long UploadFile2(StreamBody file)
+        {
+            return file.Length;
+        }
+        public long UploadFile3(StreamBody file, StreamBody file2)
+        {
+            return file.Length + file2.Length;
+        }
+
+        public Task UploadFile4(StreamBody file)
+        {
+            return Task.CompletedTask;
+        }
+        public Task<long> UploadFile5(StreamBody file)
+        {
+            return Task.FromResult(file.Length);
+        }
+        public StreamBody UploadFile6(StreamBody file)
+        {
+            var ms = new MemoryStream();
+            file.Stream.CopyTo(ms);
+            return StreamBody.FromStream(ms, file.ContentType, file.FileName, ms.Length);
+        }
+        public async Task<StreamBody> UploadFile7(StreamBody file)
+        {
+            var ms = new MemoryStream();
+            await file.Stream.CopyToAsync(ms);
+            return StreamBody.FromStream(ms, file.ContentType, file.FileName, ms.Length);
         }
     }
 }

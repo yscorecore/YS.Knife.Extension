@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+using System.IO;
+
+namespace YS.Knife
+{
+    public class StreamBody : IDisposable
+    {
+        public Stream Stream { get; set; }
+        public string ContentType { get; set; }
+        public string FileName { get; set; }
+        public long Length { get; set; }
+
+        public static StreamBody FromStream(Stream stream, string contentType, string fileName, long length, bool autoSeekBegin = true)
+        {
+            return new StreamBody { Stream = stream, ContentType = contentType, FileName = fileName, Length = length };
+        }
+
+        public void Dispose() { }
+    }
+}
+
+public interface IStreamBodyRouteService
+{
+    void UploadFile(int id, YS.Knife.StreamBody file);
+}
+
+[YS.Knife.ExposeApi(typeof(IStreamBodyRouteService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+        <code file="StreamBodyRouteController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class StreamBodyRouteController : ControllerBase
+    {
+        private readonly global::IStreamBodyRouteService iStreamBodyRouteService;
+        public StreamBodyRouteController(global::IStreamBodyRouteService iStreamBodyRouteService)
+        {
+            this.iStreamBodyRouteService = iStreamBodyRouteService;
+        }
+
+        [Route("UploadFile/{id}")]
+        [HttpPost]
+        public void UploadFile([FromRoute] int id, [FromForm] __UploadFile_FormArg arg)
+        {
+            using var __sb_file = YS.Knife.StreamBody.FromStream(arg.file.OpenReadStream(), arg.file.ContentType, arg.file.FileName, arg.file.Length);
+            this.iStreamBodyRouteService.UploadFile(id, __sb_file);
+        }
+
+        public record __UploadFile_FormArg(global::Microsoft.AspNetCore.Http.IFormFile file);
+    }
+}
+]]></code>
+    </output>
+</case>

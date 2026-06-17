@@ -61,6 +61,14 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
         [InlineData("GenerateController_WithCustomHttpGetMatches_RetrieveMethod_UsesHttpGet")]
         [InlineData("GenerateController_WithOverriddenHttpGetMatches_CreateMethod_UsesHttpGet")]
         [InlineData("GenerateController_WithClassLevelConfig_UsesClassConfig")]
+        [InlineData("GenerateController_WithStreamBodyParameter_ConvertsFromIFormFile")]
+        [InlineData("GenerateController_WithStreamBodyAndRouteParameter_HandlesCorrectly")]
+        [InlineData("GenerateController_WithStreamBodyAndFormFields_CreatesRecordWithConversion")]
+        [InlineData("GenerateController_WithStreamBodyAndAsyncTask_AddsAsyncAwait")]
+        [InlineData("GenerateController_WithStreamBodyAndTaskWithResult_UsesReturnAwait")]
+        [InlineData("GenerateController_WithStreamBodyReturn_GeneratesFileResult")]
+        [InlineData("GenerateController_WithStreamBodyReturnAsync_GeneratesAsyncFileResult")]
+        [InlineData("GenerateController_WithStreamBodyInputAndReturn_HandlesBothDirections")]
         public void GenerateController_FromXml_TestCase(string caseName)
         {
             var testCase = LoadTestCase(caseName);

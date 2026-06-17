@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+using System.IO;
+using System.Threading.Tasks;
+
+namespace YS.Knife
+{
+    public class StreamBody : IDisposable
+    {
+        public Stream Stream { get; set; }
+        public string ContentType { get; set; }
+        public string FileName { get; set; }
+        public long Length { get; set; }
+
+        public static StreamBody FromStream(Stream stream, string contentType, string fileName, long length, bool autoSeekBegin = true)
+        {
+            return new StreamBody { Stream = stream, ContentType = contentType, FileName = fileName, Length = length };
+        }
+
+        public void Dispose() { }
+    }
+}
+
+public interface IAsyncResultService
+{
+    Task<string> ProcessFileAsync(YS.Knife.StreamBody file);
+}
+
+[YS.Knife.ExposeApi(typeof(IAsyncResultService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+        <code file="AsyncResultController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AsyncResultController : ControllerBase
+    {
+        private readonly global::IAsyncResultService iAsyncResultService;
+        public AsyncResultController(global::IAsyncResultService iAsyncResultService)
+        {
+            this.iAsyncResultService = iAsyncResultService;
+        }
+
+        [Route("ProcessFileAsync")]
+        [HttpPost]
+        public async global::System.Threading.Tasks.Task<string> ProcessFileAsync([FromForm] __ProcessFileAsync_FormArg arg)
+        {
+            using var __sb_file = YS.Knife.StreamBody.FromStream(arg.file.OpenReadStream(), arg.file.ContentType, arg.file.FileName, arg.file.Length);
+            return await this.iAsyncResultService.ProcessFileAsync(__sb_file);
+        }
+
+        public record __ProcessFileAsync_FormArg(global::Microsoft.AspNetCore.Http.IFormFile file);
+    }
+}
+]]></code>
+    </output>
+</case>

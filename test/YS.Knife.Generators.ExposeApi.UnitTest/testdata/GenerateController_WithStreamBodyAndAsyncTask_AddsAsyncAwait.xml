@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+using System.IO;
+using System.Threading.Tasks;
+
+namespace YS.Knife
+{
+    public class StreamBody : IDisposable
+    {
+        public Stream Stream { get; set; }
+        public string ContentType { get; set; }
+        public string FileName { get; set; }
+        public long Length { get; set; }
+
+        public static StreamBody FromStream(Stream stream, string contentType, string fileName, long length, bool autoSeekBegin = true)
+        {
+            return new StreamBody { Stream = stream, ContentType = contentType, FileName = fileName, Length = length };
+        }
+
+        public void Dispose() { }
+    }
+}
+
+public interface IAsyncStreamBodyService
+{
+    Task UploadFileAsync(YS.Knife.StreamBody file);
+}
+
+[YS.Knife.ExposeApi(typeof(IAsyncStreamBodyService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+        <code file="AsyncStreamBodyController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AsyncStreamBodyController : ControllerBase
+    {
+        private readonly global::IAsyncStreamBodyService iAsyncStreamBodyService;
+        public AsyncStreamBodyController(global::IAsyncStreamBodyService iAsyncStreamBodyService)
+        {
+            this.iAsyncStreamBodyService = iAsyncStreamBodyService;
+        }
+
+        [Route("UploadFileAsync")]
+        [HttpPost]
+        public async global::System.Threading.Tasks.Task UploadFileAsync([FromForm] __UploadFileAsync_FormArg arg)
+        {
+            using var __sb_file = YS.Knife.StreamBody.FromStream(arg.file.OpenReadStream(), arg.file.ContentType, arg.file.FileName, arg.file.Length);
+            await this.iAsyncStreamBodyService.UploadFileAsync(__sb_file);
+        }
+
+        public record __UploadFileAsync_FormArg(global::Microsoft.AspNetCore.Http.IFormFile file);
+    }
+}
+]]></code>
+    </output>
+</case>

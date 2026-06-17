@@ -379,6 +379,7 @@ namespace {namespaceName}");
             Special,
             File,
             FileProperty,
+            StreamBodyFile,
         }
         private static Dictionary<string, SpecialType> FormFilePropertys = new Dictionary<string, SpecialType>
         {
@@ -399,6 +400,11 @@ namespace {namespaceName}");
             var route = firstArgIsRoute ? $"{methodName}/{{{method.Parameters[0].Name}}}" : methodName;
             var allStreamParameterNames = method.Parameters.Where(p => IsStreamType(p.Type)).Select(p => p.Name).ToList();
             var hasStreamParameter = allStreamParameterNames.Count > 0;
+            var hasStreamBodyParameter = method.Parameters.Any(p => IsStreamBodyType(p.Type));
+            var isAsync = IsAsyncMethod(method.ReturnType);
+            var hasReturnValue = HasMethodReturnValue(method.ReturnType);
+            var isStreamBodyReturn = IsStreamBodyReturnType(method.ReturnType);
+            var streamBodyLocalVarDeclarations = string.Empty;
             var parameters = new List<string>();
             var args = new List<string>();
             var newClassLine = string.Empty;
@@ -417,11 +423,15 @@ namespace {namespaceName}");
                 {
                     allParameters.Add((p, MethodParameterType.Special, p.Name));
                 }
-                else if (hasStreamParameter)
+                else if (hasStreamParameter || hasStreamBodyParameter)
                 {
                     if (allStreamParameterNames.Contains(p.Name))
                     {
                         allParameters.Add((p, MethodParameterType.File, $"{p.Name}.OpenReadStream()"));
+                    }
+                    else if (IsStreamBodyType(p.Type))
+                    {
+                        allParameters.Add((p, MethodParameterType.StreamBodyFile, p.Name));
                     }
                     else if (IsFileProperty(p, out var formFile, out var formFileProperty))
                     {
@@ -443,11 +453,11 @@ namespace {namespaceName}");
             }
 
             var moreThan1Body = allParameters.Count(p => p.Item2 == MethodParameterType.Body) > 1;
-            if (hasStreamParameter)
+            if (hasStreamParameter || hasStreamBodyParameter)
             {
 
 
-                var bodyParameters = allParameters.Where(p => p.Item2 == MethodParameterType.File || p.Item2 == MethodParameterType.Form).ToList();
+                var bodyParameters = allParameters.Where(p => p.Item2 == MethodParameterType.File || p.Item2 == MethodParameterType.Form || p.Item2 == MethodParameterType.StreamBodyFile).ToList();
                 var newClassName = $"__{method.Name}_FormArg";
                 var newClassArgName = "arg";
                 newClassLine = $"public record {newClassName}({string.Join(", ", bodyParameters.Select(p => FormatFormProperty(p.Item2, p.Item1)))});";
@@ -460,13 +470,21 @@ namespace {namespaceName}");
                     MethodParameterType.FileProperty => $"{newClassArgName}.{p.Item3}",
                     MethodParameterType.Form => $"{newClassArgName}.{p.Item3}",
                     MethodParameterType.File => $"{newClassArgName}.{p.Item3}",
+                    MethodParameterType.StreamBodyFile => $"__sb_{p.Item1.Name}",
                     _ => p.Item3
                 }));
+
+                if (hasStreamBodyParameter)
+                {
+                    streamBodyLocalVarDeclarations = string.Join("\n", allParameters
+                        .Where(p => p.Item2 == MethodParameterType.StreamBodyFile)
+                        .Select(p => $"    using var __sb_{p.Item1.Name} = YS.Knife.StreamBody.FromStream({newClassArgName}.{p.Item1.Name}.OpenReadStream(), {newClassArgName}.{p.Item1.Name}.ContentType, {newClassArgName}.{p.Item1.Name}.FileName, {newClassArgName}.{p.Item1.Name}.Length);"));
+                }
 
 
                 string FormatFormProperty(MethodParameterType type, IParameterSymbol parameterSymbol)
                 {
-                    if (type == MethodParameterType.File)
+                    if (type == MethodParameterType.File || type == MethodParameterType.StreamBodyFile)
                     {
                         return $"global::Microsoft.AspNetCore.Http.IFormFile {parameterSymbol.Name}";
                     }
@@ -526,16 +544,58 @@ namespace {namespaceName}");
 
             var paremeterLine = string.Join(", ", parameters);
             var argumentLine = string.Join(", ", args);
-            return $@"{comment}
+            var streamBodyVarBlock = hasStreamBodyParameter ? streamBodyLocalVarDeclarations + "\n" : string.Empty;
+
+            if (isStreamBodyReturn)
+            {
+                returnType = BuildActionResultTypeString(method.ReturnType);
+                var asyncModifier = isAsync ? "async " : string.Empty;
+                var awaitPrefix = isAsync ? "await " : string.Empty;
+                var serviceCallLine = $"    var __sb_result = {awaitPrefix}this.{instanceName}.{methodName}({argumentLine});";
+                var registerDisposeLine = "    this.HttpContext.Response.RegisterForDispose(__sb_result);";
+                var returnLine = "    return this.File(__sb_result.Stream, __sb_result.ContentType, __sb_result.FileName);";
+                return $@"{comment}
 [Route(""{route}"")]
 [{httpMethod}]
-public {returnType} {methodName}({paremeterLine})
+public {asyncModifier}{returnType} {methodName}({paremeterLine})
 {{
-    return this.{instanceName}.{methodName}({argumentLine});                    
+{streamBodyVarBlock}{serviceCallLine}
+{registerDisposeLine}
+{returnLine}
 }}
 
 {newClassLine}
 ";
+            }
+            else if (hasStreamBodyParameter)
+            {
+                var asyncModifier = isAsync ? "async " : string.Empty;
+                var awaitCall = isAsync ? "await " : string.Empty;
+                var returnCall = hasReturnValue ? "return " : string.Empty;
+                return $@"{comment}
+[Route(""{route}"")]
+[{httpMethod}]
+public {asyncModifier}{returnType} {methodName}({paremeterLine})
+{{
+{streamBodyVarBlock}    {returnCall}{awaitCall}this.{instanceName}.{methodName}({argumentLine});                    
+}}
+
+{newClassLine}
+";
+            }
+            else
+            {
+                return $@"{comment}
+[Route(""{route}"")]
+[{httpMethod}]
+public {returnType} {methodName}({paremeterLine})
+{{
+{streamBodyVarBlock}    return this.{instanceName}.{methodName}({argumentLine});                    
+}}
+
+{newClassLine}
+";
+            }
 
             bool IsFileProperty(IParameterSymbol typeSymbol, out string formFileName, out string formFilePropertyName)
             {
@@ -558,6 +618,13 @@ public {returnType} {methodName}({paremeterLine})
                 return false;
             }
         }
+        private const string StreamBodyTypeFullName = "global::YS.Knife.StreamBody";
+
+        private static bool IsStreamBodyType(ITypeSymbol typeSymbol)
+        {
+            return typeSymbol.ToDisplayFullString() == StreamBodyTypeFullName;
+        }
+
         private static readonly HashSet<string> SpecialTypeFullNames = new HashSet<string>
         {
             "global::System.Threading.CancellationToken",
@@ -587,6 +654,66 @@ public {returnType} {methodName}({paremeterLine})
         {
             return typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == "global::System.IO.Stream";
         }
+
+        private static bool IsAsyncMethod(ITypeSymbol returnType)
+        {
+            if (returnType == null) return false;
+            var name = returnType.Name;
+            return name == "Task" || name == "ValueTask";
+        }
+
+        private static bool HasMethodReturnValue(ITypeSymbol returnType)
+        {
+            if (returnType == null) return false;
+            // void has no return value
+            if (returnType.SpecialType == SpecialType.System_Void) return false;
+            // Task (non-generic) and ValueTask (non-generic) are void-like
+            if (returnType is INamedTypeSymbol namedType && namedType.IsGenericType)
+            {
+                var name = namedType.Name;
+                if (name == "Task" || name == "ValueTask")
+                    return namedType.TypeArguments.Length > 0;
+            }
+            // Task (non-generic), ValueTask (non-generic) → no return value
+            if (returnType.Name == "Task" || returnType.Name == "ValueTask") return false;
+            // Other types (int, string, etc.) have return values
+            return true;
+        }
+
+        private static ITypeSymbol? UnwrapAsyncReturnType(ITypeSymbol returnType)
+        {
+            if (returnType is INamedTypeSymbol namedType && namedType.IsGenericType)
+            {
+                var name = namedType.Name;
+                if ((name == "Task" || name == "ValueTask") && namedType.TypeArguments.Length > 0)
+                    return namedType.TypeArguments[0];
+            }
+            return null;
+        }
+
+        private static bool IsStreamBodyReturnType(ITypeSymbol returnType)
+        {
+            var unwrapped = UnwrapAsyncReturnType(returnType);
+            if (unwrapped != null)
+                return unwrapped.ToDisplayFullString() == StreamBodyTypeFullName;
+            return returnType.ToDisplayFullString() == StreamBodyTypeFullName;
+        }
+
+        private static string BuildActionResultTypeString(ITypeSymbol originalReturnType)
+        {
+            var actionResultType = "global::Microsoft.AspNetCore.Mvc.IActionResult";
+            var unwrapped = UnwrapAsyncReturnType(originalReturnType);
+            if (unwrapped != null)
+            {
+                var name = originalReturnType.Name;
+                if (name == "Task")
+                    return $"global::System.Threading.Tasks.Task<{actionResultType}>";
+                if (name == "ValueTask")
+                    return $"global::System.Threading.Tasks.ValueTask<{actionResultType}>";
+            }
+            return actionResultType;
+        }
+
         private static string GetHttpMethod(IMethodSymbol method, Dictionary<string, Regex> httpMethodRules)
         {
             var hasReturnType = HasReturnType(method.ReturnType);

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+using System.IO;
+
+namespace YS.Knife
+{
+    public class StreamBody : IDisposable
+    {
+        public Stream Stream { get; set; }
+        public string ContentType { get; set; }
+        public string FileName { get; set; }
+        public long Length { get; set; }
+
+        public static StreamBody FromStream(Stream stream, string contentType, string fileName, long length, bool autoSeekBegin = true)
+        {
+            return new StreamBody { Stream = stream, ContentType = contentType, FileName = fileName, Length = length };
+        }
+
+        public void Dispose() { }
+    }
+}
+
+public interface IDownloadService
+{
+    YS.Knife.StreamBody GetFile(int id);
+}
+
+[YS.Knife.ExposeApi(typeof(IDownloadService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+        <code file="DownloadController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class DownloadController : ControllerBase
+    {
+        private readonly global::IDownloadService iDownloadService;
+        public DownloadController(global::IDownloadService iDownloadService)
+        {
+            this.iDownloadService = iDownloadService;
+        }
+
+        [Route("GetFile/{id}")]
+        [HttpGet]
+        public global::Microsoft.AspNetCore.Mvc.IActionResult GetFile([FromRoute] int id)
+        {
+            var __sb_result = this.iDownloadService.GetFile(id);
+            this.HttpContext.Response.RegisterForDispose(__sb_result);
+            return this.File(__sb_result.Stream, __sb_result.ContentType, __sb_result.FileName);
+        }
+    }
+}
+]]></code>
+    </output>
+</case>

@@ -9,7 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-      <ProjectReference Include="..\..\src\YS.Knife.Generators.ExposeApi\YS.Knife.Generators.ExposeApi.csproj"  >
+      <ProjectReference Include="..\..\src\YS.Knife.Extensions\YS.Knife.Extensions.csproj" />
+      <ProjectReference Include="..\..\src\YS.Knife.Generators.ExposeApi\YS.Knife.Generators.ExposeApi.csproj">
           <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
           <OutputItemType>Analyzer</OutputItemType>
       </ProjectReference>
