@@ -11,7 +11,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\YS.Knife.EnumCode.Api.AspnetCore\YS.Knife.EnumCode.Api.AspnetCore.csproj" />
+        <ProjectReference Include="..\..\src\YS.Knife.Generators.ExposeApi\YS.Knife.Generators.ExposeApi.csproj">
+            <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+            <OutputItemType>Analyzer</OutputItemType>
+        </ProjectReference>
       <ProjectReference Include="..\..\src\YS.Knife.EnumCode.Impl.Default\YS.Knife.EnumCode.Impl.Default.csproj" />
     </ItemGroup>
 

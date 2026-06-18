@@ -58,7 +58,7 @@ namespace ExposeApiDemo
                     .ToArray();
                 return forecast;
             });
-
+            app.UseRewriter(new Microsoft.AspNetCore.Rewrite.RewriteOptions )
             app.Run();
         }
     }
