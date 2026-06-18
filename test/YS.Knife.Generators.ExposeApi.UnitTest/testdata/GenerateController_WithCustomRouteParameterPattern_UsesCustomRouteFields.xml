@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public interface IProductService
+{
+    string GetProductByCode(string code, int page);
+}
+
+[YS.Knife.ExposeApi(typeof(IProductService), RouteParameterPattern = "^(id|name|key|code)$")]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+        <code file="ProductController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProductController : ControllerBase
+    {
+        private readonly global::IProductService iProductService;
+        public ProductController(global::IProductService iProductService)
+        {
+            this.iProductService = iProductService;
+        }
+
+        [Route("GetProductByCode/{code}")]
+        [HttpGet]
+        public string GetProductByCode([FromRoute] string code, [FromQuery] int page)
+        {
+            return this.iProductService.GetProductByCode(code, page);                    
+        }
+    }
+}
+]]></code>
+    </output>
+</case>

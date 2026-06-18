@@ -24,6 +24,7 @@ namespace YS.Knife.Generators.ExposeApi
         private const string DefaultHttpPutPattern = "^(update|modify|edit)";
         private const string DefaultHttpDeletePattern = "^(delete|remove)";
         private const string DefaultHttpPatchPattern = "^patch";
+        private const string DefaultRouteParameterPattern = @"^(id|name|key)$";
 
         private static readonly Dictionary<string, Regex> DefaultHttpMethodRules = new Dictionary<string, Regex>(StringComparer.OrdinalIgnoreCase)
         {
@@ -32,10 +33,6 @@ namespace YS.Knife.Generators.ExposeApi
             { "HttpPut", new Regex(DefaultHttpPutPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled) },
             { "HttpDelete", new Regex(DefaultHttpDeletePattern, RegexOptions.IgnoreCase | RegexOptions.Compiled) },
             { "HttpPatch", new Regex(DefaultHttpPatchPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled) }
-        };
-        private static readonly HashSet<string> RouteFieldNames = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
-        {
-            "id", "name", "key"
         };
 
         const string AttributeCode = @"using System;
@@ -93,6 +90,11 @@ namespace YS.Knife
         /// HttpPatch方法匹配的正则表达式
         /// </summary>
         public string HttpPatchMatches { get; set; } = """ + DefaultHttpPatchPattern + @""";
+
+        /// <summary>
+        /// 路由参数名称匹配的正则表达式，方法第一个参数名称匹配时才作为路由参数
+        /// </summary>
+        public string RouteParameterPattern { get; set; } = @""" + DefaultRouteParameterPattern + @""";
 
         /// <summary>
         /// 构造函数
@@ -258,6 +260,11 @@ namespace {namespaceName}");
     this.{serviceName} = {serviceName};
 }}");
 
+            // 获取路由参数匹配正则（从属性命名参数读取，若未设置则使用默认值）
+            var routeParameterPatternArg = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "RouteParameterPattern");
+            var routeParameterPattern = (routeParameterPatternArg.Value.Value as string) ?? DefaultRouteParameterPattern;
+            var routeParameterRegex = new Regex(routeParameterPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
             foreach (var method in serviceTypeSymbol
                 .GetAllMembers()
                 .OfType<IMethodSymbol>()
@@ -268,7 +275,7 @@ namespace {namespaceName}");
                     continue;
                 }
                 codeBuilder.AppendLine();
-                codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method, httpMethodRules));
+                codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method, httpMethodRules, routeParameterRegex));
             }
 
             codeBuilder.EndAllSegments();
@@ -383,14 +390,14 @@ namespace {namespaceName}");
             ["Name"] = SpecialType.System_String,
             ["FileName"] = SpecialType.System_String,
         };
-        private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method, Dictionary<string, Regex> httpMethodRules)
+        private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method, Dictionary<string, Regex> httpMethodRules, Regex routeParameterRegex)
         {
             var returnType = method.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             var methodName = method.Name;
             var httpMethod = GetHttpMethod(method, httpMethodRules);
             var noBody = httpMethod == "HttpGet" || httpMethod == "HttpDelete";
             var comment = GetMethodComment(serviceType, method);
-            var firstArgIsRoute = IsFirstRouteParameter(method);
+            var firstArgIsRoute = IsFirstRouteParameter(method, routeParameterRegex);
             var route = firstArgIsRoute ? $"{methodName}/{{{method.Parameters[0].Name}}}" : methodName;
             var allStreamParameterNames = method.Parameters.Where(p => IsStreamType(p.Type)).Select(p => p.Name).ToList();
             var hasStreamParameter = allStreamParameterNames.Count > 0;
@@ -829,11 +836,11 @@ public {returnType} {methodName}({paremeterLine})
                 return string.Empty;
             }
         }
-        private static bool IsFirstRouteParameter(IMethodSymbol method)
+        private static bool IsFirstRouteParameter(IMethodSymbol method, Regex routeParameterRegex)
         {
             if (method.Parameters.Length > 0)
             {
-                return RouteFieldNames.Contains(method.Parameters[0].Name);
+                return routeParameterRegex.IsMatch(method.Parameters[0].Name);
             }
             return false;
         }
