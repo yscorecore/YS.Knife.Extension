@@ -84,7 +84,7 @@ namespace YS.Knife
         /// <summary>
         /// 要注入的服务类型
         /// </summary>
-        public Type ServiceType { get; }
+        public Type[] ServiceTypes { get; }
 
         /// <summary>
         /// Controller的路由前缀
@@ -109,10 +109,10 @@ namespace YS.Knife
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name=""serviceType"">要注入的服务类型</param>
-        public ExposeApiAttribute(Type serviceType)
+        /// <param name=""serviceTypes"">要注入的服务类型</param>
+        public ExposeApiAttribute(params Type[] serviceTypes)
         {
-            ServiceType = serviceType;
+            ServiceTypes = serviceTypes;
         }
     }
 }
@@ -212,15 +212,27 @@ namespace YS.Knife
         }
         private static void GeneratorController(ClassDeclarationSyntax classDeclarationSyntax, AttributeData attributeData, CodeWriter writer, Dictionary<string, Regex> httpMethodRules)
         {
-            // 获取服务类型
-            var serviceTypeSymbol = attributeData.ConstructorArguments[0].Value as INamedTypeSymbol;
-
-            if (serviceTypeSymbol is null)
+            // 获取所有服务类型（支持 params Type[]）
+            var serviceTypeSymbols = new List<INamedTypeSymbol?>();
+            if (attributeData.ConstructorArguments.Length == 1 &&
+                attributeData.ConstructorArguments[0].Kind == TypedConstantKind.Array)
             {
-                return;
+                // params Type[] 场景：所有参数被打包为一个数组
+                serviceTypeSymbols.AddRange(
+                    attributeData.ConstructorArguments[0].Values
+                        .Select(v => v.Value as INamedTypeSymbol));
+            }
+            else
+            {
+                // 兼容单个 Type 参数场景
+                serviceTypeSymbols.AddRange(
+                    attributeData.ConstructorArguments
+                        .Select(arg => arg.Value as INamedTypeSymbol));
             }
 
-            var serviceType = serviceTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            foreach (var serviceTypeSymbol in serviceTypeSymbols.Where(s => s != null))
+            {
+                var serviceType = serviceTypeSymbol!.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
             // 确定控制器名称：服务类型名称 + Controller
             var controllerName = GetControllerName(serviceTypeSymbol, writer);
@@ -367,6 +379,7 @@ namespace {namespaceName}");
                     res.Add(serviceType.Name);
                 }
                 return res;
+            }
             }
         }
 

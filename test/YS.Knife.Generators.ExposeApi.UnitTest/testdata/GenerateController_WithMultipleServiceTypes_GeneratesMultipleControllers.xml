@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+public interface IUserService
+{
+    string GetUserName(int id);
+}
+
+public interface IProductService
+{
+    int GetProductCount();
+}
+
+[YS.Knife.ExposeApi(typeof(IUserService), typeof(IProductService))]
+public class TestController
+{
+}
+]]></code>
+    </input>
+    <output>
+        <code file="UserController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UserController : ControllerBase
+    {
+        private readonly global::IUserService iUserService;
+        public UserController(global::IUserService iUserService)
+        {
+            this.iUserService = iUserService;
+        }
+
+        [Route("GetUserName/{id}")]
+        [HttpGet]
+        public string GetUserName([FromRoute] int id)
+        {
+            return this.iUserService.GetUserName(id);                    
+        }
+    }
+}
+]]></code>
+        <code file="ProductController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProductController : ControllerBase
+    {
+        private readonly global::IProductService iProductService;
+        public ProductController(global::IProductService iProductService)
+        {
+            this.iProductService = iProductService;
+        }
+
+        [Route("GetProductCount")]
+        [HttpGet]
+        public int GetProductCount()
+        {
+            return this.iProductService.GetProductCount();                    
+        }
+    }
+}
+]]></code>
+    </output>
+</case>

@@ -3,9 +3,10 @@ using YS.Knife;
 
 namespace ExposeApiDemo
 {
-    [ExposeApi(typeof(IService1))]
-    [ExposeApi(typeof(MyService))]
-    [ExposeApi(typeof(FileService))]
+    [ExposeApi(
+        typeof(FileService),
+        typeof(MyService),
+        typeof(IService1))]
     public class Program
     {
         public static void Main(string[] args)
@@ -120,7 +121,7 @@ namespace ExposeApiDemo
             return Task.CompletedTask;
         }
     }
-    
+
     public class FileService
     {
         public void UploadFile(StreamBody file)

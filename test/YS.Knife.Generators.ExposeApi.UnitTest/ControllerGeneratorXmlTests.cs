@@ -69,6 +69,7 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
         [InlineData("GenerateController_WithStreamBodyReturn_GeneratesFileResult")]
         [InlineData("GenerateController_WithStreamBodyReturnAsync_GeneratesAsyncFileResult")]
         [InlineData("GenerateController_WithStreamBodyInputAndReturn_HandlesBothDirections")]
+        [InlineData("GenerateController_WithMultipleServiceTypes_GeneratesMultipleControllers")]
         public void GenerateController_FromXml_TestCase(string caseName)
         {
             var testCase = LoadTestCase(caseName);
