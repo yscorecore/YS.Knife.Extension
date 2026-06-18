@@ -109,7 +109,7 @@ namespace YS.Knife
         /// <summary>
         /// 参数Attribute透传规则，支持通配符*和?匹配Attribute全名
         /// </summary>
-        public string[] ParameterAttributePatterns { get; set; } = Array.Empty<string>();
+        public string[] ParameterAttributePatterns { get; set; } = new string[] { ""System.ComponentModel.DataAnnotations.*"" };
 
         /// <summary>
         /// 构造函数
