@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+[AttributeUsage(AttributeTargets.All)]
+public class CustomAttr : Attribute
+{
+    public CustomAttr(string desc) { Description = desc; }
+    public string Description { get; }
+}
+
+[CustomAttr("type level")]
+public interface IAccountService
+{
+    [CustomAttr("method level")]
+    string GetAccount([CustomAttr("param level")] int id);
+}
+
+[YS.Knife.ExposeApi(typeof(IAccountService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="AccountController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AccountController : ControllerBase
+    {
+        private readonly global::IAccountService iAccountService;
+        public AccountController(global::IAccountService iAccountService)
+        {
+            this.iAccountService = iAccountService;
+        }
+
+        [Route("GetAccount/{id}")]
+        [HttpGet]
+        public string GetAccount([FromRoute] int id)
+        {
+            return this.iAccountService.GetAccount(id);                    
+        }
+    }
+}]]></code>
+    </output>
+</case>

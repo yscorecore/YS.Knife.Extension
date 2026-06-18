@@ -71,6 +71,13 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
         [InlineData("GenerateController_WithStreamBodyInputAndReturn_HandlesBothDirections")]
         [InlineData("GenerateController_WithMultipleServiceTypes_GeneratesMultipleControllers")]
         [InlineData("GenerateController_WithCustomRouteParameterPattern_UsesCustomRouteFields")]
+        [InlineData("GenerateController_WithTypeAttributePassthrough_PassesTypeAttributes")]
+        [InlineData("GenerateController_WithMethodAttributePassthrough_PassesMethodAttributes")]
+        [InlineData("GenerateController_WithParameterAttributePassthrough_PassesParameterAttributes")]
+        [InlineData("GenerateController_WithStarWildcard_MatchesAnySequence")]
+        [InlineData("GenerateController_WithQuestionMarkWildcard_MatchesSingleChar")]
+        [InlineData("GenerateController_WithEmptyAttributePatterns_NoPassthrough")]
+        [InlineData("GenerateController_WithAllAttributePatterns_PassesAllLevels")]
         public void GenerateController_FromXml_TestCase(string caseName)
         {
             var testCase = LoadTestCase(caseName);

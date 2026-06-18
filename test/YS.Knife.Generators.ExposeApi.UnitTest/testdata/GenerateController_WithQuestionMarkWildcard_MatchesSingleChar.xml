@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+[AttributeUsage(AttributeTargets.All)]
+public class CustomAttr : Attribute
+{
+    public CustomAttr() { }
+}
+
+public interface IItemService
+{
+    [CustomAttr]
+    string FindItem(int id);
+}
+
+[YS.Knife.ExposeApi(typeof(IItemService), MethodAttributePatterns = new string[] { "Custom?ttr" })]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="ItemController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ItemController : ControllerBase
+    {
+        private readonly global::IItemService iItemService;
+        public ItemController(global::IItemService iItemService)
+        {
+            this.iItemService = iItemService;
+        }
+
+        [Route("FindItem/{id}")]
+        [HttpGet]
+        [global::CustomAttr]
+        public string FindItem([FromRoute] int id)
+        {
+            return this.iItemService.FindItem(id);                    
+        }
+    }
+}]]></code>
+    </output>
+</case>

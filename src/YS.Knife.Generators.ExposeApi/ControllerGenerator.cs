@@ -97,6 +97,21 @@ namespace YS.Knife
         public string RouteParameterPattern { get; set; } = @""" + DefaultRouteParameterPattern + @""";
 
         /// <summary>
+        /// 类型Attribute透传规则，支持通配符*和?匹配Attribute全名
+        /// </summary>
+        public string[] TypeAttributePatterns { get; set; } = Array.Empty<string>();
+
+        /// <summary>
+        /// 方法Attribute透传规则，支持通配符*和?匹配Attribute全名
+        /// </summary>
+        public string[] MethodAttributePatterns { get; set; } = Array.Empty<string>();
+
+        /// <summary>
+        /// 参数Attribute透传规则，支持通配符*和?匹配Attribute全名
+        /// </summary>
+        public string[] ParameterAttributePatterns { get; set; } = Array.Empty<string>();
+
+        /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name=""serviceTypes"">要注入的服务类型</param>
@@ -178,6 +193,10 @@ namespace YS.Knife
         {
             foreach (var arg in configAttr.NamedArguments)
             {
+                // Skip array-typed arguments (e.g. TypeAttributePatterns, MethodAttributePatterns,
+                // ParameterAttributePatterns) since TypedConstant.Value throws for arrays.
+                if (arg.Value.Kind == TypedConstantKind.Array)
+                    continue;
                 var key = arg.Key switch
                 {
                     "HttpGetMatches" => "HttpGet",
@@ -233,6 +252,10 @@ namespace YS.Knife
 
             var allowAnonymous = GetAllowAnonymous();
 
+            var typeAttributePatterns = GetStringArrayFromNamedArgument(attributeData, "TypeAttributePatterns");
+            var methodAttributePatterns = GetStringArrayFromNamedArgument(attributeData, "MethodAttributePatterns");
+            var parameterAttributePatterns = GetStringArrayFromNamedArgument(attributeData, "ParameterAttributePatterns");
+
             CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder("CS1591", "CS1573");
 
             codeBuilder.AppendCodeLines($@"using Microsoft.AspNetCore.Authorization;
@@ -250,6 +273,16 @@ namespace {namespaceName}");
             if (allowAnonymous)
             {
                 codeBuilder.AppendCodeLines("[AllowAnonymous]");
+            }
+            if (typeAttributePatterns.Length > 0)
+            {
+                foreach (var typeAttr in serviceTypeSymbol.GetAttributes())
+                {
+                    if (typeAttr.AttributeClass != null && MatchesWildcardPattern(typeAttr.AttributeClass.ToDisplayString(), typeAttributePatterns))
+                    {
+                        codeBuilder.AppendCodeLines(FormatAttributeSource(typeAttr));
+                    }
+                }
             }
             codeBuilder.AppendCodeLines($"public class {controllerName} : ControllerBase");
             codeBuilder.BeginSegment();
@@ -275,7 +308,7 @@ namespace {namespaceName}");
                     continue;
                 }
                 codeBuilder.AppendLine();
-                codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method, httpMethodRules, routeParameterRegex));
+                codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method, httpMethodRules, routeParameterRegex, methodAttributePatterns, parameterAttributePatterns));
             }
 
             codeBuilder.EndAllSegments();
@@ -309,19 +342,26 @@ namespace {namespaceName}");
             bool ShouldGenerateMethod(string methodName, AttributeData attrData)
             {
                 var includesArg = attrData.NamedArguments.FirstOrDefault(arg => arg.Key == "Includes");
-                var excludesArg = attrData.NamedArguments.FirstOrDefault(arg => arg.Key == "Excludes");
-
-                if (includesArg.Key == "Includes" && includesArg.Value.Value != null)
+                if (includesArg.Key == "Includes" && includesArg.Value.Kind == TypedConstantKind.Array)
                 {
-                    if (includesArg.Value.Value is string[] includes && includes.Length > 0)
+                    var includes = includesArg.Value.Values
+                        .Where(v => v.Value is string)
+                        .Select(v => (string)v.Value)
+                        .ToArray();
+                    if (includes.Length > 0)
                     {
                         return includes.Any(x => string.Equals(x, methodName, StringComparison.OrdinalIgnoreCase));
                     }
                 }
 
-                if (excludesArg.Key == "Excludes" && excludesArg.Value.Value != null)
+                var excludesArg = attrData.NamedArguments.FirstOrDefault(arg => arg.Key == "Excludes");
+                if (excludesArg.Key == "Excludes" && excludesArg.Value.Kind == TypedConstantKind.Array)
                 {
-                    if (excludesArg.Value.Value is string[] excludes && excludes.Length > 0)
+                    var excludes = excludesArg.Value.Values
+                        .Where(v => v.Value is string)
+                        .Select(v => (string)v.Value)
+                        .ToArray();
+                    if (excludes.Length > 0)
                     {
                         return !excludes.Any(x => string.Equals(x, methodName, StringComparison.OrdinalIgnoreCase));
                     }
@@ -390,7 +430,88 @@ namespace {namespaceName}");
             ["Name"] = SpecialType.System_String,
             ["FileName"] = SpecialType.System_String,
         };
-        private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method, Dictionary<string, Regex> httpMethodRules, Regex routeParameterRegex)
+        private static string[] GetStringArrayFromNamedArgument(AttributeData attr, string key)
+        {
+            var arg = attr.NamedArguments.FirstOrDefault(a => a.Key == key);
+            if (arg.Key != key) return Array.Empty<string>();
+            if (arg.Value.Kind == TypedConstantKind.Array)
+            {
+                return arg.Value.Values
+                    .Where(v => v.Value is string)
+                    .Select(v => (string)v.Value)
+                    .ToArray();
+            }
+            return Array.Empty<string>();
+        }
+
+        private static bool MatchesWildcardPattern(string attributeFullName, string[] patterns)
+        {
+            if (patterns == null || patterns.Length == 0) return false;
+            foreach (var pattern in patterns)
+            {
+                if (string.IsNullOrEmpty(pattern)) continue;
+                var regexPattern = "^" + Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", ".") + "$";
+                if (Regex.IsMatch(attributeFullName, regexPattern, RegexOptions.IgnoreCase))
+                    return true;
+            }
+            return false;
+        }
+
+        private static string FormatAttributeSource(AttributeData attr)
+        {
+            var attrClass = attr.AttributeClass;
+            if (attrClass == null) return string.Empty;
+            var attrName = attrClass.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+
+            var argParts = new List<string>();
+
+            foreach (var arg in attr.ConstructorArguments)
+            {
+                argParts.Add(FormatTypedConstant(arg));
+            }
+
+            foreach (var arg in attr.NamedArguments)
+            {
+                argParts.Add($"{arg.Key} = {FormatTypedConstant(arg.Value)}");
+            }
+
+            if (argParts.Count > 0)
+                return $"[{attrName}({string.Join(", ", argParts)})]";
+            else
+                return $"[{attrName}]";
+        }
+
+        private static string FormatTypedConstant(TypedConstant constant)
+        {
+            switch (constant.Kind)
+            {
+                case TypedConstantKind.Primitive:
+                    if (constant.Value is string s)
+                        return $"\"{s.Replace("\\", "\\\\").Replace("\"", "\\\"")}\"";
+                    if (constant.Value is bool b)
+                        return b ? "true" : "false";
+                    if (constant.Value is char c)
+                        return $"'{c}'";
+                    return constant.Value?.ToString() ?? "null";
+                case TypedConstantKind.Enum:
+                    var enumType = constant.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                    return $"({enumType}){constant.Value}";
+                case TypedConstantKind.Type:
+                    if (constant.Value is INamedTypeSymbol typeSymbol)
+                        return $"typeof({typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)})";
+                    return "null";
+                case TypedConstantKind.Array:
+                    var elements = constant.Values.Select(FormatTypedConstant);
+                    var arrayType = constant.Type is IArrayTypeSymbol arrType
+                        ? arrType.ElementType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
+                        : "object";
+                    return $"new {arrayType}[] {{ {string.Join(", ", elements)} }}";
+                default:
+                    return constant.Value?.ToString() ?? "null";
+            }
+        }
+
+        private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method, Dictionary<string, Regex> httpMethodRules, Regex routeParameterRegex, string[] methodAttributePatterns, string[] parameterAttributePatterns)
         {
             var returnType = method.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             var methodName = method.Name;
@@ -410,6 +531,20 @@ namespace {namespaceName}");
             var args = new List<string>();
             var newClassLine = string.Empty;
             Func<IParameterSymbol, string> formatParam = (parameter) => $"{parameter.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)} {parameter.Name}";
+
+            var methodAttrLines = string.Empty;
+            if (methodAttributePatterns.Length > 0)
+            {
+                var sb = new StringBuilder();
+                foreach (var methodAttr in method.GetAttributes())
+                {
+                    if (methodAttr.AttributeClass != null && MatchesWildcardPattern(methodAttr.AttributeClass.ToDisplayString(), methodAttributePatterns))
+                    {
+                        sb.AppendLine(FormatAttributeSource(methodAttr));
+                    }
+                }
+                methodAttrLines = sb.ToString();
+            }
 
             var allParameters = new List<(IParameterSymbol, MethodParameterType, string)>();
 
@@ -462,10 +597,10 @@ namespace {namespaceName}");
                 var newClassName = $"__{method.Name}_FormArg";
                 var newClassArgName = "arg";
                 newClassLine = $"public record {newClassName}({string.Join(", ", bodyParameters.Select(p => FormatFormProperty(p.Item2, p.Item1)))});";
-                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Route).Select(p => $"[FromRoute] {formatParam(p.Item1)}"));
-                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Query).Select(p => $"[FromQuery] {formatParam(p.Item1)}"));
+                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Route).Select(p => $"[FromRoute] {GetParameterAttributePrefix(p.Item1, parameterAttributePatterns)}{formatParam(p.Item1)}"));
+                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Query).Select(p => $"[FromQuery] {GetParameterAttributePrefix(p.Item1, parameterAttributePatterns)}{formatParam(p.Item1)}"));
                 parameters.Add($"[FromForm] {newClassName} {newClassArgName}");
-                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Special).Select(p => $"{formatParam(p.Item1)}"));
+                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Special).Select(p => $"{GetParameterAttributePrefix(p.Item1, parameterAttributePatterns)}{formatParam(p.Item1)}"));
                 args.AddRange(allParameters.Select(p => p.Item2 switch
                 {
                     MethodParameterType.FileProperty => $"{newClassArgName}.{p.Item3}",
@@ -513,12 +648,12 @@ namespace {namespaceName}");
             {
                 parameters.AddRange(allParameters.Where(p => p.Item2 != MethodParameterType.FileProperty).Select(p => p.Item2 switch
                 {
-                    MethodParameterType.Route => $"[FromRoute] {formatParam(p.Item1)}",
-                    MethodParameterType.Query => $"[FromQuery] {formatParam(p.Item1)}",
-                    MethodParameterType.Body => $"[FromBody] {formatParam(p.Item1)}",
-                    MethodParameterType.File => $"[FromForm] global::Microsoft.AspNetCore.Http.IFormFile {p.Item1.Name}",
-                    MethodParameterType.Form => $"[FromForm] {formatParam(p.Item1)}",
-                    _ => formatParam(p.Item1)
+                    MethodParameterType.Route => $"[FromRoute] {GetParameterAttributePrefix(p.Item1, parameterAttributePatterns)}{formatParam(p.Item1)}",
+                    MethodParameterType.Query => $"[FromQuery] {GetParameterAttributePrefix(p.Item1, parameterAttributePatterns)}{formatParam(p.Item1)}",
+                    MethodParameterType.Body => $"[FromBody] {GetParameterAttributePrefix(p.Item1, parameterAttributePatterns)}{formatParam(p.Item1)}",
+                    MethodParameterType.File => $"[FromForm] {GetParameterAttributePrefix(p.Item1, parameterAttributePatterns)}global::Microsoft.AspNetCore.Http.IFormFile {p.Item1.Name}",
+                    MethodParameterType.Form => $"[FromForm] {GetParameterAttributePrefix(p.Item1, parameterAttributePatterns)}{formatParam(p.Item1)}",
+                    _ => $"{GetParameterAttributePrefix(p.Item1, parameterAttributePatterns)}{formatParam(p.Item1)}"
                 }));
                 args.AddRange(allParameters.Select(p => p.Item3));
             }
@@ -528,10 +663,10 @@ namespace {namespaceName}");
                 var newClassName = $"__{method.Name}_BodyArg";
                 var newClassArgName = "arg";
                 newClassLine = $"public record {newClassName}({string.Join(", ", bodyParameters.Select(t => t.Item1))});";
-                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Route).Select(p => $"[FromRoute] {formatParam(p.Item1)}"));
-                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Query).Select(p => $"[FromQuery] {formatParam(p.Item1)}"));
+                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Route).Select(p => $"[FromRoute] {GetParameterAttributePrefix(p.Item1, parameterAttributePatterns)}{formatParam(p.Item1)}"));
+                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Query).Select(p => $"[FromQuery] {GetParameterAttributePrefix(p.Item1, parameterAttributePatterns)}{formatParam(p.Item1)}"));
                 parameters.Add($"[FromBody] {newClassName} {newClassArgName}");
-                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Special).Select(p => $"{formatParam(p.Item1)}"));
+                parameters.AddRange(allParameters.Where(p => p.Item2 == MethodParameterType.Special).Select(p => $"{GetParameterAttributePrefix(p.Item1, parameterAttributePatterns)}{formatParam(p.Item1)}"));
                 args.AddRange(allParameters.Select(p => p.Item2 switch
                 {
                     MethodParameterType.Body => $"{newClassArgName}.{p.Item3}",
@@ -558,7 +693,7 @@ namespace {namespaceName}");
                 return $@"{comment}
 [Route(""{route}"")]
 [{httpMethod}]
-public {asyncModifier}{returnType} {methodName}({paremeterLine})
+{methodAttrLines}public {asyncModifier}{returnType} {methodName}({paremeterLine})
 {{
 {streamBodyVarBlock}{serviceCallLine}
 {registerDisposeLine}
@@ -576,7 +711,7 @@ public {asyncModifier}{returnType} {methodName}({paremeterLine})
                 return $@"{comment}
 [Route(""{route}"")]
 [{httpMethod}]
-public {asyncModifier}{returnType} {methodName}({paremeterLine})
+{methodAttrLines}public {asyncModifier}{returnType} {methodName}({paremeterLine})
 {{
 {streamBodyVarBlock}    {returnCall}{awaitCall}this.{instanceName}.{methodName}({argumentLine});                    
 }}
@@ -589,13 +724,27 @@ public {asyncModifier}{returnType} {methodName}({paremeterLine})
                 return $@"{comment}
 [Route(""{route}"")]
 [{httpMethod}]
-public {returnType} {methodName}({paremeterLine})
+{methodAttrLines}public {returnType} {methodName}({paremeterLine})
 {{
 {streamBodyVarBlock}    return this.{instanceName}.{methodName}({argumentLine});                    
 }}
 
 {newClassLine}
 ";
+            }
+
+            string GetParameterAttributePrefix(IParameterSymbol parameter, string[] paramPatterns)
+            {
+                if (paramPatterns == null || paramPatterns.Length == 0) return string.Empty;
+                var attrs = new List<string>();
+                foreach (var paramAttr in parameter.GetAttributes())
+                {
+                    if (paramAttr.AttributeClass != null && MatchesWildcardPattern(paramAttr.AttributeClass.ToDisplayString(), paramPatterns))
+                    {
+                        attrs.Add(FormatAttributeSource(paramAttr));
+                    }
+                }
+                return attrs.Count > 0 ? string.Join(" ", attrs) + " " : string.Empty;
             }
 
             bool IsFileProperty(IParameterSymbol typeSymbol, out string formFileName, out string formFilePropertyName)

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+[AttributeUsage(AttributeTargets.All)]
+public class TestableAttr : Attribute
+{
+    public TestableAttr() { }
+}
+
+[AttributeUsage(AttributeTargets.All)]
+public class OtherAttr : Attribute
+{
+    public OtherAttr() { }
+}
+
+[TestableAttr]
+[OtherAttr]
+public interface IDataService
+{
+    string GetData(int id);
+}
+
+[YS.Knife.ExposeApi(typeof(IDataService), TypeAttributePatterns = new string[] { "Test*" })]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="DataController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    [global::TestableAttr]
+    public class DataController : ControllerBase
+    {
+        private readonly global::IDataService iDataService;
+        public DataController(global::IDataService iDataService)
+        {
+            this.iDataService = iDataService;
+        }
+
+        [Route("GetData/{id}")]
+        [HttpGet]
+        public string GetData([FromRoute] int id)
+        {
+            return this.iDataService.GetData(id);                    
+        }
+    }
+}]]></code>
+    </output>
+</case>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+[AttributeUsage(AttributeTargets.All)]
+public class TypeAttr : Attribute
+{
+    public TypeAttr(string name) { Name = name; }
+    public string Name { get; }
+}
+
+[AttributeUsage(AttributeTargets.All)]
+public class MethodAttr : Attribute
+{
+    public MethodAttr(string name) { Name = name; }
+    public string Name { get; }
+}
+
+[AttributeUsage(AttributeTargets.All)]
+public class ParamAttr : Attribute
+{
+    public ParamAttr(string name) { Name = name; }
+    public string Name { get; }
+}
+
+[TypeAttr("service")]
+public interface IReportService
+{
+    [MethodAttr("query")]
+    string QueryReport([ParamAttr("report id")] int id);
+}
+
+[YS.Knife.ExposeApi(typeof(IReportService), TypeAttributePatterns = new string[] { "TypeAttr" }, MethodAttributePatterns = new string[] { "MethodAttr" }, ParameterAttributePatterns = new string[] { "ParamAttr" })]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="ReportController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    [global::TypeAttr("service")]
+    public class ReportController : ControllerBase
+    {
+        private readonly global::IReportService iReportService;
+        public ReportController(global::IReportService iReportService)
+        {
+            this.iReportService = iReportService;
+        }
+
+        [Route("QueryReport/{id}")]
+        [HttpGet]
+        [global::MethodAttr("query")]
+        public string QueryReport([FromRoute] [global::ParamAttr("report id")] int id)
+        {
+            return this.iReportService.QueryReport(id);                    
+        }
+    }
+}]]></code>
+    </output>
+</case>

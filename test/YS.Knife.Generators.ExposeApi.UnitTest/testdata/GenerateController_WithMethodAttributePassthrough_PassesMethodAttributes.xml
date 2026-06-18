@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+[AttributeUsage(AttributeTargets.All)]
+public class MethodAttr : Attribute
+{
+    public MethodAttr(string description) { Description = description; }
+    public string Description { get; }
+}
+
+public interface IOrderService
+{
+    [MethodAttr("get order detail")]
+    string GetOrder(int id);
+}
+
+[YS.Knife.ExposeApi(typeof(IOrderService), MethodAttributePatterns = new string[] { "MethodAttr" })]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="OrderController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class OrderController : ControllerBase
+    {
+        private readonly global::IOrderService iOrderService;
+        public OrderController(global::IOrderService iOrderService)
+        {
+            this.iOrderService = iOrderService;
+        }
+
+        [Route("GetOrder/{id}")]
+        [HttpGet]
+        [global::MethodAttr("get order detail")]
+        public string GetOrder([FromRoute] int id)
+        {
+            return this.iOrderService.GetOrder(id);                    
+        }
+    }
+}]]></code>
+    </output>
+</case>

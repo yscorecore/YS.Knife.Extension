@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+[AttributeUsage(AttributeTargets.All)]
+public class ParamAttr : Attribute
+{
+    public ParamAttr(string description) { Description = description; }
+    public string Description { get; }
+}
+
+public interface IProductService
+{
+    string GetProduct([ParamAttr("product id")] int id, string name);
+}
+
+[YS.Knife.ExposeApi(typeof(IProductService), ParameterAttributePatterns = new string[] { "ParamAttr" })]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="ProductController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProductController : ControllerBase
+    {
+        private readonly global::IProductService iProductService;
+        public ProductController(global::IProductService iProductService)
+        {
+            this.iProductService = iProductService;
+        }
+
+        [Route("GetProduct/{id}")]
+        [HttpGet]
+        public string GetProduct([FromRoute] [global::ParamAttr("product id")] int id, [FromQuery] string name)
+        {
+            return this.iProductService.GetProduct(id, name);                    
+        }
+    }
+}]]></code>
+    </output>
+</case>

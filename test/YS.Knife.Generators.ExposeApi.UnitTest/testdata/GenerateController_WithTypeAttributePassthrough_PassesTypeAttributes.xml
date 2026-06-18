@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+[AttributeUsage(AttributeTargets.All)]
+public class TypeAttr : Attribute
+{
+    public TypeAttr(string description) { Description = description; }
+    public string Description { get; }
+}
+
+[TypeAttr("user service")]
+public interface IUserService
+{
+    string GetUserName(int id);
+}
+
+[YS.Knife.ExposeApi(typeof(IUserService), TypeAttributePatterns = new string[] { "TypeAttr" })]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="UserController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    [global::TypeAttr("user service")]
+    public class UserController : ControllerBase
+    {
+        private readonly global::IUserService iUserService;
+        public UserController(global::IUserService iUserService)
+        {
+            this.iUserService = iUserService;
+        }
+
+        [Route("GetUserName/{id}")]
+        [HttpGet]
+        public string GetUserName([FromRoute] int id)
+        {
+            return this.iUserService.GetUserName(id);
+        }
+    }
+}]]></code>
+    </output>
+</case>
