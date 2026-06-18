@@ -3,14 +3,12 @@
     <input>
         <code><![CDATA[using System;
 
-[assembly: YS.Knife.ExposeApiConfig(HttpGetMatches = "^(get|query|find|fetch|list|read|retrieve)")]
-
 public interface IRetrievalService
 {
     string RetrieveUser(string id);
 }
 
-[YS.Knife.ExposeApi(typeof(IRetrievalService))]
+[YS.Knife.ExposeApi(typeof(IRetrievalService), HttpGetMatches = "^(get|query|find|fetch|list|read|retrieve)")]
 public class TestController
 {
 }]]></code>

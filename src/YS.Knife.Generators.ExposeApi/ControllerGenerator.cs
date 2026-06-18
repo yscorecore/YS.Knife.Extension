@@ -19,9 +19,6 @@ namespace YS.Knife.Generators.ExposeApi
         const string AttributeName = "ExposeApiAttribute";
         internal static string AttributeFullName = $"{NameSpaceName}.{AttributeName}";
 
-        const string ConfigAttributeName = "ExposeApiConfigAttribute";
-        internal static string ConfigAttributeFullName = $"{NameSpaceName}.{ConfigAttributeName}";
-
         private const string DefaultHttpGetPattern = "^(get|query|find|fetch|list)";
         private const string DefaultHttpPostPattern = "^(create|add|post|upload|save|write)";
         private const string DefaultHttpPutPattern = "^(update|modify|edit)";
@@ -40,40 +37,6 @@ namespace YS.Knife.Generators.ExposeApi
         {
             "id", "name", "key"
         };
-
-        const string ConfigAttributeCode = @"using System;
-namespace YS.Knife
-{
-    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    sealed class ExposeApiConfigAttribute : Attribute
-    {
-        /// <summary>
-        /// HttpGet方法匹配的正则表达式
-        /// </summary>
-        public string HttpGetMatches { get; set; } = """ + DefaultHttpGetPattern + @""";
-
-        /// <summary>
-        /// HttpPost方法匹配的正则表达式
-        /// </summary>
-        public string HttpPostMatches { get; set; } = """ + DefaultHttpPostPattern + @""";
-
-        /// <summary>
-        /// HttpPut方法匹配的正则表达式
-        /// </summary>
-        public string HttpPutMatches { get; set; } = """ + DefaultHttpPutPattern + @""";
-
-        /// <summary>
-        /// HttpDelete方法匹配的正则表达式
-        /// </summary>
-        public string HttpDeleteMatches { get; set; } = """ + DefaultHttpDeletePattern + @""";
-
-        /// <summary>
-        /// HttpPatch方法匹配的正则表达式
-        /// </summary>
-        public string HttpPatchMatches { get; set; } = """ + DefaultHttpPatchPattern + @""";
-    }
-}
-";
 
         const string AttributeCode = @"using System;
 namespace YS.Knife
@@ -107,6 +70,31 @@ namespace YS.Knife
         public string[] Excludes { get; set; } = Array.Empty<string>();
 
         /// <summary>
+        /// HttpGet方法匹配的正则表达式
+        /// </summary>
+        public string HttpGetMatches { get; set; } = """ + DefaultHttpGetPattern + @""";
+
+        /// <summary>
+        /// HttpPost方法匹配的正则表达式
+        /// </summary>
+        public string HttpPostMatches { get; set; } = """ + DefaultHttpPostPattern + @""";
+
+        /// <summary>
+        /// HttpPut方法匹配的正则表达式
+        /// </summary>
+        public string HttpPutMatches { get; set; } = """ + DefaultHttpPutPattern + @""";
+
+        /// <summary>
+        /// HttpDelete方法匹配的正则表达式
+        /// </summary>
+        public string HttpDeleteMatches { get; set; } = """ + DefaultHttpDeletePattern + @""";
+
+        /// <summary>
+        /// HttpPatch方法匹配的正则表达式
+        /// </summary>
+        public string HttpPatchMatches { get; set; } = """ + DefaultHttpPatchPattern + @""";
+
+        /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name=""serviceTypes"">要注入的服务类型</param>
@@ -125,7 +113,6 @@ namespace YS.Knife
             context.RegisterPostInitializationOutput(i =>
             {
                 i.AddSource($"{AttributeFullName}.g.cs", AttributeCode);
-                i.AddSource($"{ConfigAttributeFullName}.g.cs", ConfigAttributeCode);
             });
             // 注册语法接收器
             var classDeclarations = context.SyntaxProvider
@@ -146,9 +133,6 @@ namespace YS.Knife
         private static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classDeclarations, SourceProductionContext context)
         {
             var dynamicApiAttributeType = compilation.GetTypeByMetadataName(AttributeFullName);
-            var configAttributeType = compilation.GetTypeByMetadataName(ConfigAttributeFullName);
-
-            var defaultRules = GetHttpMethodRules(compilation, configAttributeType);
             var codeWriter = new CodeWriter(compilation, context);
             // 查找所有标记了DynamicApiAttribute的类
             foreach (var classDecl in classDeclarations)
@@ -157,37 +141,34 @@ namespace YS.Knife
                 var symbol = semanticModel.GetDeclaredSymbol(classDecl);
                 if (symbol == null)
                     continue;
-                var classConfigAttr = symbol.GetAttributes().FirstOrDefault(a => a.AttributeClass != null && a.AttributeClass.Equals(configAttributeType, SymbolEqualityComparer.Default));
-                var httpMethodRules = classConfigAttr != null
-                    ? GetHttpMethodRulesWithConfig(defaultRules, classConfigAttr)
-                    : defaultRules;
 
                 var attrs = symbol.GetAttributes().Where(p => p.AttributeClass != null && p.AttributeClass.Equals(dynamicApiAttributeType, SymbolEqualityComparer.Default))
                         .ToImmutableList();
                 foreach (var attr in attrs)
                 {
-                    GeneratorController(classDecl, attr, codeWriter, httpMethodRules);
+                    if (HasServiceTypes(attr))
+                    {
+                        var httpMethodRules = BuildHttpMethodRules(attr);
+                        GeneratorController(classDecl, attr, codeWriter, httpMethodRules);
+                    }
                 }
             }
 
         }
-        private static Dictionary<string, Regex> GetHttpMethodRules(Compilation compilation, INamedTypeSymbol configAttributeType)
+        private static bool HasServiceTypes(AttributeData attr)
+        {
+            if (attr.ConstructorArguments.IsDefaultOrEmpty)
+                return false;
+            // params Type[] 无参数时 Values 为空
+            if (attr.ConstructorArguments.Length == 1 &&
+                attr.ConstructorArguments[0].Kind == TypedConstantKind.Array)
+                return attr.ConstructorArguments[0].Values.Length > 0;
+            return true;
+        }
+        private static Dictionary<string, Regex> BuildHttpMethodRules(AttributeData attr)
         {
             var rules = new Dictionary<string, Regex>(DefaultHttpMethodRules, StringComparer.OrdinalIgnoreCase);
-
-            var assemblyAttr = compilation.Assembly.GetAttributes().FirstOrDefault(a => a.AttributeClass != null && a.AttributeClass.Equals(configAttributeType, SymbolEqualityComparer.Default));
-            if (assemblyAttr != null)
-            {
-                ApplyConfigAttribute(assemblyAttr, rules);
-            }
-
-            return rules;
-        }
-
-        private static Dictionary<string, Regex> GetHttpMethodRulesWithConfig(Dictionary<string, Regex> defaultRules, AttributeData classConfigAttr)
-        {
-            var rules = new Dictionary<string, Regex>(defaultRules, StringComparer.OrdinalIgnoreCase);
-            ApplyConfigAttribute(classConfigAttr, rules);
+            ApplyConfigAttribute(attr, rules);
             return rules;
         }
 

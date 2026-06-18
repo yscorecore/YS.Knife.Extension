@@ -3,14 +3,12 @@
     <input>
         <code><![CDATA[using System;
 
-[assembly: YS.Knife.ExposeApiConfig(HttpPostMatches = "^(create|add|insert)")]
-
 public interface IInsertionService
 {
     string InsertUser(string name);
 }
 
-[YS.Knife.ExposeApi(typeof(IInsertionService))]
+[YS.Knife.ExposeApi(typeof(IInsertionService), HttpPostMatches = "^(create|add|insert)")]
 public class TestController
 {
 }]]></code>
