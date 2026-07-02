@@ -97,7 +97,13 @@ namespace YS.Knife.Extensions.UnitTest
             var ids = GetUsers().OrderBy(p => p.Age).ThenByDescending(p => p.UserId).To<UserDto>().TryOrderByEntityKey().Select(p => p.UserId).ToArray();
             ids.SequenceEqual(new[] { 3, 5, 2, 1 }).Should().BeTrue();
         }
-
+        [Fact]
+        public void ShouldDynamicMapToUserDto()
+        {
+            var dtoQuery = GetUsers().Map<UserDto>();
+            var users = dtoQuery.ToList();
+            users.Count().Should().Be(4);
+        }
         private IQueryable<User> GetUsers()
         {
             return new User[]

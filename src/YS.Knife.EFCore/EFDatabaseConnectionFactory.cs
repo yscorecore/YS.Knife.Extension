@@ -15,7 +15,6 @@ namespace YS.Knife.EFCore
         {
             this.providerFactory = new Lazy<DbProviderFactory>(() =>
             {
-                dbContext.Database.GetDbConnection();
                 return DbProviderFactories.GetFactory(dbContext.Database.GetDbConnection());
             });
             this.relationalOptionsExtension = new Lazy<RelationalOptionsExtension>(() =>
