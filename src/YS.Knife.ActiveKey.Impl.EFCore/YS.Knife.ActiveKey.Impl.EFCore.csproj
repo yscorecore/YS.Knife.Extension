@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.ActiveKey.Core\YS.Knife.ActiveKey.Core.csproj" />
+      <ProjectReference Include="..\YS.Knife.ActiveKey.Entity.EFCore\YS.Knife.ActiveKey.Entity.EFCore.csproj" />
+    </ItemGroup>
+
+</Project>
