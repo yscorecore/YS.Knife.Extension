@@ -47,7 +47,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 }
                 else if (type == "CopySingle")
                 {
-                    var copyfuncType = typeof(Action<,,,>).MakeGenericType(source, target,typeof(Action<object>),typeof(Action<object>));
+                    var copyfuncType = typeof(Action<,,,>).MakeGenericType(source, target, typeof(Action<object>), typeof(Action<object>));
                     options.CopyFuncs.Add((source, target), Delegate.CreateDelegate(copyfuncType, null, method));
                 }
             }

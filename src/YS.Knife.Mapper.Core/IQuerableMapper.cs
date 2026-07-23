@@ -10,6 +10,6 @@
     }
     public interface ICopyMapper
     {
-        void Copy<From, To>(From source, To target, Action<object>? onAddItem = null, Action<object>? onRemoveItem= null) where To:class;
+        void Copy<From, To>(From source, To target, Action<object>? onAddItem = null, Action<object>? onRemoveItem = null) where To : class;
     }
 }

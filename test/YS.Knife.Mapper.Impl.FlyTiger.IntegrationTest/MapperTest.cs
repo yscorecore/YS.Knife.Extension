@@ -4,8 +4,6 @@ using Microsoft.Extensions.Hosting;
 
 namespace YS.Knife.Mapper.Impl.FlyTiger.IntegrationTest
 {
-
-    [Mapper(typeof(User1), typeof(User2))]
     public class MapperTest : YS.Knife.Hosting.KnifeHost
     {
         protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
@@ -48,7 +46,7 @@ namespace YS.Knife.Mapper.Impl.FlyTiger.IntegrationTest
             var service = this.GetService<IConvertMapper>();
             var source = new User1 { Name = "Tom", Age = 18 };
             var target = service.Convert<User1, User2>(source);
-            target.Should().BeEquivalentTo(new User2 { Name = "Tom", Age = 18 } );
+            target.Should().BeEquivalentTo(new User2 { Name = "Tom", Age = 18 });
         }
         [Fact]
         public void ShouldThrowErrorWhenMapperConvert_NotDefineMapperAttribute()
@@ -80,7 +78,7 @@ namespace YS.Knife.Mapper.Impl.FlyTiger.IntegrationTest
             var service = this.GetService<ICopyMapper>();
             var source = new User1 { Name = "Tom", Age = 18 };
             var target = new User3();
-            var action = () => service.Copy(source,target);
+            var action = () => service.Copy(source, target);
             action.Should().ThrowExactly<Exception>().WithMessage("Can not find copy mapper from YS.Knife.Mapper.Impl.FlyTiger.IntegrationTest.MapperTest+User1 to YS.Knife.Mapper.Impl.FlyTiger.IntegrationTest.MapperTest+User3");
         }
 

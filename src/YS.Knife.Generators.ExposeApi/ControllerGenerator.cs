@@ -236,178 +236,178 @@ namespace YS.Knife
             {
                 var serviceType = serviceTypeSymbol!.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
-            // 确定控制器名称：服务类型名称 + Controller
-            var controllerName = GetControllerName(serviceTypeSymbol, writer);
+                // 确定控制器名称：服务类型名称 + Controller
+                var controllerName = GetControllerName(serviceTypeSymbol, writer);
 
-            // 确定服务名称：服务类型名称的驼峰式命名（首字母小写）
-            var serviceName = GetServiceFieldName(serviceTypeSymbol);
+                // 确定服务名称：服务类型名称的驼峰式命名（首字母小写）
+                var serviceName = GetServiceFieldName(serviceTypeSymbol);
 
-            // 确定命名空间：与原始类相同
-            var namespaceName = classDeclarationSyntax.Parent is NamespaceDeclarationSyntax namespaceDecl
-                ? namespaceDecl.Name.ToString()
-                : "";
+                // 确定命名空间：与原始类相同
+                var namespaceName = classDeclarationSyntax.Parent is NamespaceDeclarationSyntax namespaceDecl
+                    ? namespaceDecl.Name.ToString()
+                    : "";
 
-            // 获取路由前缀
-            var router = GetRouter() ?? "api/[controller]"; // 默认值
+                // 获取路由前缀
+                var router = GetRouter() ?? "api/[controller]"; // 默认值
 
-            var allowAnonymous = GetAllowAnonymous();
+                var allowAnonymous = GetAllowAnonymous();
 
-            var typeAttributePatterns = GetStringArrayFromNamedArgument(attributeData, "TypeAttributePatterns");
-            var methodAttributePatterns = GetStringArrayFromNamedArgument(attributeData, "MethodAttributePatterns");
-            var parameterAttributePatterns = GetStringArrayFromNamedArgument(attributeData, "ParameterAttributePatterns");
+                var typeAttributePatterns = GetStringArrayFromNamedArgument(attributeData, "TypeAttributePatterns");
+                var methodAttributePatterns = GetStringArrayFromNamedArgument(attributeData, "MethodAttributePatterns");
+                var parameterAttributePatterns = GetStringArrayFromNamedArgument(attributeData, "ParameterAttributePatterns");
 
-            CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder("CS1591", "CS1573");
+                CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder("CS1591", "CS1573");
 
-            codeBuilder.AppendCodeLines($@"using Microsoft.AspNetCore.Authorization;
+                codeBuilder.AppendCodeLines($@"using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace {namespaceName}");
-            codeBuilder.BeginSegment();
-            var comment = GetClassComment(serviceTypeSymbol);
-            if (!string.IsNullOrEmpty(comment))
-            {
-                codeBuilder.AppendCodeLines(comment);
-            }
-            codeBuilder.AppendCodeLines($@"[ApiController]
+                codeBuilder.BeginSegment();
+                var comment = GetClassComment(serviceTypeSymbol);
+                if (!string.IsNullOrEmpty(comment))
+                {
+                    codeBuilder.AppendCodeLines(comment);
+                }
+                codeBuilder.AppendCodeLines($@"[ApiController]
 [Route(""{router}"")]
 ");
-            if (allowAnonymous)
-            {
-                codeBuilder.AppendCodeLines("[AllowAnonymous]");
-            }
-            if (typeAttributePatterns.Length > 0)
-            {
-                foreach (var typeAttr in serviceTypeSymbol.GetAttributes())
+                if (allowAnonymous)
                 {
-                    if (typeAttr.AttributeClass != null && MatchesWildcardPattern(typeAttr.AttributeClass.ToDisplayString(), typeAttributePatterns))
+                    codeBuilder.AppendCodeLines("[AllowAnonymous]");
+                }
+                if (typeAttributePatterns.Length > 0)
+                {
+                    foreach (var typeAttr in serviceTypeSymbol.GetAttributes())
                     {
-                        codeBuilder.AppendCodeLines(FormatAttributeSource(typeAttr));
+                        if (typeAttr.AttributeClass != null && MatchesWildcardPattern(typeAttr.AttributeClass.ToDisplayString(), typeAttributePatterns))
+                        {
+                            codeBuilder.AppendCodeLines(FormatAttributeSource(typeAttr));
+                        }
                     }
                 }
-            }
-            codeBuilder.AppendCodeLines($"public class {controllerName} : ControllerBase");
-            codeBuilder.BeginSegment();
-            codeBuilder.AppendCodeLines($@"private readonly {serviceType} {serviceName};");
-            //构造函数
-            codeBuilder.AppendCodeLines($@"public {controllerName}({serviceType} {serviceName})
+                codeBuilder.AppendCodeLines($"public class {controllerName} : ControllerBase");
+                codeBuilder.BeginSegment();
+                codeBuilder.AppendCodeLines($@"private readonly {serviceType} {serviceName};");
+                //构造函数
+                codeBuilder.AppendCodeLines($@"public {controllerName}({serviceType} {serviceName})
 {{
     this.{serviceName} = {serviceName};
 }}");
 
-            // 获取路由参数匹配正则（从属性命名参数读取，若未设置则使用默认值）
-            var routeParameterPatternArg = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "RouteParameterPattern");
-            var routeParameterPattern = (routeParameterPatternArg.Value.Value as string) ?? DefaultRouteParameterPattern;
-            var routeParameterRegex = new Regex(routeParameterPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                // 获取路由参数匹配正则（从属性命名参数读取，若未设置则使用默认值）
+                var routeParameterPatternArg = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "RouteParameterPattern");
+                var routeParameterPattern = (routeParameterPatternArg.Value.Value as string) ?? DefaultRouteParameterPattern;
+                var routeParameterRegex = new Regex(routeParameterPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-            foreach (var method in serviceTypeSymbol
-                .GetAllMembers()
-                .OfType<IMethodSymbol>()
-                .Where(m => m.MethodKind == MethodKind.Ordinary && m.IsGenericMethod == false && m.DeclaredAccessibility == Accessibility.Public && m.ContainingType.SpecialType != SpecialType.System_Object && !m.IsStatic))
-            {
-                if (!ShouldGenerateMethod(method.Name, attributeData))
+                foreach (var method in serviceTypeSymbol
+                    .GetAllMembers()
+                    .OfType<IMethodSymbol>()
+                    .Where(m => m.MethodKind == MethodKind.Ordinary && m.IsGenericMethod == false && m.DeclaredAccessibility == Accessibility.Public && m.ContainingType.SpecialType != SpecialType.System_Object && !m.IsStatic))
                 {
-                    continue;
-                }
-                codeBuilder.AppendLine();
-                codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method, httpMethodRules, routeParameterRegex, methodAttributePatterns, parameterAttributePatterns));
-            }
-
-            codeBuilder.EndAllSegments();
-
-            var code = codeBuilder.ToString();
-
-            writer.WriteCodeFile(new CodeFile
-            {
-                BasicName = string.IsNullOrEmpty(namespaceName) ? controllerName : $"{namespaceName}.{controllerName}",
-                Content = code
-            });
-
-            string GetRouter()
-            {
-                var routePrefixArg = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "RoutePrefix");
-                if (routePrefixArg.Value.Value != null)
-                {
-                    return (string)routePrefixArg.Value.Value;
-                }
-                return "api/[controller]";
-            }
-            bool GetAllowAnonymous()
-            {
-                var routePrefixArg = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "AllowAnonymous");
-                if (routePrefixArg.Value.Value != null)
-                {
-                    return (bool)routePrefixArg.Value.Value;
-                }
-                return false;
-            }
-            bool ShouldGenerateMethod(string methodName, AttributeData attrData)
-            {
-                var includesArg = attrData.NamedArguments.FirstOrDefault(arg => arg.Key == "Includes");
-                if (includesArg.Key == "Includes" && includesArg.Value.Kind == TypedConstantKind.Array)
-                {
-                    var includes = includesArg.Value.Values
-                        .Where(v => v.Value is string)
-                        .Select(v => (string)v.Value)
-                        .ToArray();
-                    if (includes.Length > 0)
+                    if (!ShouldGenerateMethod(method.Name, attributeData))
                     {
-                        return includes.Any(x => string.Equals(x, methodName, StringComparison.OrdinalIgnoreCase));
+                        continue;
                     }
+                    codeBuilder.AppendLine();
+                    codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method, httpMethodRules, routeParameterRegex, methodAttributePatterns, parameterAttributePatterns));
                 }
 
-                var excludesArg = attrData.NamedArguments.FirstOrDefault(arg => arg.Key == "Excludes");
-                if (excludesArg.Key == "Excludes" && excludesArg.Value.Kind == TypedConstantKind.Array)
-                {
-                    var excludes = excludesArg.Value.Values
-                        .Where(v => v.Value is string)
-                        .Select(v => (string)v.Value)
-                        .ToArray();
-                    if (excludes.Length > 0)
-                    {
-                        return !excludes.Any(x => string.Equals(x, methodName, StringComparison.OrdinalIgnoreCase));
-                    }
-                }
+                codeBuilder.EndAllSegments();
 
-                return true;
-            }
-            string GetServiceFieldName(INamedTypeSymbol serviceType)
-            {
-                return serviceTypeSymbol.Name.ToCamelCase();
-            }
-            string GetControllerName(INamedTypeSymbol serviceType, CodeWriter codeWriter)
-            {
-                var allNames = GetTypeNames(serviceType);
-                var name = allNames[0];
-                if (serviceType.TypeKind == TypeKind.Interface && allNames[0].StartsWith("I"))
+                var code = codeBuilder.ToString();
+
+                writer.WriteCodeFile(new CodeFile
                 {
-                    allNames[0] = allNames[0].Substring(1);
-                }
-                if (allNames[0].EndsWith("Service"))
+                    BasicName = string.IsNullOrEmpty(namespaceName) ? controllerName : $"{namespaceName}.{controllerName}",
+                    Content = code
+                });
+
+                string GetRouter()
                 {
-                    allNames[0] = allNames[0].Substring(0, allNames[0].Length - "Service".Length);
-                }
-                var fullName = string.Join("", allNames);
-                var uniqueFullName = codeWriter.GetUniqueCodeName("Controller", fullName);
-                return $"{uniqueFullName}Controller";
-            }
-            List<string> GetTypeNames(INamedTypeSymbol serviceType)
-            {
-                var res = new List<string>();
-                if (serviceType.IsGenericType)
-                {
-                    var name = serviceType.Name;
-                    // 无论是否包含反引号，都直接使用类型名称
-                    res.Add(name);
-                    foreach (var type in serviceType.TypeArguments.OfType<INamedTypeSymbol>())
+                    var routePrefixArg = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "RoutePrefix");
+                    if (routePrefixArg.Value.Value != null)
                     {
-                        res.AddRange(GetTypeNames(type));
+                        return (string)routePrefixArg.Value.Value;
                     }
+                    return "api/[controller]";
                 }
-                else
+                bool GetAllowAnonymous()
                 {
-                    res.Add(serviceType.Name);
+                    var routePrefixArg = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "AllowAnonymous");
+                    if (routePrefixArg.Value.Value != null)
+                    {
+                        return (bool)routePrefixArg.Value.Value;
+                    }
+                    return false;
                 }
-                return res;
-            }
+                bool ShouldGenerateMethod(string methodName, AttributeData attrData)
+                {
+                    var includesArg = attrData.NamedArguments.FirstOrDefault(arg => arg.Key == "Includes");
+                    if (includesArg.Key == "Includes" && includesArg.Value.Kind == TypedConstantKind.Array)
+                    {
+                        var includes = includesArg.Value.Values
+                            .Where(v => v.Value is string)
+                            .Select(v => (string)v.Value)
+                            .ToArray();
+                        if (includes.Length > 0)
+                        {
+                            return includes.Any(x => string.Equals(x, methodName, StringComparison.OrdinalIgnoreCase));
+                        }
+                    }
+
+                    var excludesArg = attrData.NamedArguments.FirstOrDefault(arg => arg.Key == "Excludes");
+                    if (excludesArg.Key == "Excludes" && excludesArg.Value.Kind == TypedConstantKind.Array)
+                    {
+                        var excludes = excludesArg.Value.Values
+                            .Where(v => v.Value is string)
+                            .Select(v => (string)v.Value)
+                            .ToArray();
+                        if (excludes.Length > 0)
+                        {
+                            return !excludes.Any(x => string.Equals(x, methodName, StringComparison.OrdinalIgnoreCase));
+                        }
+                    }
+
+                    return true;
+                }
+                string GetServiceFieldName(INamedTypeSymbol serviceType)
+                {
+                    return serviceTypeSymbol.Name.ToCamelCase();
+                }
+                string GetControllerName(INamedTypeSymbol serviceType, CodeWriter codeWriter)
+                {
+                    var allNames = GetTypeNames(serviceType);
+                    var name = allNames[0];
+                    if (serviceType.TypeKind == TypeKind.Interface && allNames[0].StartsWith("I"))
+                    {
+                        allNames[0] = allNames[0].Substring(1);
+                    }
+                    if (allNames[0].EndsWith("Service"))
+                    {
+                        allNames[0] = allNames[0].Substring(0, allNames[0].Length - "Service".Length);
+                    }
+                    var fullName = string.Join("", allNames);
+                    var uniqueFullName = codeWriter.GetUniqueCodeName("Controller", fullName);
+                    return $"{uniqueFullName}Controller";
+                }
+                List<string> GetTypeNames(INamedTypeSymbol serviceType)
+                {
+                    var res = new List<string>();
+                    if (serviceType.IsGenericType)
+                    {
+                        var name = serviceType.Name;
+                        // 无论是否包含反引号，都直接使用类型名称
+                        res.Add(name);
+                        foreach (var type in serviceType.TypeArguments.OfType<INamedTypeSymbol>())
+                        {
+                            res.AddRange(GetTypeNames(type));
+                        }
+                    }
+                    else
+                    {
+                        res.Add(serviceType.Name);
+                    }
+                    return res;
+                }
             }
         }
 

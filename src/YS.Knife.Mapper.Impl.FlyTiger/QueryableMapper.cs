@@ -28,7 +28,7 @@ namespace YS.Knife.Mapper.Impl.FlyTiger
                 return fun1(source);
             }
             else
-            { 
+            {
                 throw new Exception("Can not find convert mapper from " + typeof(From).FullName + " to " + typeof(T).FullName);
             }
         }
@@ -42,7 +42,7 @@ namespace YS.Knife.Mapper.Impl.FlyTiger
                 fun1(source, target, onAddItem, onRemoveItem);
             }
             else
-            { 
+            {
                 throw new Exception("Can not find copy mapper from " + typeof(From).FullName + " to " + typeof(T).FullName);
             }
         }
