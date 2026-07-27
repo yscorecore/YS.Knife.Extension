@@ -1,8 +1,9 @@
 ﻿namespace YS.Knife.Service
 {
     public interface IUpdateApi<TUpdateDto, TKey>
-         where TUpdateDto : class
+         where TUpdateDto : class, IIdDto<TKey>
     {
-        Task Update(TKey[] ids, TUpdateDto dto, CancellationToken token = default);
+        
+        Task Update(TUpdateDto[] dtos, CancellationToken token = default);
     }
 }

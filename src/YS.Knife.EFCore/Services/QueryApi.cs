@@ -39,7 +39,6 @@ namespace YS.Knife.EFCore.Services
         where TEntity : class, IEntity<TKey>
     {
         private readonly IEntityStore<TEntity> _entityStore;
-        [Operation(nameof(Delete), "删除{name}")]
         public virtual async Task Delete(TKey[] ids, CancellationToken token = default)
         {
             var entitys = await _entityStore.Current.FindArrayOrThrowAsync(ids, token);
@@ -62,7 +61,6 @@ namespace YS.Knife.EFCore.Services
         private readonly IEntityStore<TEntity> _entityStore;
         private readonly IConvertMapper mapper;
 
-        [Operation(nameof(Create), "创建{name}")]
         public virtual async Task<TKey[]> Create(TCreateDto[] dtos, CancellationToken token = default)
         {
             var entitys = dtos.Select(p => mapper.Convert<TCreateDto, TEntity>(p)).ToList();
@@ -74,15 +72,22 @@ namespace YS.Knife.EFCore.Services
 
     [AutoConstructor]
     public partial class UpdateApi<TEntity, TUpdateDto, TKey> : IUpdateApi<TUpdateDto, TKey>
-       where TUpdateDto : class, new()
+       where TUpdateDto : class, IIdDto<TKey>, new()
        where TEntity : class, IEntity<TKey>, new()
     {
         private readonly IEntityStore<TEntity> _entityStore;
         private readonly ICopyMapper mapper;
-        public virtual async Task Update(TKey[] ids, TUpdateDto dto, CancellationToken token = default)
+        
+
+        public async Task Update(TUpdateDto[] dtos, CancellationToken token = default)
         {
-            var entitys = await _entityStore.Current.FindArrayOrThrowAsync(ids, token);
-            Array.ForEach(entitys, p => mapper.Copy(dto, p));
+            var ids = dtos.Select(p => p.Id).ToArray();
+            var enties = await _entityStore.Current.FindDictionaryOrThrowAsync(ids, token);
+            var newValueMap = dtos.ToDictionary(p => p.Id);
+            foreach(var (k,v) in enties)
+            {
+                mapper.Copy(newValueMap[k], v);
+            }
             await _entityStore.SaveChangesAsync(token);
         }
     }

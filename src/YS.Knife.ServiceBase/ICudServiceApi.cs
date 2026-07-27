@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace YS.Knife.Service
 {
-    public interface ICudServiceApi<TCreateDto, TUpdateDto, TKey> :
-           ICreateApi<TCreateDto, TKey>
-         , IUpdateApi<TUpdateDto, TKey>
-         , IDeleteApi<TKey>
-         where TCreateDto : class
-         where TUpdateDto : class
-    {
+    //public interface ICudServiceApi<TCreateDto, TUpdateDto, TKey> :
+    //       ICreateApi<TCreateDto, TKey>
+    //     , IUpdateApi<TUpdateDto, TKey>
+    //     , IDeleteApi<TKey>
+    //     where TCreateDto : class
+    //     where TUpdateDto : class
+    //{
 
-    }
-    public interface ICudServiceApi<T, TKey> : ICudServiceApi<T, T, TKey>
-        where T : class
-    {
+    //}
+    //public interface ICudServiceApi<T, TKey> : ICudServiceApi<T, T, TKey>
+    //    where T : class
+    //{
 
-    }
+    //}
 }
