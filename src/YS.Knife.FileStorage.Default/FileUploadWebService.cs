@@ -10,6 +10,18 @@ namespace YS.Knife.FileStorage.Default
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IFileCategoryProvider fileCategoryProvider;
 
+        public async Task<IFileUploadWebService.FileUploadRequestInfo> GetUploadInfo(string name, CancellationToken cancellationToken)
+        {
+            var category = await fileCategoryProvider.CreateCategory(name);
+            return new IFileUploadWebService.FileUploadRequestInfo()
+            {
+                AllowExtensions = category.AllowExtensions,
+                FileFormName = category.FileFormName,
+                MaxLength = category.MaxLength,
+                ServiceName = category.ServiceName,
+            };
+        }
+
         public async Task<FileUploadObject> Upload(string category, CancellationToken cancellationToken = default)
         {
             var request = httpContextAccessor.HttpContext.Request;
