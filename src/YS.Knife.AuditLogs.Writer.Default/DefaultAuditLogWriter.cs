@@ -8,6 +8,11 @@ namespace YS.Knife.AuditLogs.AspnetCore.Mvc
     public partial class DefaultAuditLogWriter : IAuditLogWriter
     {
         private readonly ILogger<DefaultAuditLogWriter> logger;
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
+        {
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        };
         public Task WriteLog(IAuditLog auditLog)
         {
             var template = $@"
@@ -18,7 +23,7 @@ Duration:{auditLog.Duration:f0} ms
 Success: {auditLog.Success}
 ExecutionTime: {auditLog.ExecutionTime:yyyy-MM-dd HH:mm:ss.fff}
 Error: {auditLog.Error?.Message ?? "None"}
-{string.Join("\r\n", auditLog.Datas.Select(p => $"{p.Key}: {JsonSerializer.Serialize(p.Value)}"))}
+{string.Join("\r\n", auditLog.Datas.Select(p => $"{p.Key}: {p.Value.ToJsonText(jsonSerializerOptions)}"))}
 -----------------------------------------------";
             logger.LogInformation(template);
             return Task.CompletedTask;

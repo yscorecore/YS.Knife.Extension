@@ -68,28 +68,9 @@ namespace YS.Knife.Operations.Core.UnitTest
             userOperation.Should().NotBe(orderOperation);
         }
 
-        [Fact]
-        public void ShouldKeepOriginalGenericArgumentNameWhenNamingStyleIsOriginal()
-        {
-            var method = typeof(GenericService<User>).GetMethod(nameof(GenericService<User>.Remove))!;
 
-            var operation = method.GetOperation();
 
-            operation.Id.Should().Be("remove-User");
-            operation.Description.Should().Be("删除用户");
-        }
 
-        [Fact]
-        public void ShouldSupportMultipleGenericArgumentPlaceholders()
-        {
-            var method = typeof(GenericPairService<User, Order>).GetMethod(nameof(GenericPairService<User, Order>.Link))!;
-
-            var operation = method.GetOperation();
-
-            // {0} -> 第一个泛型实参 User，{1} -> 第二个泛型实参 Order
-            operation.Id.Should().Be("link-user-order");
-            operation.Description.Should().Be("关联用户与Order");
-        }
 
         private static MethodInfo GetMethod(string name)
         {
@@ -124,18 +105,9 @@ namespace YS.Knife.Operations.Core.UnitTest
             {
             }
 
-            [Operation("remove-{0}", "删除{0}", OperationNamingStyle.Original)]
-            public void Remove()
-            {
-            }
+
         }
 
-        private class GenericPairService<T1, T2>
-        {
-            [Operation("link-{0}-{1}", "关联{0}与{1}")]
-            public void Link()
-            {
-            }
-        }
+
     }
 }

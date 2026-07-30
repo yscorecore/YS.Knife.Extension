@@ -17,10 +17,19 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddFlyTigerCoreService();
             services.Configure<FlyTigerMapperOptions>(t =>
             {
-                ConfigAssemblyQueryable(t, assemblies[0]);
+                Array.ForEach(assemblies, (a) =>
+                {
+                    ConfigAssemblyQueryable(t, a);
+
+                });
+
             });
 
 
+        }
+        public static void AddFlyTigerMapper(this IServiceCollection services, params Type[] assemblyTypes)
+        {
+            services.AddFlyTigerMapper(assemblyTypes.Select(p => p.Assembly).Distinct().ToArray());
         }
         private static void ConfigAssemblyQueryable(FlyTigerMapperOptions options, Assembly assembly)
         {

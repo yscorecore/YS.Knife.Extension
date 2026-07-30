@@ -77,14 +77,14 @@ namespace YS.Knife.EFCore.Services
     {
         private readonly IEntityStore<TEntity> _entityStore;
         private readonly ICopyMapper mapper;
-        
+
 
         public async Task Update(TUpdateDto[] dtos, CancellationToken token = default)
         {
             var ids = dtos.Select(p => p.Id).ToArray();
             var enties = await _entityStore.Current.FindDictionaryOrThrowAsync(ids, token);
             var newValueMap = dtos.ToDictionary(p => p.Id);
-            foreach(var (k,v) in enties)
+            foreach (var (k, v) in enties)
             {
                 mapper.Copy(newValueMap[k], v);
             }

@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFrameworks>net8.0</TargetFrameworks>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\YS.Knife.AspnetCore\YS.Knife.AspnetCore.csproj" />
+		<ProjectReference Include="..\..\src\YS.Knife.AuditLogs.AspnetCore.Mvc\YS.Knife.AuditLogs.AspnetCore.Mvc.csproj" />
+		<ProjectReference Include="..\..\src\YS.Knife.AuditLogs.Writer.Default\YS.Knife.AuditLogs.Writer.Default.csproj" />
+		<ProjectReference Include="..\..\src\YS.Knife.EFCore\YS.Knife.EFCore.csproj" />
+		<ProjectReference Include="..\..\src\YS.Knife.Extensions\YS.Knife.Extensions.csproj" />
+		<ProjectReference Include="..\..\src\YS.Knife.Generators.ExposeApi\YS.Knife.Generators.ExposeApi.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<OutputItemType>Analyzer</OutputItemType>
+		</ProjectReference>
+		<ProjectReference Include="..\..\src\YS.Knife.Mapper.Impl.FlyTiger\YS.Knife.Mapper.Impl.FlyTiger.csproj" />
+		<PackageReference Include="FlyTiger" Version="0.0.25">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="4.5.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; content; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="YS.Knife.Hosting.Web" Version="2.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.3" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.3" />
+    </ItemGroup>
+
+</Project>

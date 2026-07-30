@@ -4,16 +4,16 @@ namespace YS.Knife.Service
 {
     public static class ServiceExtensions
     {
-        public static async Task<TKey> Create<TCreateDto, TKey>(this ICreateApi<TCreateDto, TKey> api, TCreateDto Dto, CancellationToken token = default)
+        public static async Task<TKey> Create<TCreateDto, TKey>(this ICreateApi<TCreateDto, TKey> api, TCreateDto dto, CancellationToken token = default)
              where TCreateDto : class
         {
-            var res = await api.Create(new TCreateDto[] { Dto }, token);
+            var res = await api.Create(new TCreateDto[] { dto }, token);
             return res.Single();
         }
-        public static Task Update<TUpdateDto, TKey>(this IUpdateApi<TUpdateDto, TKey> api, TKey key, TUpdateDto Dto, CancellationToken token = default)
-             where TUpdateDto : class
+        public static Task Update<TUpdateDto, TKey>(this IUpdateApi<TUpdateDto, TKey> api, TKey key, TUpdateDto dto, CancellationToken token = default)
+             where TUpdateDto : class, IIdDto<TKey>
         {
-            return api.Update(new TKey[] { key }, Dto, token);
+            return api.Update(new TUpdateDto[] { dto }, token);
         }
         public static Task Delete<TKey>(this IDeleteApi<TKey> api, TKey key, CancellationToken token = default)
         {

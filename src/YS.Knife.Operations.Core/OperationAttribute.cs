@@ -3,19 +3,25 @@
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class OperationAttribute : Attribute
     {
-        public OperationAttribute(string id, string description, OperationNamingStyle namingStyle = OperationNamingStyle.CamelCase)
+        public OperationAttribute(string id, string description)
         {
             Id = id;
             Description = description;
-            NamingStyle = namingStyle;
         }
 
         public string Id { get; }
         public string Description { get; }
 
-        /// <summary>
-        /// <see cref="Id"/> 中占位符替换为声明类型泛型实参名称时使用的命名风格。
-        /// </summary>
-        public OperationNamingStyle NamingStyle { get; }
+    }
+    [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
+    public class OperationArgumentAttribute : Attribute
+    {
+        public OperationArgumentAttribute(string key, string value)
+        {
+            this.Key = key;
+            this.Value = value;
+        }
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
 }

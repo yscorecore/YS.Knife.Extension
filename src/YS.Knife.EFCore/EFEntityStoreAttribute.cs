@@ -14,7 +14,7 @@ namespace YS.Knife.EFCore
         public Type EntityType { get; private set; }
         public EFEntityStoreAttribute() : base(typeof(DbContext))
         {
-            
+
         }
         public EFEntityStoreAttribute(Type type) : base(typeof(DbContext))
         {
@@ -53,7 +53,7 @@ namespace YS.Knife.EFCore
         {
             if (this.EntityType == null)
             {
-                foreach(var type in GetDbSetEntityTypes(declareType))
+                foreach (var type in GetDbSetEntityTypes(declareType))
                 {
                     services.AddScoped(typeof(IEntityStore<>).MakeGenericType(type), (sp) =>
                     {
@@ -70,7 +70,7 @@ namespace YS.Knife.EFCore
                     return ActivatorUtilities.CreateInstance(sp, entityStoreType);
                 });
             }
-          
+
         }
         //private Type GetEntityKeyType()
         //{
