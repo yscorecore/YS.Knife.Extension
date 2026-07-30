@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YS.Knife.Entity
 {
-    public class BaseEntity<TKey> : IEntity<TKey>
+    public class BaseEntity<TKey> : IEntity<TKey>, ICreationAuditedEntity
         where TKey : notnull
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -13,6 +13,13 @@ namespace YS.Knife.Entity
         [StringLength(64)]
         public virtual string CreateUser { get; set; }
     }
+
+    public interface ICreationAuditedEntity
+    {
+        DateTime CreateTime { get; set; }
+        string CreateUser { get; set; }
+    }
+   
 
     public interface ITagOwnerEntity<TOwner, TTag, TKey>
         where TTag : Tag<TOwner, TKey>

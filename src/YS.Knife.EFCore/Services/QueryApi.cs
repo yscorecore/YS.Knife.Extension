@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using YS.Knife.Entity;
 using YS.Knife.Mapper;
-using YS.Knife.Operations;
 using YS.Knife.Query;
 using YS.Knife.Service;
 
@@ -29,6 +23,10 @@ namespace YS.Knife.EFCore.Services
             if (typeof(ISortableEntity).IsAssignableFrom(typeof(TEntity)))
             {
                 query = query.OrderBy(e => ((ISortableEntity)e).Order);
+            }
+            else if (typeof(ICreationAuditedEntity).IsAssignableFrom(typeof(TEntity)))
+            {
+                query = query.OrderBy(e => ((ICreationAuditedEntity)e).CreateTime);
             }
             return mapper.MapQuery<TEntity, TDto>(query).QueryPageAsync(req, cancellationToken);
         }
