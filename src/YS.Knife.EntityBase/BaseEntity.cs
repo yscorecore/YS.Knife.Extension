@@ -3,7 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YS.Knife.Entity
 {
-    public class BaseEntity<TKey> : IEntity<TKey>, ICreationAuditedEntity
+    [Obsolete("Use CreationAuditedEntity")]
+    public class BaseEntity<TKey> : IEntity<TKey>
         where TKey : notnull
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -14,12 +15,6 @@ namespace YS.Knife.Entity
         public virtual string CreateUser { get; set; }
     }
 
-    public interface ICreationAuditedEntity
-    {
-        DateTime CreateTime { get; set; }
-        string CreateUser { get; set; }
-    }
-   
 
     public interface ITagOwnerEntity<TOwner, TTag, TKey>
         where TTag : Tag<TOwner, TKey>
@@ -28,7 +23,7 @@ namespace YS.Knife.Entity
         public List<TTag> Tags { get; set; }
     }
 
-    public abstract class Tag<TOwner, TKey> : BaseEntity<TKey>
+    public abstract class Tag<TOwner, TKey> : FullAuditedEntity<TKey>
         where TKey : notnull
     {
         public TOwner Owner { get; set; }

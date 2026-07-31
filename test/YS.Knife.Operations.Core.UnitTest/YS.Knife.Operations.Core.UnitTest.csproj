@@ -1,7 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\YS.Knife.Operations.Core\YS.Knife.Operations.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="FlyTiger" Version="0.0.25" />
     </ItemGroup>
 
 </Project>

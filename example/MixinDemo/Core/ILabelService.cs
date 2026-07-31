@@ -11,7 +11,7 @@ namespace MixinDemo.Core
         IUpdateApi<UpdateLabelInfo, int>
     {
 
-        public record LabelInfo : BaseDto<int>
+        public record LabelInfo : CreationAuditedDto<int>
         {
             public string Name { get; set; } = null!;
             public string Desc { get; set; } = null!;

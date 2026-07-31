@@ -13,7 +13,7 @@ namespace YS.Knife.ActiveKey.Core
         Requested = 1,
         Used = 2,
     }
-    public record ActiveKeyInfo<T> : BaseDto<T>
+    public record ActiveKeyInfo<T> : CreationAuditedDto<T>
     {
         public string Code { get; set; } = null!;
         public Dictionary<string, object> Meta { get; set; } = new();

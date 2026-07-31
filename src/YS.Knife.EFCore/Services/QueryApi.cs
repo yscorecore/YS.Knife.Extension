@@ -26,7 +26,7 @@ namespace YS.Knife.EFCore.Services
             }
             else if (typeof(ICreationAuditedEntity).IsAssignableFrom(typeof(TEntity)))
             {
-                query = query.OrderBy(e => ((ICreationAuditedEntity)e).CreateTime);
+                query = query.OrderBy(e => ((ICreationAuditedEntity)e).CreationTime);
             }
             return mapper.MapQuery<TEntity, TDto>(query).QueryPageAsync(req, cancellationToken);
         }

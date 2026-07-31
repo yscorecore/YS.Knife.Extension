@@ -3,7 +3,7 @@ using YS.Knife.Entity;
 
 namespace TagsDemo
 {
-    [ModelScopeDefaultValueSql(nameof(YS.Knife.Entity.BaseEntity<Guid>.CreateTime), typeof(DateTime), "current_timestamp")]
+    [ModelScopeDefaultValueSql(nameof(YS.Knife.Entity.FullAuditedEntity<Guid>.CreationTime), typeof(DateTimeOffset), "current_timestamp")]
 
     public class TagDbContext : DbContext
     {
@@ -22,14 +22,14 @@ namespace TagsDemo
         }
     }
 
-    public class SchoolEntity : BaseEntity<Guid>, ITagOwnerEntity<SchoolEntity, SchoolTag, Guid>
+    public class SchoolEntity : FullAuditedEntity<Guid>, ITagOwnerEntity<SchoolEntity, SchoolTag, Guid>
     {
         public string Name { get; set; }
         public List<SchoolTag> Tags { get; set; } = new();
     }
     public class SchoolTag : Tag<SchoolEntity, Guid> { }
     public class UserTag : Tag<UserEntity, Guid> { }
-    public class UserEntity : BaseEntity<Guid>, ITagOwnerEntity<UserEntity, UserTag, Guid>
+    public class UserEntity : FullAuditedEntity<Guid>, ITagOwnerEntity<UserEntity, UserTag, Guid>
     {
         public string Name { get; set; }
         public List<UserTag> Tags { get; set; } = new();
