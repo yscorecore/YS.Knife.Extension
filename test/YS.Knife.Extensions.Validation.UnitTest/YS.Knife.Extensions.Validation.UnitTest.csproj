@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.Extensions.Validation\YS.Knife.Extensions.Validation.csproj" />
+  </ItemGroup>
+</Project>
