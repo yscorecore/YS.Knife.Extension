@@ -514,12 +514,18 @@ namespace {namespaceName}");
         private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method, Dictionary<string, Regex> httpMethodRules, Regex routeParameterRegex, string[] methodAttributePatterns, string[] parameterAttributePatterns)
         {
             var returnType = method.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            var operationAttr = method.GetAttributes()
+                .FirstOrDefault(a => IsOperationAttribute(a.AttributeClass));
             var methodName = method.Name;
+            var routeText = operationAttr != null && operationAttr.ConstructorArguments.Length > 0
+                && operationAttr.ConstructorArguments[0].Value is string opName
+                ? opName
+                : method.Name;
             var httpMethod = GetHttpMethod(method, httpMethodRules);
             var noBody = httpMethod == "HttpGet" || httpMethod == "HttpDelete";
             var comment = GetMethodComment(serviceType, method);
             var firstArgIsRoute = IsFirstRouteParameter(method, routeParameterRegex);
-            var route = firstArgIsRoute ? $"{methodName}/{{{method.Parameters[0].Name}}}" : methodName;
+            var route = firstArgIsRoute ? (string.IsNullOrWhiteSpace(routeText) ? $"{{{method.Parameters[0].Name}}}" : $"{routeText}/{{{method.Parameters[0].Name}}}") : methodName;
             var allStreamParameterNames = method.Parameters.Where(p => IsStreamType(p.Type)).Select(p => p.Name).ToList();
             var hasStreamParameter = allStreamParameterNames.Count > 0;
             var hasStreamBodyParameter = method.Parameters.Any(p => IsStreamBodyType(p.Type));
@@ -993,6 +999,20 @@ namespace {namespaceName}");
             }
             return false;
         }
+
+        private static bool IsOperationAttribute(INamedTypeSymbol? type)
+        {
+            while (type != null)
+            {
+                if (type.ToDisplayString() == "YS.Knife.Operations.OperationAttribute" ||
+                    type.OriginalDefinition.ToDisplayString() == "YS.Knife.Operations.OperationAttribute")
+                    return true;
+                type = type.BaseType;
+            }
+            return false;
+        }
+
+
         private static bool HasReturnType(ITypeSymbol returnType)
         {
             if (returnType == null)

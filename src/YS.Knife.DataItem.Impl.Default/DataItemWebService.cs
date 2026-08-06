@@ -35,7 +35,7 @@ namespace YS.Knife.DataItem.Impl.Default
                 {
                     break;
                 }
-                var args = await GetParameterValues(item,context);
+                var args = await GetParameterValues(item, context);
                 try
                 {
                     dic[item] = await dataItemService.GetItem(item, args, cancellationToken);
@@ -47,7 +47,7 @@ namespace YS.Knife.DataItem.Impl.Default
             }
             return dic;
         }
-        private async Task<object[]> GetParameterValues(string dataItem,HttpContext context)
+        private async Task<object[]> GetParameterValues(string dataItem, HttpContext context)
         {
             var entry = await dataItemService.GetEntry(dataItem);
             var valueProvider = new DataItemValueQueryStringProvider(dataItem, context.Request.Query);
@@ -69,7 +69,7 @@ namespace YS.Knife.DataItem.Impl.Default
                     ParameterType = p.ParameterType,
                 };
                 var defaultValue = GetParameterDefaultValue(p);
-               
+
                 var modelBindResult = await parameterBinder.BindModelAsync(_actionContextAccessor.ActionContext, binder, valueProvider, parameterDesc, modelMeta, defaultValue);
                 if (modelBindResult.IsModelSet == false)
                 {

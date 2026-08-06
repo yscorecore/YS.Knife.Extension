@@ -22,7 +22,7 @@ namespace YS.Knife.Operations
                 var argDic = args.ToLookup(p => p.Key).ToDictionary(p => p.Key, p => p.Last().Value as object);
                 return new Operation
                 {
-                    Id = FormatTemplate(attr.Id, argDic),
+                    Id = attr.Id,
                     Description = FormatTemplate(attr.Description, argDic),
                 };
             });

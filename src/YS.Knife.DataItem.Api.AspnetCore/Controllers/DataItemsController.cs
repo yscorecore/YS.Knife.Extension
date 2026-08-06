@@ -21,7 +21,7 @@ namespace YS.Knife.DataItem.Api.AspnetCore
         {
             return await dataItemWebService.LoadData(dataItems, cancellationToken);
         }
-     
+
 
         [HttpGet]
         [Route("all")]

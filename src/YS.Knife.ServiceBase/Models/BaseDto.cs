@@ -6,7 +6,7 @@
         public DateTime CreateTime { get; set; }
         public string CreateUser { get; set; }
     }
-   
+
     public record CreationAuditedDto<TKey> : IdDto<TKey>
     {
         DateTimeOffset CreationTime { get; set; }

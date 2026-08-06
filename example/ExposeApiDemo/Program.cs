@@ -73,6 +73,7 @@ namespace ExposeApiDemo
         /// <param name="id">数据ID</param>
         /// <param name="token">取消令牌</param>
         /// <returns>数据内容</returns>
+        [YS.Knife.Operations.Operation("get-data", "获取数据")]
         string GetData(int id, CancellationToken token);
 
         /// <summary>
@@ -80,6 +81,7 @@ namespace ExposeApiDemo
         /// </summary>
         /// <param name="id">数据ID</param>
         /// <returns>数据内容</returns>
+        [YS.Knife.Operations.Operation(null, "获取数据2")]
         Task<string> GetData2(int id);
 
         /// <summary>

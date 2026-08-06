@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\YS.Knife.Operations.Core\YS.Knife.Operations.Core.csproj" />
+        <ProjectReference Include="..\..\src\YS.Knife.Operations.Core\YS.Knife.Operations.csproj" />
     </ItemGroup>
 
     <ItemGroup>

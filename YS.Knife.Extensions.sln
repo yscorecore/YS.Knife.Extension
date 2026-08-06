@@ -151,7 +151,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.KeyValue.Entity.EF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Operations", "Operations", "{3B410A2B-E24A-4831-9C89-9C6E5C743847}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Operations.Core", "src\YS.Knife.Operations.Core\YS.Knife.Operations.Core.csproj", "{30E6FC65-58F4-01E5-0E8A-B858D9F69961}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Operations", "src\YS.Knife.Operations.Core\YS.Knife.Operations.csproj", "{30E6FC65-58F4-01E5-0E8A-B858D9F69961}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AuditLogs", "AuditLogs", "{EE9A170C-9884-4831-BF4E-6B556F3B5D81}"
 EndProject

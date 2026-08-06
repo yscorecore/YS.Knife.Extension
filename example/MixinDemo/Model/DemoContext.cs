@@ -5,7 +5,7 @@ namespace MixinDemo.Model
 {
 
     [EFEntityStore]
-    [ModelScopeDefaultValueSql(nameof(YS.Knife.Entity.BaseEntity<int>.CreateTime), typeof(DateTime), "current_timestamp")]
+    [ModelScopeDefaultValueSql(nameof(YS.Knife.Entity.CreationAuditedEntity<int>.CreationTime), typeof(DateTime), "current_timestamp")]
 
     public class DemoContext : DbContext
     {

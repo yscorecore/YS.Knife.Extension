@@ -91,7 +91,6 @@ namespace YS.Knife.Operations.Core.UnitTest
             public static void MethodWithoutAttribute()
             {
             }
-
             [Operation("op-001", "do something")]
             public static void MethodWithAttribute()
             {
