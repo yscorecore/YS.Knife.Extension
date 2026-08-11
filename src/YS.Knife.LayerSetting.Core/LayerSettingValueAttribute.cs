@@ -43,7 +43,7 @@ namespace YS.Knife
                 {
                     var attribute = typeof(T).GetCustomAttribute<LayerSettingValueAttribute>();
                     var groupName = attribute?.Group ?? typeof(T).FullName;
-                    var logicRoles = await logicRoleService.GetALlRoleCodes();
+                    var logicRoles = await logicRoleService.GetAllRoleCodes();
                     cacheValue = await layerService.GetLayerSettingObjectByRoleCodes<T>(groupName, logicRoles.FilterByProviders(attribute.RoleProviders));
                 }
                 return cacheValue;

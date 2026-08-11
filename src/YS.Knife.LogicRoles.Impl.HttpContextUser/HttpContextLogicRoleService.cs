@@ -2,12 +2,14 @@
 namespace YS.Knife.LogicRoles.Impl.HttpContextUser
 {
     [Service]
-    public class HttpContextLogicRoleService : ILogicRoleService
+    [AutoConstructor]
+    public partial class HttpContextLogicRoleService : ILogicRoleService
     {
-        //private readonly IHttpContextAccess
-        public Task<string[]> GetALlRoleCodes()
+        private readonly IHttpContextAccessor httpContextAccessor;
+        public Task<string[]> GetAllRoleCodes()
         {
-            throw new NotImplementedException();
+            return Task.FromResult((httpContextAccessor.HttpContext?.User.Claims.Where(p => p.Type == ClaimTypes.LogicRole)
+                  .Select(p => p.Value).ToArray() ?? Array.Empty<string>()));
         }
     }
 }

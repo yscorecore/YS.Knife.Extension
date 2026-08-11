@@ -405,6 +405,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.LogicRoles.Impl.Ht
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiAuthDemo", "example\ApiAuthDemo\ApiAuthDemo.csproj", "{89E1F6E5-3722-4F9D-9EA8-2820697A67DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.LogicRoles.Impl.Default", "src\YS.Knife.LogicRoles.Impl.Default\YS.Knife.LogicRoles.Impl.Default.csproj", "{030B8139-3BFC-486C-8DA4-B9FC004006B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2215,6 +2217,18 @@ Global
 		{89E1F6E5-3722-4F9D-9EA8-2820697A67DC}.Release|x64.Build.0 = Release|Any CPU
 		{89E1F6E5-3722-4F9D-9EA8-2820697A67DC}.Release|x86.ActiveCfg = Release|Any CPU
 		{89E1F6E5-3722-4F9D-9EA8-2820697A67DC}.Release|x86.Build.0 = Release|Any CPU
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2}.Debug|x64.Build.0 = Debug|Any CPU
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2}.Debug|x86.Build.0 = Debug|Any CPU
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2}.Release|x64.ActiveCfg = Release|Any CPU
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2}.Release|x64.Build.0 = Release|Any CPU
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2}.Release|x86.ActiveCfg = Release|Any CPU
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2411,6 +2425,7 @@ Global
 		{95BC2AC7-7760-4FC1-842A-A2FC01B810B2} = {D781C5E3-BD80-4B02-8F2C-E0361F6E2B40}
 		{39787511-10FE-481F-86DD-313905D0CF07} = {31810254-F695-4919-AD14-03A45095F824}
 		{89E1F6E5-3722-4F9D-9EA8-2820697A67DC} = {9BC89E41-835A-46A8-B536-06AED03AE51B}
+		{030B8139-3BFC-486C-8DA4-B9FC004006B2} = {31810254-F695-4919-AD14-03A45095F824}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB11BB21-3F5D-42D6-8737-F19C0666F1F8}

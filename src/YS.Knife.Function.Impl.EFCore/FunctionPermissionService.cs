@@ -56,7 +56,7 @@ namespace YS.Knife.Function.Impl.EFCore
         {
             var tree = await functionManagerService.GetFunctionTree(appId);
             var providers = GetAppRoleProviders(tree);
-            var allRoleCodes = await logicRoleService.GetALlRoleCodes();
+            var allRoleCodes = await logicRoleService.GetAllRoleCodes();
 
             //所有的分层数据
             var allLayerValues = await layerService.GetLayerValuesByRoleCodes(appId, allRoleCodes.FilterByProviders(providers));
@@ -124,7 +124,7 @@ namespace YS.Knife.Function.Impl.EFCore
             //当前的在第一位，app在最后一位
             var functionCodeChains = GetFunctionCodeChains(appId, tree, funcitonCode);
             var providers = GetAppRoleProviders(tree);
-            var allRoleCodes = await logicRoleService.GetALlRoleCodes();
+            var allRoleCodes = await logicRoleService.GetAllRoleCodes();
             //所有的分层数据
             var allLayerValues = await layerService.GetLayerValues(appId, functionCodeChains, allRoleCodes.FilterByProviders(providers));
 

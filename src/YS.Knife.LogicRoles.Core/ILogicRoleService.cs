@@ -2,7 +2,7 @@
 {
     public interface ILogicRoleService
     {
-        Task<string[]> GetALlRoleCodes();
+        Task<string[]> GetAllRoleCodes();
     }
 
     public static class LogicRoleExtensions

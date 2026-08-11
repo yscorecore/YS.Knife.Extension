@@ -25,7 +25,7 @@ namespace YS.Knife.Function.Impl.EFCore
         public async Task<Dictionary<string, object>> GetLayerSetting(string group)
         {
             var providerNames = await GetGroupProviderNames(group);
-            var allRoleCodes = await logicRoleService.GetALlRoleCodes();
+            var allRoleCodes = await logicRoleService.GetAllRoleCodes();
             return await layerService.GetLayerSettingDictionaryByRoleCodes(group, allRoleCodes.FilterByProviders(providerNames));
         }
 
@@ -34,7 +34,7 @@ namespace YS.Knife.Function.Impl.EFCore
         public async Task<T> GetLayerSettingObject<T>(string group) where T : class, new()
         {
             var providerNames = await GetGroupProviderNames(group);
-            var allRoleCodes = await logicRoleService.GetALlRoleCodes();
+            var allRoleCodes = await logicRoleService.GetAllRoleCodes();
             return await layerService.GetLayerSettingObjectByRoleCodes<T>(group, allRoleCodes.FilterByProviders(providerNames));
         }
 
