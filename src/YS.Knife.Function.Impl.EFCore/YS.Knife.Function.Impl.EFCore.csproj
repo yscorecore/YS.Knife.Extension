@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <None Remove="5eizg0h4.k3f~" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.Function.Core\YS.Knife.Function.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.Function.Entity.EFCore\YS.Knife.Function.Entity.EFCore.csproj" />
+    <ProjectReference Include="..\YS.Knife.LayerValue.Core\YS.Knife.LayerValue.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.LogicRoles.Core\YS.Knife.LogicRoles.Core.csproj" />
+  </ItemGroup>
+    
+    <ItemGroup>
+        <Using Include="YS.Knife" />
+        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+    </ItemGroup>
+</Project>

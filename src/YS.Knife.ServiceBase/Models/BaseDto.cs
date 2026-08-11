@@ -1,6 +1,6 @@
 ﻿namespace YS.Knife.Service
 {
-    [Obsolete("use CreationAuditedDto")]
+    //[Obsolete("use CreationAuditedDto")]
     public record BaseDto<TKey> : IdDto<TKey>
     {
         public DateTime CreateTime { get; set; }

@@ -15,10 +15,10 @@ namespace Microsoft.EntityFrameworkCore
         }
         public void Apply(PropertyBuilder property)
         {
-            if (property.Metadata.ClrType.IsEnum == false)
+            var baseType = Nullable.GetUnderlyingType(property.Metadata.ClrType) ?? property.Metadata.ClrType;
+            if (baseType.IsEnum == false)
             {
                 throw new InvalidOperationException($"The property '{property.Metadata.Name}' is not an enum type.");
-
             }
             var mappintHints = new ConverterMappingHints(size: VarcharLength);
             var type = typeof(EnumVarcharConvert<>).MakeGenericType(property.Metadata.ClrType);

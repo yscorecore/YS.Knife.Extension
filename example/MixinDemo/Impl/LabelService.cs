@@ -16,8 +16,21 @@ namespace MixinDemo.Impl
     [Mapper(typeof(LabelEntity), typeof(LabelInfo), MapperType = MapperType.Query)]
     [Mapper(typeof(CreateLabelInfo), typeof(LabelEntity), MapperType = MapperType.Convert)]
     [Mapper(typeof(UpdateLabelInfo), typeof(LabelEntity), MapperType = MapperType.Update)]
+    [Mixin(typeof(PrintService))]
     [SuppressMessage("FlyTiger.Mapper", "FT50000:The mapper is not being used")]
     public partial class LabelService : ILabelService
     {
+        //public Task Delete(int[] ids, CancellationToken token = default)
+        //{
+        //    return Task.CompletedTask;
+        //}
+    }
+    [Service(typeof(PrintService))]
+    public class PrintService
+    {
+        public void Print()
+        {
+            Console.WriteLine("Print 1");
+        }
     }
 }

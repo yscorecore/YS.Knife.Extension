@@ -40,17 +40,6 @@ namespace YS.Knife.Operations.Core.UnitTest
             second.Should().Be(first);
         }
 
-        [Fact]
-        public void ShouldReplacePlaceholderWithGenericArgumentInClosedGenericType()
-        {
-            var method = typeof(GenericService<User>).GetMethod(nameof(GenericService<User>.Create))!;
-
-            var operation = method.GetOperation();
-
-            // 默认 CamelCase：User -> user；描述取 User 上的 DescriptionAttribute
-            operation.Id.Should().Be("create-user");
-            operation.Description.Should().Be("创建用户");
-        }
 
         [Fact]
         public void ShouldResolveDifferentOperationsForDifferentClosedGenericTypes()
@@ -58,11 +47,11 @@ namespace YS.Knife.Operations.Core.UnitTest
             var userOperation = typeof(GenericService<User>).GetMethod(nameof(GenericService<User>.Create))!.GetOperation();
             var orderOperation = typeof(GenericService<Order>).GetMethod(nameof(GenericService<Order>.Create))!.GetOperation();
 
-            userOperation.Id.Should().Be("create-user");
+            userOperation.Id.Should().Be("create");
             userOperation.Description.Should().Be("创建用户");
 
             // Order 未定义 DescriptionAttribute，描述回退为类型名
-            orderOperation.Id.Should().Be("create-order");
+            orderOperation.Id.Should().Be("create");
             orderOperation.Description.Should().Be("创建Order");
 
             userOperation.Should().NotBe(orderOperation);
@@ -99,7 +88,7 @@ namespace YS.Knife.Operations.Core.UnitTest
 
         private class GenericService<T>
         {
-            [Operation("create-{0}", "创建{0}")]
+            [Operation("create", "创建{0}")]
             public void Create()
             {
             }

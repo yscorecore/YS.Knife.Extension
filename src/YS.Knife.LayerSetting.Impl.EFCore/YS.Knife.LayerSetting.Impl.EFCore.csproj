@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.LayerSetting.Core\YS.Knife.LayerSetting.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.LayerSetting.Entity.EFCore\YS.Knife.LayerSetting.Entity.EFCore.csproj" />
+    <ProjectReference Include="..\YS.Knife.LogicRoles.Core\YS.Knife.LogicRoles.Core.csproj" />
+  </ItemGroup>
+    <ItemGroup>
+        <Using Include="YS.Knife" />
+        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+    </ItemGroup>
+</Project>

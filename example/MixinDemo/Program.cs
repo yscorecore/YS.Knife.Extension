@@ -50,7 +50,18 @@ namespace MixinDemo
             {
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
-
+                Enumerable.Range(1, 100).ToList().ForEach(i =>
+                {
+                    context.Labels.Add(new LabelEntity()
+                    {
+                        Name = $"Label {i}",
+                        Desc = $"Description {i}",
+                        CreateTime = DateTime.Now,
+                        Value = Random.Shared.NextDouble() * 100,
+                        Status = (LabelStatus)Random.Shared.Next(0, 3)
+                    });
+                });
+                context.SaveChanges();
             }
         }
     }

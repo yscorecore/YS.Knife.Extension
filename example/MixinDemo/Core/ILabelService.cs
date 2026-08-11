@@ -1,4 +1,5 @@
-﻿using YS.Knife.Operations;
+﻿using MixinDemo.Model;
+using YS.Knife.Operations;
 using YS.Knife.Service;
 using static MixinDemo.Core.ILabelService;
 
@@ -11,10 +12,12 @@ namespace MixinDemo.Core
         IUpdateApi<UpdateLabelInfo, int>
     {
 
-        public record LabelInfo : CreationAuditedDto<int>
+        public record LabelInfo : BaseDto<int>
         {
             public string Name { get; set; } = null!;
             public string Desc { get; set; } = null!;
+            public double Value { get; set; }
+            public LabelStatus Status { get; set; }
         }
         public record CreateLabelInfo
         {
