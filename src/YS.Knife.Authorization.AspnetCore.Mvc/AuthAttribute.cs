@@ -12,7 +12,7 @@ namespace YS.Knife.Authorization.AspnetCore.Mvc
     {
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
-            
+
             var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<AuthAttribute>>();
             var service = context.HttpContext.RequestServices.GetRequiredService<IFunctionPermissionService>();
             // 1. Check if already authorized (handled by a previous filter)

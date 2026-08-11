@@ -6,7 +6,7 @@ namespace YS.Knife.Mapper.Impl.FlyTiger.IntegrationTest
 {
 
 #pragma warning disable FT50000 // The mapper is not being used
-    [global::FlyTiger.Mapper(typeof(User1),typeof(User2))]
+    [global::FlyTiger.Mapper(typeof(User1), typeof(User2))]
 #pragma warning restore FT50000 // The mapper is not being used
     public class MapperTest : YS.Knife.Hosting.KnifeHost
     {
