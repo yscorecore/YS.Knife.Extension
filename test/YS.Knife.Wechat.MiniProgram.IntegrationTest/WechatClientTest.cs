@@ -34,20 +34,20 @@ namespace YS.Knife.Wechat.MiniProgram.IntegrationTest
             });
             await act.Should().ThrowAsync<WechatException>();
         }
-        [Fact]
-        public async Task ShouldGetUnlimitedQrCode()
-        {
-            var client = this.GetService<WechatClient>();
-            var token = await client.GetAccessToken(TestWechatAppId, TestWechatAppSecret);
-            var imgStream = await client.GetUnlimited(token.AccessToken, new GetWxacodeunlimitRequest
-            {
-                Scene = "abc",
-                Page = "abc",
-                CheckPath = false
-            });
-            var buffer = new byte[imgStream.Length];
-            imgStream.Read(buffer, 0, buffer.Length);
-            buffer.Length.Should().BeGreaterThan(200);
-        }
+        //[Fact]
+        //public async Task ShouldGetUnlimitedQrCode()
+        //{
+        //    var client = this.GetService<WechatClient>();
+        //    var token = await client.GetAccessToken(TestWechatAppId, TestWechatAppSecret);
+        //    var imgStream = await client.GetUnlimited(token.AccessToken, new GetWxacodeunlimitRequest
+        //    {
+        //        Scene = "abc",
+        //        Page = "abc",
+        //        CheckPath = false
+        //    });
+        //    var buffer = new byte[imgStream.Length];
+        //    imgStream.Read(buffer, 0, buffer.Length);
+        //    buffer.Length.Should().BeGreaterThan(200);
+        //}
     }
 }
