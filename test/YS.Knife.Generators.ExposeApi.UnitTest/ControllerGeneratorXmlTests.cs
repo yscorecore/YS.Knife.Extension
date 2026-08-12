@@ -78,6 +78,8 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
         [InlineData("GenerateController_WithQuestionMarkWildcard_MatchesSingleChar")]
         [InlineData("GenerateController_WithEmptyAttributePatterns_NoPassthrough")]
         [InlineData("GenerateController_WithAllAttributePatterns_PassesAllLevels")]
+        [InlineData("operation_attribute_route")]
+        [InlineData("operation_attribute_use_operation_id_false")]
         public void GenerateController_FromXml_TestCase(string caseName)
         {
             var testCase = LoadTestCase(caseName);

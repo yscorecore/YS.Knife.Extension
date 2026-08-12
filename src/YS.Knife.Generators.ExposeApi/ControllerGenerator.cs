@@ -112,6 +112,11 @@ namespace YS.Knife
         public string[] ParameterAttributePatterns { get; set; } = new string[] { ""System.ComponentModel.DataAnnotations.*"" };
 
         /// <summary>
+        /// 是否使用OperationAttribute的Id作为路由名称，默认为true
+        /// </summary>
+        public bool UseOperationIdAsRoute { get; set; } = true;
+
+        /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name=""serviceTypes"">要注入的服务类型</param>
@@ -252,6 +257,9 @@ namespace YS.Knife
 
                 var allowAnonymous = GetAllowAnonymous();
 
+                var useOperationIdAsRouteArg = attributeData.NamedArguments.FirstOrDefault(arg => arg.Key == "UseOperationIdAsRoute");
+                var useOperationIdAsRoute = useOperationIdAsRouteArg.Value.Value is bool bVal ? bVal : true;
+
                 var typeAttributePatterns = GetStringArrayFromNamedArgument(attributeData, "TypeAttributePatterns");
                 var methodAttributePatterns = GetStringArrayFromNamedArgument(attributeData, "MethodAttributePatterns");
                 var parameterAttributePatterns = GetStringArrayFromNamedArgument(attributeData, "ParameterAttributePatterns");
@@ -308,7 +316,7 @@ namespace {namespaceName}");
                         continue;
                     }
                     codeBuilder.AppendLine();
-                    codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method, httpMethodRules, routeParameterRegex, methodAttributePatterns, parameterAttributePatterns));
+                    codeBuilder.AppendCodeLines(GeneratorMethodCode(serviceTypeSymbol, serviceName, method, httpMethodRules, routeParameterRegex, methodAttributePatterns, parameterAttributePatterns, useOperationIdAsRoute));
                 }
 
                 codeBuilder.EndAllSegments();
@@ -511,13 +519,13 @@ namespace {namespaceName}");
             }
         }
 
-        private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method, Dictionary<string, Regex> httpMethodRules, Regex routeParameterRegex, string[] methodAttributePatterns, string[] parameterAttributePatterns)
+        private static string GeneratorMethodCode(INamedTypeSymbol serviceType, string instanceName, IMethodSymbol method, Dictionary<string, Regex> httpMethodRules, Regex routeParameterRegex, string[] methodAttributePatterns, string[] parameterAttributePatterns, bool useOperationIdAsRoute)
         {
             var returnType = method.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             var operationAttr = method.GetAttributes()
                 .FirstOrDefault(a => IsOperationAttribute(a.AttributeClass));
             var methodName = method.Name;
-            var routeText = operationAttr != null && operationAttr.ConstructorArguments.Length > 0
+            var routeText = useOperationIdAsRoute && operationAttr != null && operationAttr.ConstructorArguments.Length > 0
                 && operationAttr.ConstructorArguments[0].Value is string opName
                 ? opName
                 : method.Name;
@@ -525,7 +533,7 @@ namespace {namespaceName}");
             var noBody = httpMethod == "HttpGet" || httpMethod == "HttpDelete";
             var comment = GetMethodComment(serviceType, method);
             var firstArgIsRoute = IsFirstRouteParameter(method, routeParameterRegex);
-            var route = firstArgIsRoute ? (string.IsNullOrWhiteSpace(routeText) ? $"{{{method.Parameters[0].Name}}}" : $"{routeText}/{{{method.Parameters[0].Name}}}") : methodName;
+            var route = firstArgIsRoute ? (string.IsNullOrWhiteSpace(routeText) ? $"{{{method.Parameters[0].Name}}}" : $"{routeText}/{{{method.Parameters[0].Name}}}") : routeText;
             var allStreamParameterNames = method.Parameters.Where(p => IsStreamType(p.Type)).Select(p => p.Name).ToList();
             var hasStreamParameter = allStreamParameterNames.Count > 0;
             var hasStreamBodyParameter = method.Parameters.Any(p => IsStreamBodyType(p.Type));

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<case>
+    <input>
+        <code><![CDATA[using System;
+
+namespace YS.Knife.Operations
+{
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class OperationAttribute : Attribute
+    {
+        public OperationAttribute(string id, string description) { Id = id; Description = description; }
+        public string Id { get; }
+        public string Description { get; }
+    }
+}
+
+public interface ILabelService
+{
+    string QueryAll();
+
+    [YS.Knife.Operations.OperationAttribute("create", "创建标签")]
+    string Create(string name);
+
+    [YS.Knife.Operations.OperationAttribute("delete", "删除标签")]
+    string Delete(int id);
+}
+
+[YS.Knife.ExposeApi(typeof(ILabelService))]
+public class TestController
+{
+}]]></code>
+    </input>
+    <output>
+        <code file="LabelController.g.cs"><![CDATA[#pragma warning disable CS1591, CS1573
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+namespace 
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class LabelController : ControllerBase
+    {
+        private readonly global::ILabelService iLabelService;
+        public LabelController(global::ILabelService iLabelService)
+        {
+            this.iLabelService = iLabelService;
+        }
+        [Route("QueryAll")]
+        [HttpGet]
+        public string QueryAll()
+        {
+            return this.iLabelService.QueryAll();
+        }
+        [Route("create/{name}")]
+        [HttpPost]
+        public string Create([FromRoute] string name)
+        {
+            return this.iLabelService.Create(name);
+        }
+        [Route("delete/{id}")]
+        [HttpDelete]
+        public string Delete([FromRoute] int id)
+        {
+            return this.iLabelService.Delete(id);
+        }
+    }
+}]]></code>
+    </output>
+</case>
