@@ -4,7 +4,7 @@ namespace YS.Knife.EnumCode
 {
     public interface IEnumCodeService
     {
-        Task<Dictionary<string, List<CodeInfo>>> GetAllCodes();
+        Task<Dictionary<string, List<CodeInfo>>> All();
 
         public record CodeInfo
         {
