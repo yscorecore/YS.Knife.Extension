@@ -9,7 +9,7 @@ namespace YS.Knife.EnumCode.Impl.Default
     {
         private readonly IEnumerable<ICodeLoader> loaders;
         private readonly EnumCodeOptions options;
-        public async Task<Dictionary<string, List<CodeInfo>>> All()
+        public async Task<Dictionary<string, List<CodeInfo>>> GetAllEnumCode()
         {
             Dictionary<string, List<CodeInfo>> all = new Dictionary<string, List<CodeInfo>>();
             foreach (var loader in loaders.OrderBy(p => p.Priority))

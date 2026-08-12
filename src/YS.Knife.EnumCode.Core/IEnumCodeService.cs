@@ -1,10 +1,12 @@
 ﻿using System.Text.Json.Serialization;
+using YS.Knife.Operations;
 
 namespace YS.Knife.EnumCode
 {
     public interface IEnumCodeService
     {
-        Task<Dictionary<string, List<CodeInfo>>> All();
+        [Operation("all", "获取所有的枚举值")]
+        Task<Dictionary<string, List<CodeInfo>>> GetAllEnumCode();
 
         public record CodeInfo
         {

@@ -1,1 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.Operations.Core\YS.Knife.Operations.csproj" />
+  </ItemGroup>
+</Project>
