@@ -1,6 +1,5 @@
 ﻿using System;
 using YS.Knife;
-using YS.Knife.EnumCode;
 
 namespace ExposeApiDemo
 {
