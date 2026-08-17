@@ -35,6 +35,8 @@
         }
         public string Id { get; }
         public string Description { get; }
+
+        public string[] RoleProviders { get; set; } = Array.Empty<string>();
     }
     [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
     public class OperationArgumentAttribute : Attribute

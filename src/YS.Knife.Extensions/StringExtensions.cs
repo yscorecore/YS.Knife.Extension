@@ -6,6 +6,21 @@ namespace System
 {
     public static class StringExtensions
     {
+        public static JsonElement AsJsonElement(this object val)
+        {
+            if (val is JsonElement jsonElement)
+            {
+                return jsonElement;
+            }
+            else
+            {
+                throw new Exception($"Cannot convert type {val.GetType().FullName} to JsonElement.");
+            }
+        }
+        public static T AsJsonObject<T>(this JsonElement val, JsonSerializerOptions options = default)
+        {
+            return JsonSerializer.Deserialize<T>(val.GetRawText(), options);
+        }
         public static T AsJsonObject<T>(this string val, JsonSerializerOptions options = default)
         {
             if (string.IsNullOrEmpty(val))

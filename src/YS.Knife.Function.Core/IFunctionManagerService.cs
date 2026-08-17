@@ -11,8 +11,10 @@ namespace YS.Knife.Function
 
         Task<List<FunctionInfo>> GetApps();
 
-        Task SaveFunctions(string appId, List<FunctionInfo> allFunctions);
+        Task SaveFunctions(string appId, List<FunctionInfo> allFunctions, CancellationToken cancellationToken);
 
+        Task DeleteApp(string appId, CancellationToken cancellationToken);
 
+        Task<List<FunctionInfo>> LoadFromFile(StreamBody file, CancellationToken cancellationToken);
     }
 }

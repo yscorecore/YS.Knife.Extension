@@ -36,10 +36,23 @@ namespace YS.Knife.Function.Impl.EFCore
             return res.BuildTree(appId);
         }
 
-
-        public async Task SaveFunctions(string appId, List<FunctionInfo> allFunctions)
+        public async Task<List<FunctionInfo>> LoadFromFile(StreamBody file, CancellationToken cancellationToken)
         {
-            var allFunctionInDb = await functionEntityStore.Current.Where(p => p.AppId == appId).ToListAsync();
+            return await FunctionFile.Instance.LoadFromFile(file, cancellationToken);
+        }
+
+        public async Task DeleteApp(string appId, CancellationToken cancellationToken = default)
+        {
+            var res = await functionEntityStore.Current
+                    .Where(p => p.AppId == appId)
+                    .ToListAsync(cancellationToken);
+            functionEntityStore.DeleteRange(res);
+            await functionEntityStore.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task SaveFunctions(string appId, List<FunctionInfo> allFunctions, CancellationToken cancellationToken)
+        {
+            var allFunctionInDb = await functionEntityStore.Current.Where(p => p.AppId == appId).ToListAsync(cancellationToken);
             allFunctions.To(allFunctionInDb, CollectionUpdateMode.Update,
                 (t) => functionEntityStore.Delete((FunctionEntity)t),
                 (t) =>
@@ -48,7 +61,7 @@ namespace YS.Knife.Function.Impl.EFCore
                     val.AppId = appId;
                     functionEntityStore.Add(val);
                 });
-            await functionEntityStore.SaveChangesAsync();
+            await functionEntityStore.SaveChangesAsync(cancellationToken);
         }
     }
 }

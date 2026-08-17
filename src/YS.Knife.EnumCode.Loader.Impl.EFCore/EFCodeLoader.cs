@@ -30,7 +30,7 @@ namespace YS.Knife.EnumCode.Loader.Impl.EFCore
         public string[] Assemblies { get; set; } = new string[0];
 
     }
-    [Service]
+    [Service(typeof(EFCodeManager))]
     [Mapper(typeof(CodeInfo), typeof(TempCodeInfo), MapperType = MapperType.Convert)]
     [Mapper(typeof(TempCodeInfo), typeof(EnumCodeEntity<Guid>), MapperType = MapperType.All)]
     [AutoConstructor]

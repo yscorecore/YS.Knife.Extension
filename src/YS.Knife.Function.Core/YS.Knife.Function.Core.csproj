@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -10,6 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.Extensions\YS.Knife.Extensions.csproj" />
       <ProjectReference Include="..\YS.Knife.LogicRoles.Core\YS.Knife.LogicRoles.Core.csproj" />
     </ItemGroup>
 </Project>

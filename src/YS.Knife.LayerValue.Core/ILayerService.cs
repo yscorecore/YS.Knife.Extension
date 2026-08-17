@@ -10,7 +10,6 @@ namespace YS.Knife.Function
         Task<List<LayerValueInfo>> GetLayerValues(string group, string[] keys, string[] roleCodes);
         Task<List<LayerValueInfo>> GetLayerValuesByRoleCodes(string group, string[] roleCodes);
     }
-
     public static class LayerServiceExtensions
     {
         public static Task<List<GroupValueInfo>> GetGroupValues(this ILayerService layerService, string group, string[] roleCodes, params string[] keys)
