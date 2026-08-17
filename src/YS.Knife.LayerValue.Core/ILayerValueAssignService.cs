@@ -25,6 +25,4 @@ namespace YS.Knife.Function
 
         }
     }
-
-
 }

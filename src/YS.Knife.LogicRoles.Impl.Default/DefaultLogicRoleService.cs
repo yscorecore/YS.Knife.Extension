@@ -1,5 +1,4 @@
-﻿
-namespace YS.Knife.LogicRoles.Impl.Default
+﻿namespace YS.Knife.LogicRoles.Impl.Default
 {
     [Service]
     [AutoConstructor]

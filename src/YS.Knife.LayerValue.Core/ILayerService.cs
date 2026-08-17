@@ -6,7 +6,7 @@ namespace YS.Knife.Function
     {
         public static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-        Task<List<LayerValueInfo>> GetLayerValuesByKeys(string group, string[] keys);
+        Task<List<LayerValueInfo>> GetLayerValuesByKeys(string group, params string[] keys);
         Task<List<LayerValueInfo>> GetLayerValues(string group, string[] keys, string[] roleCodes);
         Task<List<LayerValueInfo>> GetLayerValuesByRoleCodes(string group, string[] roleCodes);
     }
@@ -52,18 +52,6 @@ namespace YS.Knife.Function
             return layerValues.Select(p => new GroupValueInfo<T>(p.Key, p.LayerValues, p.Value.AsJsonObject<T>(ILayerService.JsonOptions))).ToList();
         }
 
-        [Obsolete]
-        public static async Task<List<GroupValueInfo>> GetLayerValues(this ILayerService layerService, string group, string[] roleProviderNames, string[] allRoleCodes, params string[] keys)
-        {
-            var roleCodes = roleProviderNames.SelectMany(p => allRoleCodes.Where(t => t.StartsWith(p + "::"))).ToArray();
-            return await layerService.GetGroupValues(group, roleCodes, keys);
-        }
-        [Obsolete]
-        public static async Task<List<GroupValueInfo>> GetAllLayerValues(this ILayerService layerService, string group, string[] roleProviderNames, string[] allRoleCodes)
-        {
-            var roleCodes = roleProviderNames.SelectMany(p => allRoleCodes.Where(t => t.StartsWith(p + "::"))).ToArray();
-            return await layerService.GetGroupValues(group, roleCodes);
-        }
     }
 
 
