@@ -8,6 +8,16 @@
 
     public static class LogicRoleProviderExtensions
     {
+        public static async Task<IList<string>> GetAllRoles(this IEnumerable<ILogicRoleProvider> allProviders)
+        {
+            var res = new List<string>();
+            foreach (var provider in allProviders)
+            {
+                var cleanRoleCodes = await provider.GetCurrentRoleCodes();
+                res.AddRange(cleanRoleCodes.Select(p => $"{provider.Name}::{p}"));
+            }
+            return res.ToArray();
+        }
         public static async Task<IList<string>> GetAllRoles(this IEnumerable<ILogicRoleProvider> allProviders, string[] activeProviderNames)
         {
             var logicRoleMap = allProviders.ToDictionary(p => p.Name);

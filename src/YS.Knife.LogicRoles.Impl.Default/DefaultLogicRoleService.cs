@@ -8,12 +8,7 @@
 
         public async Task<string[]> GetAllRoleCodes()
         {
-            List<string> allRoles = new List<string>();
-            foreach (var provider in _providers)
-            {
-                allRoles.AddRange(await provider.GetCurrentRoleCodes());
-            }
-            return allRoles.ToArray();
+            return (await _providers.GetAllRoles()).ToArray();
         }
     }
 }
