@@ -6,11 +6,13 @@ namespace YS.Knife.Function
     {
         public Task AssignByRole(LayerValueAssignByRoleInfo dto);
 
+        Task<Dictionary<string, T>> GetLayerValueByRole<T>(string group, string roleCode);
         Task<Dictionary<string, object>> GetLayerValueByRole(string group, string roleCode);
 
         public Task AssignByKey(LayerValueAssginByKeyInfo dto);
 
         Task<Dictionary<string, object>> GetLayerValueByKey(string group, string key);
+        Task<Dictionary<string, T>> GetLayerValueByKey<T>(string group, string key);
         public record LayerValueAssignByRoleInfo
         {
             public string Group { get; set; } = null!;

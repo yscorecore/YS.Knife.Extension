@@ -34,19 +34,30 @@ namespace YS.Knife.LayerValue.Impl.EFCore
             needUpdate.ForEach(p => currentDic[p].Value = dto.KeyValues[p].ToJsonText(ILayerService.JsonOptions));
             await layerContext.SaveChangesAsync();
         }
-        public async Task<Dictionary<string, object>> GetLayerValueByKey(string group, string key)
+        public Task<Dictionary<string, object>> GetLayerValueByKey(string group, string key)
+        {
+            return GetLayerValueByKey<object>(group, key);
+        }
+
+        public async Task<Dictionary<string, T>> GetLayerValueByKey<T>(string group, string key)
         {
             var res = await layerContext.Current.Where(p => p.Group == group && p.Key == key)
-                 .Select(p => new LayerValueInfo { Key = p.Key, RoleCode = p.RoleCode, Value = p.Value })
-                 .ToListAsync();
-            return res.Select(p => p.ToLayerValueInfo<object>()).ToDictionary(p => p.RoleCode, p => p.Value);
+                  .Select(p => new LayerValueInfo { Key = p.Key, RoleCode = p.RoleCode, Value = p.Value })
+                  .ToListAsync();
+            return res.Select(p => p.ToLayerValueInfo<T>()).ToDictionary(p => p.RoleCode, p => p.Value);
         }
-        public async Task<Dictionary<string, object>> GetLayerValueByRole(string group, string roleCode)
+
+        public Task<Dictionary<string, object>> GetLayerValueByRole(string group, string roleCode)
+        {
+            return GetLayerValueByRole<object>(group, roleCode);
+        }
+
+        public async Task<Dictionary<string, T>> GetLayerValueByRole<T>(string group, string roleCode)
         {
             var res = await layerContext.Current.Where(p => p.Group == group && p.RoleCode == roleCode)
                  .Select(p => new LayerValueInfo { Key = p.Key, RoleCode = p.RoleCode, Value = p.Value })
                  .ToListAsync();
-            return res.Select(p => p.ToLayerValueInfo<object>()).ToList().ToDictionary(p => p.Key, p => p.Value);
+            return res.Select(p => p.ToLayerValueInfo<T>()).ToList().ToDictionary(p => p.Key, p => p.Value);
         }
     }
 }
