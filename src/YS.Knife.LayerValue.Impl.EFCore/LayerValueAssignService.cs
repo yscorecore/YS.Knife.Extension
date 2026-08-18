@@ -29,19 +29,19 @@ namespace YS.Knife.LayerValue.Impl.EFCore
                 (t) => { ((LayerValueEntity)t).Group = dto.Group; });
             await layerContext.SaveChangesAsync();
         }
-        public async Task<List<LayerValueInfo<object>>> GetLayerValueByKey(string group, string key)
+        public async Task<Dictionary<string, object>> GetLayerValueByKey(string group, string key)
         {
             var res = await layerContext.Current.Where(p => p.Group == group && p.Key == key)
                  .Select(p => new LayerValueInfo { Key = p.Key, RoleCode = p.RoleCode, Value = p.Value })
                  .ToListAsync();
-            return res.Select(p => p.ToLayerValueInfo<object>()).ToList();
+            return res.Select(p => p.ToLayerValueInfo<object>()).ToDictionary(p => p.RoleCode, p => p.Value);
         }
-        public async Task<List<LayerValueInfo<object>>> GetLayerValueByRole(string group, string roleCode)
+        public async Task<Dictionary<string, object>> GetLayerValueByRole(string group, string roleCode)
         {
             var res = await layerContext.Current.Where(p => p.Group == group && p.RoleCode == roleCode)
                  .Select(p => new LayerValueInfo { Key = p.Key, RoleCode = p.RoleCode, Value = p.Value })
                  .ToListAsync();
-            return res.Select(p => p.ToLayerValueInfo<object>()).ToList();
+            return res.Select(p => p.ToLayerValueInfo<object>()).ToList().ToDictionary(p => p.Key, p => p.Value);
         }
     }
 }
