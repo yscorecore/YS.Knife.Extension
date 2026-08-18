@@ -7,26 +7,31 @@ namespace YS.Knife.LayerValue.Impl.EFCore
 {
     [Service]
     [AutoConstructor]
-    [Mapper(typeof(LayerValueInfo), typeof(LayerValueEntity), MapperType = MapperType.BatchUpdate)]
     public partial class LayerValueAssignService : ILayerValueAssignService
     {
         private readonly IEntityStore<LayerValueEntity> layerContext;
         public async Task AssignByKey(ILayerValueAssignService.LayerValueAssginByKeyInfo dto)
         {
-            var current = await layerContext.Current.Where(p => p.Group == dto.Group && p.Key == dto.Key).ToListAsync();
-            dto.RoleValues.Select(p => new LayerValueInfo { Key = dto.Key, RoleCode = p.Key, Value = p.Value.ToJsonText(ILayerService.JsonOptions) })
-                .To(current, CollectionUpdateMode.Update,
-                (t) => layerContext.Delete((LayerValueEntity)t),
-                (t) => { ((LayerValueEntity)t).Group = dto.Group; });
+            var current = layerContext.Current.Where(p => p.Group == dto.Group && p.Key == dto.Key).ToList();
+            var currentDic = current.ToDictionary(p => p.RoleCode);
+            var needAdd = dto.RoleValues.Keys.Except(currentDic.Keys).ToList();
+            var needDelete = currentDic.Keys.Except(dto.RoleValues.Keys).ToList();
+            var needUpdate = currentDic.Keys.Intersect(dto.RoleValues.Keys).ToList();
+            layerContext.DeleteRange(currentDic.Where(p => needDelete.Contains(p.Key)).Select(p => p.Value));
+            layerContext.AddRange(dto.RoleValues.Where(p => needAdd.Contains(p.Key)).Select(p => new LayerValueEntity { Group = dto.Group, Key = dto.Key, RoleCode = p.Key, Value = p.Value.ToJsonText(ILayerService.JsonOptions) }));
+            needUpdate.ForEach(p => currentDic[p].Value = dto.RoleValues[p].ToJsonText(ILayerService.JsonOptions));
             await layerContext.SaveChangesAsync();
         }
         public async Task AssignByRole(ILayerValueAssignService.LayerValueAssignByRoleInfo dto)
         {
             var current = layerContext.Current.Where(p => p.Group == dto.Group && p.RoleCode == dto.RoleCode).ToList();
-            dto.KeyValues.Select(p => new LayerValueInfo { Key = p.Key, RoleCode = dto.RoleCode, Value = p.Value.ToJsonText(ILayerService.JsonOptions) })
-                .To(current, CollectionUpdateMode.Update,
-                (t) => layerContext.Delete((LayerValueEntity)t),
-                (t) => { ((LayerValueEntity)t).Group = dto.Group; });
+            var currentDic = current.ToDictionary(p => p.Key);
+            var needAdd = dto.KeyValues.Keys.Except(currentDic.Keys).ToList();
+            var needDelete = currentDic.Keys.Except(dto.KeyValues.Keys).ToList();
+            var needUpdate = currentDic.Keys.Intersect(dto.KeyValues.Keys).ToList();
+            layerContext.DeleteRange(currentDic.Where(p => needDelete.Contains(p.Key)).Select(p => p.Value));
+            layerContext.AddRange(dto.KeyValues.Where(p => needAdd.Contains(p.Key)).Select(p => new LayerValueEntity { Group = dto.Group, Key = p.Key, RoleCode = dto.RoleCode, Value = p.Value.ToJsonText(ILayerService.JsonOptions) }));
+            needUpdate.ForEach(p => currentDic[p].Value = dto.KeyValues[p].ToJsonText(ILayerService.JsonOptions));
             await layerContext.SaveChangesAsync();
         }
         public async Task<Dictionary<string, object>> GetLayerValueByKey(string group, string key)
