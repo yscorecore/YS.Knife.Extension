@@ -8,7 +8,7 @@ namespace YS.Knife.LayerSetting.Entity.EFCore
     public class SettingEntity : BaseEntity<Guid>
     {
         [StringLength(32)]
-        public string Name { get; set; } = null!;
+        public string? Name { get; set; } = null!;
 
         [StringLength(64)]
         [Required]
@@ -30,7 +30,7 @@ namespace YS.Knife.LayerSetting.Entity.EFCore
         public string Key { get; set; } = null!;
 
         [StringLength(64)]
-        public string Name { get; set; } = null!;
+        public string? Name { get; set; } = null!;
 
         [StringLength(256)]
         public string? Description { get; set; }

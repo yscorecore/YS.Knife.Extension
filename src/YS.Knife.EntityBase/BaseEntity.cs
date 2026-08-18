@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YS.Knife.Entity
 {
-    [Obsolete("Use CreationAuditedEntity")]
+    //[Obsolete("Use CreationAuditedEntity")]
     public class BaseEntity<TKey> : IEntity<TKey>
         where TKey : notnull
     {

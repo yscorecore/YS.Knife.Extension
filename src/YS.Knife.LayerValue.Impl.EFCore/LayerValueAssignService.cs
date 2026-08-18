@@ -29,17 +29,19 @@ namespace YS.Knife.LayerValue.Impl.EFCore
                 (t) => { ((LayerValueEntity)t).Group = dto.Group; });
             await layerContext.SaveChangesAsync();
         }
-        public Task<List<LayerValueInfo<object>>> GetLayerValueByKey(string group, string key)
+        public async Task<List<LayerValueInfo<object>>> GetLayerValueByKey(string group, string key)
         {
-            return layerContext.Current.Where(p => p.Group == group && p.Key == key)
-                 .Select(p => new LayerValueInfo<object> { Key = p.Key, RoleCode = p.RoleCode, Value = p.Value.AsJsonObject<object>(ILayerService.JsonOptions) })
+            var res = await layerContext.Current.Where(p => p.Group == group && p.Key == key)
+                 .Select(p => new LayerValueInfo { Key = p.Key, RoleCode = p.RoleCode, Value = p.Value })
                  .ToListAsync();
+            return res.Select(p => p.ToLayerValueInfo<object>()).ToList();
         }
-        public Task<List<LayerValueInfo<object>>> GetLayerValueByRole(string group, string roleCode)
+        public async Task<List<LayerValueInfo<object>>> GetLayerValueByRole(string group, string roleCode)
         {
-            return layerContext.Current.Where(p => p.Group == group && p.RoleCode == roleCode)
-                 .Select(p => new LayerValueInfo<object> { Key = p.Key, RoleCode = p.RoleCode, Value = p.Value.AsJsonObject<object>(ILayerService.JsonOptions) })
+            var res = await layerContext.Current.Where(p => p.Group == group && p.RoleCode == roleCode)
+                 .Select(p => new LayerValueInfo { Key = p.Key, RoleCode = p.RoleCode, Value = p.Value })
                  .ToListAsync();
+            return res.Select(p => p.ToLayerValueInfo<object>()).ToList();
         }
     }
 }
