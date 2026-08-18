@@ -62,7 +62,7 @@ namespace YS.Knife.Function.Impl.EFCore
             var allLayerValues = await layerService.GetLayerValuesByRoleCodes(appId, allRoleCodes.FilterByProviders(providers));
             foreach (var group in SplitPipeArray(providers))
             {
-                tree = GetAssignedTree(appId, tree, group, allLayerValues);
+                tree = GetAssignedTree(tree, group, allLayerValues);
             }
             if (string.IsNullOrEmpty(functionCode) || tree == null)
             {
@@ -73,36 +73,15 @@ namespace YS.Knife.Function.Impl.EFCore
                 return tree.ExpandTree().Where(p => p.Code == functionCode).FirstOrDefault();
             }
         }
-        private FunctionTreeInfo GetAssignedTree(string appId, FunctionTreeInfo tree, string[] roleProviderNames, List<LayerValueInfo> allValues)
+
+        private FunctionTreeInfo GetAssignedTree(FunctionTreeInfo tree, string[] roleProviderNames, List<LayerValueInfo> allValues)
         {
             if (tree == null || roleProviderNames == null || roleProviderNames.Length == 0) return null;
-
             var assignMap = FilterRoleValuesByProviderNames(allValues, roleProviderNames)
                     .ToGroupValues()
                     .As<FunctionAssignObjectInfo>()
                     .ToDictionary(p => p.Key, p => p.Value);
-            return CreateFunctionInfo(false, tree);
-            FunctionTreeInfo CreateFunctionInfo(bool parentAllow, FunctionTreeInfo tree)
-            {
-                AssignType assignType = assignMap.TryGetValue(tree.Code, out var assignInfo) ?
-                    assignInfo.Type : (parentAllow ? AssignType.AllowInherrites : AssignType.Deny);
-
-                if (assignType != AssignType.Deny)
-                {
-                    var functionInfo = tree with { };
-                    if (tree.SubItems != null)
-                    {
-                        var subItems = tree.SubItems.Select(p => CreateFunctionInfo(assignType == AssignType.AllowInherrites, p)).Where(p => p != null).ToList();
-                        functionInfo.SubItems = subItems;
-                    }
-                    return functionInfo;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
+            return tree.GetAssignedTree(assignMap);
         }
         IEnumerable<LayerValueInfo> FilterRoleValuesByProviderNames(List<LayerValueInfo> source, string[] providers)
         {
