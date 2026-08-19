@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
-using YS.Knife.Function.Core;
+using YS.Knife.Function;
 using YS.Knife.Operations;
 namespace YS.Knife.Authorization.AspnetCore.Mvc
 {

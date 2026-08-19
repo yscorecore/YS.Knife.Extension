@@ -1,4 +1,4 @@
-﻿using YS.Knife.Function.Core;
+﻿using YS.Knife.Function;
 
 namespace YS.Knife.Function
 {

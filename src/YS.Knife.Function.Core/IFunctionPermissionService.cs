@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Function.Core
+﻿namespace YS.Knife.Function
 {
     public interface IFunctionPermissionService
     {

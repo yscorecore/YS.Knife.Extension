@@ -1,4 +1,4 @@
-﻿using YS.Knife.Function.Core;
+﻿using YS.Knife.Function;
 using YS.Knife.Query;
 
 namespace YS.Knife.Function
@@ -8,14 +8,20 @@ namespace YS.Knife.Function
     /// </summary>
     public interface IFunctionManagerService
     {
-        Task<FunctionTreeInfo> GetFunctionTree(string appId);
+        Task<FunctionTreeInfo> GetFunctionTree(string appId, CancellationToken cancellationToken = default);
 
         Task<PagedList<FunctionInfo>> GetApps(LimitQueryInfo req, CancellationToken cancellationToken = default);
 
-        Task SaveFunctions(string appId, List<FunctionInfo> allFunctions, CancellationToken cancellationToken);
+        Task SaveFunctions(string appId, List<FunctionInfo> allFunctions, CancellationToken cancellationToken = default);
 
-        Task DeleteApp(string appId, CancellationToken cancellationToken);
+        Task DeleteApp(string appId, CancellationToken cancellationToken = default);
 
         Task<List<FunctionInfo>> LoadFromFile(StreamBody file, CancellationToken cancellationToken);
+        public async Task ImportFromFile(StreamBody file, CancellationToken cancellationToken)
+        {
+            var functions = await LoadFromFile(file, cancellationToken);
+            await SaveFunctions(functions.First().Code, functions, cancellationToken);
+        }
+        Task RefreshApiFunctions(CancellationToken cancellationToken = default);
     }
 }

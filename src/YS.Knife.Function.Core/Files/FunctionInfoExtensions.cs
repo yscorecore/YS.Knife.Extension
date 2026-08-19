@@ -1,43 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
-using YS.Knife.Function.Core;
+using YS.Knife.Function;
+using YS.Knife.Query;
 
-namespace YS.Knife.Function
+namespace YS.Knife.Function.Files
 {
-    [SingletonPattern]
-    public partial class FunctionFile
+    public static class FunctionInfoExtensions
     {
-        static JsonSerializerOptions JsonSerializerOptions = new()
+        public static List<FunctionInfo> ToFunctionModel(this AppInfo appInfo)
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            IgnoreReadOnlyProperties = false,
-            PropertyNameCaseInsensitive = false,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        };
-        public async Task<List<FunctionInfo>> LoadFromFile(StreamBody file, CancellationToken cancellationToken)
-        {
-            var appInfo = await LoadAppInfoFromFile(file);
-            if (appInfo == null)
+            if (string.IsNullOrEmpty(appInfo.AppId))
             {
-                throw new Exception("不是有效的function文件");
+                throw new Exception("AppId is Empty.");
             }
             var functions = ExpandToFunctionInfo(appInfo);
             CheckFunctions(functions);
             return functions;
         }
-
-
-
-        async ValueTask<AppInfo?> LoadAppInfoFromFile(StreamBody file)
-        {
-            return await JsonSerializer.DeserializeAsync<AppInfo>(file.Stream, JsonSerializerOptions);
-        }
-        List<FunctionInfo> ExpandToFunctionInfo(AppInfo appInfo)
+        static List<FunctionInfo> ExpandToFunctionInfo(AppInfo appInfo)
         {
             List<FunctionInfo> result = new List<FunctionInfo>();
             result.Add(new FunctionInfo
@@ -102,40 +86,13 @@ namespace YS.Knife.Function
         }
 
 
-        void CheckFunctions(List<FunctionInfo> functions)
+        static void CheckFunctions(List<FunctionInfo> functions)
         {
             var item = functions.ToLookup(p => p.Code).Where(p => p.Count() > 1).FirstOrDefault();
             if (item != null)
             {
-                throw new Exception($"duplicate function code '{item.Key}'");
+                throw new Exception($"Duplicate function code '{item.Key}'");
             }
-        }
-
-        record AppInfo
-        {
-            public string AppId { get; set; } = null!;
-            public string AppName { get; set; } = null!;
-            public string? AppDesc { get; set; } = null!;
-            public Dictionary<string, object> AppConfig { get; set; } = null!;
-            public List<ModuleInfo>? Modules { get; set; } = null!;
-
-
-        }
-        record ModuleInfo
-        {
-            public string Code { get; set; } = null!;
-            public string Name { get; set; } = null!;
-            public string? Desc { get; set; } = null!;
-            public Dictionary<string, object>? Config { get; set; } = null!;
-            public List<ModuleInfo>? Modules { get; set; } = null!;
-            public List<ActionInfo>? Actions { get; set; } = null!;
-        }
-        record ActionInfo
-        {
-            public string Code { get; set; } = null!;
-            public string Name { get; set; } = null!;
-            public string? Desc { get; set; } = null!;
-            public Dictionary<string, object>? Config { get; set; } = null!;
         }
     }
 }

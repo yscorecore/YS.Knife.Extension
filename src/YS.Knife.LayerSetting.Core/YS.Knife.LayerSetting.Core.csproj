@@ -10,6 +10,7 @@
     <ItemGroup>
       <ProjectReference Include="..\YS.Knife.LayerValue.Core\YS.Knife.LayerValue.Core.csproj" />
       <ProjectReference Include="..\YS.Knife.LogicRoles.Core\YS.Knife.LogicRoles.Core.csproj" />
+      <ProjectReference Include="..\YS.Knife.Metadata.Core\YS.Knife.Metadata.Core.csproj" />
         <ProjectReference Include="..\YS.Knife.ServiceBase\YS.Knife.ServiceBase.csproj" />
 
     </ItemGroup>

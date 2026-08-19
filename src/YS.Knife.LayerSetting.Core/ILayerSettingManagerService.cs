@@ -14,7 +14,15 @@ namespace YS.Knife.Function
 
         Task SaveSetting(SettingInfo setting, CancellationToken cancellationToken = default);
 
-        Task<SettingInfo> LoadFromFile(StreamBody file, CancellationToken cancellationToken);
+        Task<SettingInfo> LoadFromFile(StreamBody file, CancellationToken cancellationToken = default);
+
+        public async Task ImportFromFile(StreamBody file, CancellationToken cancellationToken = default)
+        {
+            var setting = await LoadFromFile(file, cancellationToken);
+            await SaveSetting(setting, cancellationToken);
+        }
+        Task RefreshSettings(CancellationToken cancellationToken = default);
+
     }
     public record SettingInfo
     {

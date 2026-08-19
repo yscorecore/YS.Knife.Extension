@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using YS.Knife.Entity;
-using YS.Knife.Function.Core;
 using YS.Knife.Function.Entity.EFCore;
+using YS.Knife.Function.Files;
 using YS.Knife.Query;
 
 namespace YS.Knife.Function.Impl.EFCore
@@ -19,7 +20,7 @@ namespace YS.Knife.Function.Impl.EFCore
     {
         private readonly IEntityStore<FunctionEntity> functionEntityStore;
 
-        public async Task<FunctionTreeInfo> GetFunctionTree(string appId)
+        public async Task<FunctionTreeInfo> GetFunctionTree(string appId, CancellationToken cancellationToken = default)
         {
             var res = await functionEntityStore.Current
                    .Where(p => p.AppId == appId)
@@ -38,7 +39,8 @@ namespace YS.Knife.Function.Impl.EFCore
 
         public async Task<List<FunctionInfo>> LoadFromFile(StreamBody file, CancellationToken cancellationToken)
         {
-            return await FunctionFile.Instance.LoadFromFile(file, cancellationToken);
+            var res = await AppInfo.LoadFromFile(file, cancellationToken);
+            return res.ToFunctionModel();
         }
 
         public async Task DeleteApp(string appId, CancellationToken cancellationToken = default)
@@ -64,6 +66,13 @@ namespace YS.Knife.Function.Impl.EFCore
             await functionEntityStore.SaveChangesAsync(cancellationToken);
         }
 
-
+        public async Task RefreshApiFunctions(CancellationToken cancellationToken = default)
+        {
+            var entry = Assembly.GetEntryAssembly();
+            var appInfo = entry.FindAppInfo(AppDomain.CurrentDomain.GetAssemblies(), p => p.GetCustomAttributesData().Any(t => t.AttributeType.FullName == "Microsoft.AspNetCore.Mvc.ApiControllerAttribute"));
+            var appId = appInfo.AppId;
+            var functions = appInfo.ToFunctionModel();
+            await SaveFunctions(appId, functions, cancellationToken);
+        }
     }
 }
