@@ -10,5 +10,7 @@
     <ItemGroup>
       <ProjectReference Include="..\YS.Knife.Extensions\YS.Knife.Extensions.csproj" />
       <ProjectReference Include="..\YS.Knife.LogicRoles.Core\YS.Knife.LogicRoles.Core.csproj" />
+        <ProjectReference Include="..\YS.Knife.ServiceBase\YS.Knife.ServiceBase.csproj" />
+
     </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 ﻿using YS.Knife.Function.Core;
+using YS.Knife.Query;
 
 namespace YS.Knife.Function
 {
@@ -9,7 +10,7 @@ namespace YS.Knife.Function
     {
         Task<FunctionTreeInfo> GetFunctionTree(string appId);
 
-        Task<List<FunctionInfo>> GetApps();
+        Task<PagedList<FunctionInfo>> GetApps(LimitQueryInfo req, CancellationToken cancellationToken = default);
 
         Task SaveFunctions(string appId, List<FunctionInfo> allFunctions, CancellationToken cancellationToken);
 

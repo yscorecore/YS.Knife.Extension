@@ -2,6 +2,7 @@
 using YS.Knife.Entity;
 using YS.Knife.Function.Core;
 using YS.Knife.Function.Entity.EFCore;
+using YS.Knife.Query;
 
 namespace YS.Knife.Function.Impl.EFCore
 {
@@ -18,14 +19,6 @@ namespace YS.Knife.Function.Impl.EFCore
     {
         private readonly IEntityStore<FunctionEntity> functionEntityStore;
 
-        public Task<List<FunctionInfo>> GetApps()
-        {
-            return functionEntityStore.Current
-                    .Where(p => p.Code == p.AppId && string.IsNullOrEmpty(p.ParentCode))
-                    .To<FunctionInfo>()
-                    .ToListAsync();
-        }
-
         public async Task<FunctionTreeInfo> GetFunctionTree(string appId)
         {
             var res = await functionEntityStore.Current
@@ -34,6 +27,13 @@ namespace YS.Knife.Function.Impl.EFCore
                    .To<FunctionTreeInfo>()
                    .ToListAsync();
             return res.BuildTree(appId);
+        }
+        public Task<PagedList<FunctionInfo>> GetApps(LimitQueryInfo req, CancellationToken cancellationToken = default)
+        {
+            return functionEntityStore.Current
+                   .Where(p => p.Code == p.AppId && string.IsNullOrEmpty(p.ParentCode))
+                   .To<FunctionInfo>()
+                   .QueryPageAsync(req, cancellationToken);
         }
 
         public async Task<List<FunctionInfo>> LoadFromFile(StreamBody file, CancellationToken cancellationToken)
@@ -63,5 +63,7 @@ namespace YS.Knife.Function.Impl.EFCore
                 });
             await functionEntityStore.SaveChangesAsync(cancellationToken);
         }
+
+
     }
 }
