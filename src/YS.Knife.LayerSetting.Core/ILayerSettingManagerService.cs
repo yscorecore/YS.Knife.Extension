@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using YS.Knife.Query;
+using YS.Knife.Service;
 
 namespace YS.Knife.Function
 {
@@ -12,14 +13,14 @@ namespace YS.Knife.Function
 
         Task RemoveSetting(string group, CancellationToken cancellationToken = default);
 
-        Task SaveSetting(SettingInfo setting, CancellationToken cancellationToken = default);
+        Task SaveSetting(SettingInfo setting, SaveMode saveMode = SaveMode.Merge, CancellationToken cancellationToken = default);
 
         Task<SettingInfo> LoadFromFile(StreamBody file, CancellationToken cancellationToken = default);
 
-        public async Task ImportFromFile(StreamBody file, CancellationToken cancellationToken = default)
+        public async Task ImportFromFile(StreamBody file, SaveMode saveMode = SaveMode.Merge, CancellationToken cancellationToken = default)
         {
             var setting = await LoadFromFile(file, cancellationToken);
-            await SaveSetting(setting, cancellationToken);
+            await SaveSetting(setting, saveMode, cancellationToken);
         }
         Task RefreshSettings(CancellationToken cancellationToken = default);
 

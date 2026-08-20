@@ -10,6 +10,16 @@ namespace YS.Knife.Function
     public interface ILayerSettingService
     {
         Task<Dictionary<string, object>> GetLayerSetting(string group);
+        //暂时先用默认实现，会循环查询数据库，有性能问题的时候可以优化
+        public async Task<Dictionary<string, object>> GetLayerSettings(params string[] group)
+        {
+            var res = new Dictionary<string, object>();
+            foreach (var v in group ?? Array.Empty<string>())
+            {
+                res.Merge(await GetLayerSetting(v));
+            }
+            return res;
+        }
 
         Task<T> GetLayerSettingObject<T>(string group) where T : class, new();
 

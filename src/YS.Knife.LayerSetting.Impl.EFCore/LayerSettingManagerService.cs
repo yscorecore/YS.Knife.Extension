@@ -6,6 +6,7 @@ using YS.Knife.Function;
 using YS.Knife.LayerSetting.Entity.EFCore;
 using YS.Knife.LayerSetting.Files;
 using YS.Knife.Query;
+using YS.Knife.Service;
 
 
 namespace YS.Knife.LayerSetting.Impl.EFCore
@@ -13,7 +14,8 @@ namespace YS.Knife.LayerSetting.Impl.EFCore
     [Service]
     [AutoConstructor]
     [Mapper(typeof(SettingEntity), typeof(SettingInfo), MapperType = MapperType.Query)]
-    [Mapper(typeof(SettingInfo), typeof(SettingEntity), MapperType = MapperType.BatchUpdate)]
+    [Mapper(typeof(SettingInfo), typeof(SettingEntity), MapperType = MapperType.Convert)]
+    [Mapper(typeof(SettingPropertyInfo), typeof(SettingPropertyEntity), MapperType = MapperType.BatchUpdate)]
     public partial class LayerSettingManagerService : ILayerSettingManagerService
     {
         private readonly IEntityStore<SettingEntity> settingStore;
@@ -37,7 +39,7 @@ namespace YS.Knife.LayerSetting.Impl.EFCore
             {
                 settings.AddRange(Assembly.LoadFrom(ass).FindLayerSettings().ToList());
             }
-            return SaveSettings(settings.ToArray(), cancellationToken);
+            return SaveSettings(settings.ToArray(), saveMode: SaveMode.Merge, cancellationToken);
         }
 
         public async Task RemoveSetting(string group, CancellationToken cancellationToken = default)
@@ -47,7 +49,7 @@ namespace YS.Knife.LayerSetting.Impl.EFCore
             settingStore.Delete(setting);
             await settingStore.SaveChangesAsync(cancellationToken);
         }
-        private async Task SaveSettings(IList<SettingInfo> settings, CancellationToken cancellationToken = default)
+        private async Task SaveSettings(IList<SettingInfo> settings, SaveMode saveMode = SaveMode.Merge, CancellationToken cancellationToken = default)
         {
             if (settings.Count == 0)
             {
@@ -62,18 +64,19 @@ namespace YS.Knife.LayerSetting.Impl.EFCore
             {
                 if (currentDic.TryGetValue(s.Group, out var current))
                 {
-                    s.To(current, (t) => { settingPropertyStore.Delete((SettingPropertyEntity)t); });
+                    s.CopyTo(current);
+                    s.Properties.To(current.Properties, (CollectionUpdateMode)(int)saveMode);
                 }
                 else
                 {
                     settingStore.Add(s.To<SettingEntity>());
                 }
             }
-            await settingStore.SaveChangesAsync();
+            await settingStore.SaveChangesAsync(cancellationToken);
         }
-        public Task SaveSetting(SettingInfo setting, CancellationToken cancellationToken = default)
+        public Task SaveSetting(SettingInfo setting, SaveMode saveMode = SaveMode.Merge, CancellationToken cancellationToken = default)
         {
-            return SaveSettings(setting.AsList(), cancellationToken);
+            return SaveSettings(setting.AsList(), saveMode, cancellationToken);
         }
     }
 

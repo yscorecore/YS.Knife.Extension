@@ -30,20 +30,8 @@ namespace YS.Knife.Operations
                 };
             });
         }
-        private static string GetAppId()
-        {
-            var assembly = Assembly.GetEntryAssembly();
-            var appatt = Assembly.GetEntryAssembly()?.GetCustomAttribute<AppAttribute>();
-            var guidatt = Assembly.GetEntryAssembly()?.GetCustomAttribute<GuidAttribute>();
-            return appatt != null ? appatt.Id : (guidatt != null ? guidatt.Value : (assembly?.GetName().Name));
-        }
-        public static string GetModuleId(Type type)
-        {
-            if (type == null) return null;
-            var attr = type.GetCustomAttribute<ModuleAttribute>();
 
-            return attr != null ? attr.Id : type.Name;
-        }
+
 
 
         private static string FormatTemplate(string template, Dictionary<string, object> args)
