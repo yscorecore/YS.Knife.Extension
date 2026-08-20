@@ -11,7 +11,7 @@ namespace YS.Knife.Function.Files
 {
     public static class AssemblyExtensions
     {
-        public static AppInfo FindAppInfo(this Assembly entryAssembly, Assembly[] assemblies, Func<Type, bool> isModuleFunc)
+        public static AppInfo FindAppInfo(this Assembly entryAssembly, Assembly[] assemblies, Func<Type, bool> isModuleFunc, Func<MethodInfo, bool> isActionFunc)
         {
             var appInfo = GetAppInfo(entryAssembly);
             foreach (var assembly in new Assembly[] { entryAssembly }.Concat(assemblies).Distinct())
@@ -22,7 +22,7 @@ namespace YS.Knife.Function.Files
                     {
                         var module = GetModuleInfo(type);
                         appInfo.Modules!.Add(module);
-                        var actions = GetModuleActionInfos(type);
+                        var actions = GetModuleActionInfos(type, isActionFunc);
                         if (module.Actions == null) module.Actions = new List<ActionInfo>();
                         module.Actions.AddRange(actions);
                     }
@@ -65,10 +65,11 @@ namespace YS.Knife.Function.Files
                 Config = new Dictionary<string, object> { { "type", type.FullName ?? string.Empty } }
             };
         }
-        private static List<ActionInfo> GetModuleActionInfos(Type type)
+        private static List<ActionInfo> GetModuleActionInfos(Type type, Func<MethodInfo, bool> isActionFunc)
         {
             return type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
                 .Where(p => !p.IsSpecialName)
+                .Where(p => isActionFunc(p))
                 .Select(p => GetMethodActionInfo(p))
                 .ToList();
         }
