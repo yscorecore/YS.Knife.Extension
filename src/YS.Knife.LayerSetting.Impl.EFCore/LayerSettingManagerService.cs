@@ -37,7 +37,7 @@ namespace YS.Knife.LayerSetting.Impl.EFCore
             var settings = new List<SettingInfo>();
             foreach (var ass in (options.Assemblies ?? Array.Empty<string>()))
             {
-                settings.AddRange(Assembly.LoadFrom(ass).FindLayerSettings().ToList());
+                settings.AddRange(Assembly.Load(ass).FindLayerSettings().ToList());
             }
             return SaveSettings(settings.ToArray(), saveMode: SaveMode.Merge, cancellationToken);
         }

@@ -69,10 +69,28 @@ namespace YS.Knife.Function.Impl.EFCore
         public async Task RefreshApiFunctions(CancellationToken cancellationToken = default)
         {
             var entry = Assembly.GetEntryAssembly();
-            var appInfo = entry.FindAppInfo(AppDomain.CurrentDomain.GetAssemblies(), p => p.GetCustomAttributesData().Any(t => t.AttributeType.FullName == "Microsoft.AspNetCore.Mvc.ApiControllerAttribute"));
+            var appInfo = entry.FindAppInfo(AppDomain.CurrentDomain.GetAssemblies(), IsModule, IsAction);
             var appId = appInfo.AppId;
             var functions = appInfo.ToFunctionModel();
             await SaveFunctions(appId, functions, cancellationToken);
+        }
+        private static bool IsModule(Type type)
+        {
+            return type.GetCustomAttributesData().Any(t => t.AttributeType.FullName == "Microsoft.AspNetCore.Mvc.ApiControllerAttribute");
+        }
+        private static HashSet<string> AllHttpMethodAttributeTypes = new HashSet<string>()
+        {
+            "Microsoft.AspNetCore.Mvc.HttpGetAttribute",
+            "Microsoft.AspNetCore.Mvc.HttpPostAttribute",
+            "Microsoft.AspNetCore.Mvc.HttpPutAttribute",
+            "Microsoft.AspNetCore.Mvc.HttpDeleteAttribute",
+            "Microsoft.AspNetCore.Mvc.HttpHeadAttribute",
+            "Microsoft.AspNetCore.Mvc.HttpPatchAttribute",
+            "Microsoft.AspNetCore.Mvc.HttpOptionsAttribute",
+        };
+        private static bool IsAction(MethodInfo method)
+        {
+            return method.GetCustomAttributesData().Any(t => AllHttpMethodAttributeTypes.Contains(t.AttributeType.FullName));
         }
     }
 }

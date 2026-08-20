@@ -52,11 +52,5 @@ namespace YS.Knife.Service
             }, cancellationToken);
             return res.TotalCount ?? 0;
         }
-        public static void SaveTo<TKey, TDto, TEntity>(this IDictionary<TKey, TDto> dtos, IDictionary<TKey, TEntity> entities, SaveMode saveMode)
-        {
-
-        }
     }
-
-
 }
