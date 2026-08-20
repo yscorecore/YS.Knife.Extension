@@ -73,6 +73,7 @@ namespace System
                 NameStyle.Lower => text.ToLowerInvariant(),
                 NameStyle.Upper => text.ToUpperInvariant(),
                 NameStyle.TitleCase => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(text),
+                NameStyle.CamelCase => JsonNamingPolicy.CamelCase.ConvertName(text),
                 _ => text
             };
         }

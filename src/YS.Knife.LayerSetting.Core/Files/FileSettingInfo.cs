@@ -9,6 +9,7 @@ namespace YS.Knife.LayerSetting.Files
         internal static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
             IgnoreReadOnlyProperties = false,
             PropertyNameCaseInsensitive = false,
             ReadCommentHandling = JsonCommentHandling.Skip,

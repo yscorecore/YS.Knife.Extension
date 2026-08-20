@@ -95,7 +95,7 @@ namespace YS.Knife
             public Task<TProp> GetPropertyValueByRoles<TProp>(IDictionary<string, string[]> roleMaps, Expression<Func<T, TProp>> propertyFunc)
             {
                 var propName = GetPropertyName(propertyFunc);
-                propName = propName[0..1].ToLower() + propName[1..];
+                propName = propName.WithStyle(NameStyle.CamelCase);
                 return GetPropertyValueByRoles<TProp>(roleMaps, propName);
             }
             private static string GetPropertyName<TProp>(Expression<Func<T, TProp>> expression)

@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using YS.Knife.Function;
 
@@ -68,7 +69,7 @@ namespace YS.Knife.LayerSetting
             var editor = propertyInfo.GetCustomAttribute<Metadata.EditorSourceAttribute>(true)?.ToString();
             return new SettingPropertyInfo
             {
-                Key = propertyInfo.Name,
+                Key = propertyInfo.Name.WithStyle(NameStyle.CamelCase),
                 Name = displayAttribute?.Name ?? displayNameAttribute?.DisplayName,
                 Description = displayAttribute?.Description ?? descriptionAttribute?.Description,
                 Order = displayAttribute?.Order ?? 0,

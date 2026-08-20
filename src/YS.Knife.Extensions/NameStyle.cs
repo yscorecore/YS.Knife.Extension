@@ -6,5 +6,6 @@
         Lower,
         Upper,
         TitleCase,
+        CamelCase
     }
 }
