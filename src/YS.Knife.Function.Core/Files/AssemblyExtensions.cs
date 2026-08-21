@@ -39,7 +39,7 @@ namespace YS.Knife.Function.Files
             {
                 AppId = appatt.Id,
                 AppDesc = appatt.Description,
-                AppName = assembly.FullName ?? string.Empty,
+                AppName = appatt.Description!,
                 AppConfig = new Dictionary<string, object>
                 {
                     { "roleProviders", appatt.RoleProviders },
@@ -55,11 +55,11 @@ namespace YS.Knife.Function.Files
             {
                 Code = attr.Id,
                 Desc = attr.Description,
-                Name = type.Name,
+                Name = attr.Description,
                 Config = new Dictionary<string, object> { { "type", type.FullName ?? string.Empty } },
             } : new ModuleInfo
             {
-                Code = type.FullName!,
+                Code = type.Name,
                 Name = type.Name,
                 Desc = type.FullName ?? string.Empty,
                 Config = new Dictionary<string, object> { { "type", type.FullName ?? string.Empty } }

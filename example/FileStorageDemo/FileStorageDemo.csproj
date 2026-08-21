@@ -7,6 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="wwwroot\**" />
+      <Content Remove="wwwroot\**" />
+      <EmbeddedResource Remove="wwwroot\**" />
+      <None Remove="wwwroot\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="YS.Knife.Hosting.Web" Version="2.0.2" />
     </ItemGroup>
 
@@ -15,10 +22,6 @@
       <ProjectReference Include="..\..\src\YS.Knife.FileStorage.CategoryProvider.Default\YS.Knife.FileStorage.CategoryProvider.Default.csproj" />
       <ProjectReference Include="..\..\src\YS.Knife.FileStorage.Impl.Local\YS.Knife.FileStorage.Impl.Local.csproj" />
       <ProjectReference Include="..\..\src\YS.Knife.FileStorage.SystemArguments.Default\YS.Knife.FileStorage.SystemArguments.Default.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="wwwroot\" />
     </ItemGroup>
 
 
