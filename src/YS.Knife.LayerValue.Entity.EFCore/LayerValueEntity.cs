@@ -15,7 +15,7 @@ namespace YS.Knife.LayerValue.Entity.EFCore
         [StringLength(64)]
         public string RoleCode { get; set; } = null!;
         [Required]
-        [StringLength(64)]
+        [StringLength(128)]
         public string Key { get; set; } = null!;
         [Required]
         public string Value { get; set; } = null!;

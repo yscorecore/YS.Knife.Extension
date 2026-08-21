@@ -7,7 +7,7 @@ namespace YS.Knife.LayerSetting.Entity.EFCore
     [Index(nameof(Group), IsUnique = true)]
     public class SettingEntity : BaseEntity<Guid>
     {
-        [StringLength(32)]
+        [StringLength(64)]
         public string? Name { get; set; } = null!;
 
         [StringLength(64)]

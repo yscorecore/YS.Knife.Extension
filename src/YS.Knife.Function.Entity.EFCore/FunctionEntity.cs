@@ -15,14 +15,14 @@ namespace YS.Knife.Function.Entity.EFCore
         [StringLength(64)]
         [Required]
         public string AppId { get; set; } = null!;
-        [StringLength(32)]
-        public string Name { get; set; } = null!;
         [StringLength(64)]
+        public string Name { get; set; } = null!;
+        [StringLength(128)]
         [Required]
         public string Code { get; set; } = null!;
         [StringLength(256)]
         public string? Description { get; set; }
-        [StringLength(64)]
+        [StringLength(128)]
         public string? ParentCode { get; set; }
 
         public int Sequence { get; set; }

@@ -65,7 +65,7 @@ namespace YS.Knife.LayerSetting.Impl.EFCore
                 if (currentDic.TryGetValue(s.Group, out var current))
                 {
                     s.CopyTo(current);
-                    s.Properties.To(current.Properties, (CollectionUpdateMode)(int)saveMode);
+                    s.Properties.To(current.Properties, (CollectionUpdateMode)(int)saveMode, (t) => settingPropertyStore.Delete((SettingPropertyEntity)t));
                 }
                 else
                 {

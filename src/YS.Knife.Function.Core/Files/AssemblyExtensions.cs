@@ -55,13 +55,13 @@ namespace YS.Knife.Function.Files
             {
                 Code = attr.Id,
                 Desc = attr.Description,
-                Name = type.FullName ?? string.Empty,
+                Name = type.Name,
                 Config = new Dictionary<string, object> { { "type", type.FullName ?? string.Empty } },
             } : new ModuleInfo
             {
-                Code = type.FullName ?? string.Empty,
-                Desc = type.FullName,
-                Name = type.FullName ?? string.Empty,
+                Code = type.FullName!,
+                Name = type.Name,
+                Desc = type.FullName ?? string.Empty,
                 Config = new Dictionary<string, object> { { "type", type.FullName ?? string.Empty } }
             };
         }
