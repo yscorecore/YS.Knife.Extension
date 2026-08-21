@@ -20,6 +20,7 @@ namespace YS.Knife.LayerSetting.Entity.EFCore
         public string[] RoleProviders { get; set; } = null!;
         public List<SettingPropertyEntity> Properties { get; set; } = new();
     }
+    [Index(nameof(SettingId), nameof(Key), IsUnique = true)]
     public class SettingPropertyEntity : BaseEntity<Guid>
     {
         public Guid SettingId { get; set; }
