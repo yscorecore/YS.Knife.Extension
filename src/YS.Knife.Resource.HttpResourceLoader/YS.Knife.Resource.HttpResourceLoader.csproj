@@ -2,6 +2,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\YS.Knife.Resource.Core\YS.Knife.Resource.Core.csproj" />
+        <ProjectReference Include="..\YS.Knife.Extensions.HttpClient\YS.Knife.Extensions.HttpClient.csproj" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="[6.*,99.9.0)" />
         <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
     </ItemGroup>
 

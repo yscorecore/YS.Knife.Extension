@@ -6,7 +6,16 @@ namespace System.Net.Http
 {
     public static class HttpClientDownloadExtensions
     {
-        public static async Task<string> DownloadWithCache(this HttpClient client, string url, string cacheFolder, CancellationToken cancellationToken = default)
+        public static Task<string> DownloadWithCache(this HttpClient client, string url, string cacheFolder, CancellationToken cancellationToken = default)
+        {
+            return client.DownloadWithCache(url, cacheFolder, true, cancellationToken);
+        }
+
+        /// <param name="refreshCache">
+        /// When true, an existing cache file is revalidated against the server using conditional headers.
+        /// When false, an existing cache file is used directly without any request.
+        /// </param>
+        public static async Task<string> DownloadWithCache(this HttpClient client, string url, string cacheFolder, bool refreshCache, CancellationToken cancellationToken = default)
         {
             _ = url ?? throw new ArgumentNullException(nameof(url));
             _ = cacheFolder ?? throw new ArgumentNullException(nameof(cacheFolder));
@@ -27,7 +36,10 @@ namespace System.Net.Http
 
             if (File.Exists(cacheFile))
             {
-                await RefreshCacheIfModified(client, url, cacheFile, etagFile, cancellationToken).ConfigureAwait(false);
+                if (refreshCache)
+                {
+                    await RefreshCacheIfModified(client, url, cacheFile, etagFile, cancellationToken).ConfigureAwait(false);
+                }
             }
             else
             {
@@ -37,9 +49,14 @@ namespace System.Net.Http
             return cacheFile;
         }
 
-        public static async Task<Stream> DownloadStreamWithCache(this HttpClient client, string url, string cacheFolder, CancellationToken cancellationToken = default)
+        public static Task<Stream> DownloadStreamWithCache(this HttpClient client, string url, string cacheFolder, CancellationToken cancellationToken = default)
         {
-            var file = await client.DownloadWithCache(url, cacheFolder, cancellationToken).ConfigureAwait(false);
+            return client.DownloadStreamWithCache(url, cacheFolder, true, cancellationToken);
+        }
+
+        public static async Task<Stream> DownloadStreamWithCache(this HttpClient client, string url, string cacheFolder, bool refreshCache, CancellationToken cancellationToken = default)
+        {
+            var file = await client.DownloadWithCache(url, cacheFolder, refreshCache, cancellationToken).ConfigureAwait(false);
             return File.OpenRead(file);
         }
 

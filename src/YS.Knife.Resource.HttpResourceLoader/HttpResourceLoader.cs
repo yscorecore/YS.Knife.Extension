@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace YS.Knife.Resource
 {
@@ -7,6 +6,7 @@ namespace YS.Knife.Resource
     [Service(Lifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton)]
     public partial class HttpResourceLoader : IResourceLoader
     {
+        private readonly HttpClient httpClient;
         private readonly HttpResourceOptions options;
         private readonly ILogger<HttpResourceLoader> logger;
 
@@ -25,70 +25,9 @@ namespace YS.Knife.Resource
 
         public async Task<string> Download(string uri, string path)
         {
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            var cacheFileName = Path.Combine(path, BuildCacheFileName(uri));
-            await DownloadFileWithCache(uri, cacheFileName);
-            return cacheFileName;
+            var cacheFile = await httpClient.DownloadWithCache(uri, path, options.RefreshCache);
+            logger.LogInformation("Template cache file ready for the url {url}", uri);
+            return cacheFile;
         }
-
-        private string BuildCacheFileName(string uri)
-        {
-            var targetSpan = new char[uri.Length];
-            uri.AsSpan().CopyTo(targetSpan);
-            var invalidFileNameChars = Path.GetInvalidFileNameChars();
-            for (int i = 0; i < targetSpan.Length; i++)
-            {
-                if (invalidFileNameChars.Contains(targetSpan[i]))
-                {
-                    targetSpan[i] = '_';
-                }
-            }
-            return new string(targetSpan.ToArray());
-        }
-
-        private async Task DownloadFileWithCache(string uri, string filePath)
-        {
-            if (File.Exists(filePath))
-            {
-                if (options.CheckRemoteLastModiedTime)
-                {
-                    var lastModified = File.GetLastWriteTime(filePath);
-
-                    using var client = new HttpClient();
-                    client.DefaultRequestHeaders.IfModifiedSince = lastModified;
-
-                    using var response = await client.GetAsync(uri);
-
-                    if (response.StatusCode == HttpStatusCode.NotModified)
-                    {
-                        logger.LogInformation("Template cache file not modified for the url {url}", uri);
-                    }
-                    else if (response.IsSuccessStatusCode)
-                    {
-                        using var stream = await response.Content.ReadAsStreamAsync();
-                        using var fileStream = File.OpenWrite(filePath);
-                        stream.CopyTo(fileStream);
-                        logger.LogInformation("Template cache file updated for the url {url}", uri);
-                    }
-                }
-            }
-            else
-            {
-                var client = new HttpClient();
-                var response = await client.GetAsync(uri);
-                if (response.IsSuccessStatusCode)
-                {
-                    using var stream = await response.Content.ReadAsStreamAsync();
-                    using var fileStream = File.OpenWrite(filePath);
-                    stream.CopyTo(fileStream);
-                    logger.LogInformation("Template cache file download for the url {url}", uri);
-                }
-            }
-        }
-
-
     }
 }

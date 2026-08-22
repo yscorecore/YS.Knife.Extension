@@ -9,10 +9,11 @@ namespace YS.Knife.Resource
         [Required]
         public string CacheFolder { get; set; }
 
-
-        public bool CheckRemoteLastModiedTime { get; set; } = true;
-
-
+        /// <summary>
+        /// Whether to revalidate an existing cache file against the server (via ETag and Last-Modified).
+        /// When false, an existing cache file is used directly without any request.
+        /// </summary>
+        public bool RefreshCache { get; set; } = true;
     }
 
     [OptionsPostHandler]
