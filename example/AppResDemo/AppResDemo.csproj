@@ -11,7 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
+      <ProjectReference Include="..\..\src\YS.Knife.Generators.ExposeApi\YS.Knife.Generators.ExposeApi.csproj">
+          <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+          <OutputItemType>Analyzer</OutputItemType>
+      </ProjectReference>
     <ProjectReference Include="..\..\src\YS.Knife.AppRes.Impl.EFCore\YS.Knife.AppRes.Impl.EFCore.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Mapper.Impl.FlyTiger\YS.Knife.Mapper.Impl.FlyTiger.csproj" />
   </ItemGroup>
     <ItemGroup>
         <PackageReference Include="YS.Knife.Hosting.Web" Version="2.0.2" />

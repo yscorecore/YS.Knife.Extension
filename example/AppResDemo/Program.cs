@@ -2,9 +2,15 @@
 using AppResDemo.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using YS.Knife.AppRes;
+using YS.Knife.AppRes.Impl.EFCore;
 
 namespace AppResDemo
 {
+    [YS.Knife.ExposeApi(typeof(IAppTextResourceService))]
+    [YS.Knife.ExposeApi(typeof(IAppTextResourceManager))]
+    [YS.Knife.ExposeApi(typeof(IAppFileResourceService))]
+    [YS.Knife.ExposeApi(typeof(IAppFileResourceManager))]
     public class Program : YS.Knife.Hosting.KnifeWebHost
     {
         public Program(string[] args) : base(args)
@@ -24,7 +30,7 @@ namespace AppResDemo
             //    options.Filters.Add<AuditLogAttribute>();
             //    options.Filters.Add<WrapCodeResultAttribute>();
             //});
-           
+            serviceCollection.AddFlyTigerMapper(typeof(AppFileResourceManager));
             base.OnConfigureCustomService(builder, serviceCollection);
             serviceCollection.AddDbContext<DemoContext>((op) =>
             {
