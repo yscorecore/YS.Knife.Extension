@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.AppRes.Entity.EFCore\YS.Knife.AppRes.Entity.EFCore.csproj" />
+    <ProjectReference Include="..\YS.Knife.EntityBase\YS.Knife.EntityBase.csproj" />
+    <ProjectReference Include="..\YS.Knife.Extensions.HttpClient\YS.Knife.Extensions.HttpClient.csproj" />
+    <ProjectReference Include="..\YS.Knife.Resource.Core\YS.Knife.Resource.Core.csproj" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="[6.*,99.9.0)" />
+  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+    </ItemGroup>
+
+</Project>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using YS.Knife.Resource.AppFileResLoader;
 
 namespace YS.Knife.Resource
 {
@@ -6,8 +7,8 @@ namespace YS.Knife.Resource
     {
         public void RegisterServices(IServiceCollection services, IRegisterContext context)
         {
-            services.AddHttpClient<HttpResourceLoader>();
-
+            services.AddHttpClient<AppResourceLoader>();
+            services.AddHttpClient<AppResourceNameGroupLoader>();
         }
     }
 }

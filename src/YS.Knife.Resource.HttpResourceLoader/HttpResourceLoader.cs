@@ -17,17 +17,10 @@ namespace YS.Knife.Resource
             return Uri.IsWellFormedUriString(templateUri, UriKind.Absolute);
         }
 
-        public virtual async Task<Stream> LoadTemplate(string templateUri)
+        public virtual Task<Stream> LoadTemplate(string templateUri)
         {
-            var cacheFile = await Download(templateUri, options.CacheFolder);
-            return File.OpenRead(cacheFile);
-        }
-
-        public async Task<string> Download(string uri, string path)
-        {
-            var cacheFile = await httpClient.DownloadWithCache(uri, path, options.RefreshCache);
-            logger.LogInformation("Template cache file ready for the url {url}", uri);
-            return cacheFile;
+            logger.LogInformation("Loading template from the url {url}", templateUri);
+            return httpClient.DownloadStreamWithCache(templateUri, options.CacheFolder, options.RefreshCache);
         }
     }
 }

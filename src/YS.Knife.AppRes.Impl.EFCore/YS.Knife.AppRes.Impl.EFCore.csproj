@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.AppRes.Core\YS.Knife.AppRes.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.AppRes.Entity.EFCore\YS.Knife.AppRes.Entity.EFCore.csproj" />
+    <ProjectReference Include="..\YS.Knife.ServiceBase\YS.Knife.ServiceBase.csproj" />
+  </ItemGroup>
+    <ItemGroup>
+        <Using Include="YS.Knife" />
+        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+    </ItemGroup>
+</Project>

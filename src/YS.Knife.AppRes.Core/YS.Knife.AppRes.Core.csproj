@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>YS.Knife.AppRes</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.Extensions\YS.Knife.Extensions.csproj" />
+    <ProjectReference Include="..\YS.Knife.ServiceBase\YS.Knife.ServiceBase.csproj" />
+      <ProjectReference Include="..\YS.Knife.Extensions.Validation\YS.Knife.Extensions.Validation.csproj" />
+
+  </ItemGroup>
+
+</Project>
