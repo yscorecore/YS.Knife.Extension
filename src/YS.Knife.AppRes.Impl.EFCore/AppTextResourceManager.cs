@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using YS.Knife.AppRes.Entity.EFCore;
 using YS.Knife.EFCore.Services;
@@ -23,10 +24,26 @@ namespace YS.Knife.AppRes.Impl.EFCore
     public partial class AppTextResourceManager : IAppTextResourceManager, IAppTextResourceService
     {
         private readonly IEntityStore<AppTextResourceEntity> entityStore;
+        private static readonly Regex keyRegex = new Regex("^(?<c>.+)@(?<g>.+)$");
 
-        public async Task<StreamBody> GetContent(Guid id, CancellationToken cancellationToken)
+        public async Task<StreamBody> GetContent(string key, CancellationToken cancellationToken)
         {
-            var entity = await entityStore.Current.Where(p => p.Id == id).FindOrThrowAsync(cancellationToken);
+            AppTextResourceEntity entity;
+            if (Guid.TryParse(key, out var id))
+            {
+                entity = await entityStore.Current.Where(p => p.Id == id).FindOrThrowAsync(cancellationToken);
+            }
+            else if (keyRegex.IsMatch(key))
+            {
+                var match = keyRegex.Match(key);
+                var code = match.Groups["c"].Value;
+                var group = match.Groups["g"].Value;
+                entity = await entityStore.Current.Where(p => p.Group == group && p.Code == code).FindOrThrowAsync(cancellationToken);
+            }
+            else
+            {
+                throw new InvalidOperationException($"Invalid key format: '{key}', expected guid or code@group.");
+            }
             var bytes = Encoding.UTF8.GetBytes(entity.Content ?? string.Empty);
             return StreamBody.FromBytes(bytes, MediaTypeNames.Text.Plain, $"{entity.Name}.txt");
         }

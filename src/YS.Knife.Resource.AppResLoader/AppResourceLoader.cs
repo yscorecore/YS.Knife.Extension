@@ -9,7 +9,7 @@ namespace YS.Knife.Resource.AppFileResLoader
     public partial class AppResourceLoader : IResourceLoader
     {
         public virtual int Priority => 11000;
-        private readonly IEntityStore<BaseResourceEntity> entityStore;
+        private readonly IEntityStore<AppResourceEntity> entityStore;
         private readonly AppResourceOptions options;
         private readonly HttpClient httpClient;
 
@@ -24,7 +24,7 @@ namespace YS.Knife.Resource.AppFileResLoader
             var appresourceEntity = await entityStore.Current.Where(p => p.Id == id).FindOrThrowAsync();
             return await LoadAppSourceEntity(appresourceEntity, httpClient, options, default);
         }
-        internal static async Task<Stream> LoadAppSourceEntity(BaseResourceEntity appresourceEntity, HttpClient httpClient, AppResourceOptions options, CancellationToken cancellationToken = default)
+        internal static async Task<Stream> LoadAppSourceEntity(AppResourceEntity appresourceEntity, HttpClient httpClient, AppResourceOptions options, CancellationToken cancellationToken = default)
         {
             if (appresourceEntity is AppFileResourceEntity appFile)
             {

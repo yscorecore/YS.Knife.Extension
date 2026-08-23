@@ -2,7 +2,7 @@
 
 namespace YS.Knife.AppRes.Entity.EFCore
 {
-    public class AppFileResourceEntity : BaseResourceEntity
+    public class AppFileResourceEntity : AppResourceEntity
     {
         [StringLength(256)]
         public string FileUrl { get; set; } = null!;

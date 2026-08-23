@@ -11,7 +11,7 @@ namespace YS.Knife.Resource.AppFileResLoader
     {
         private static readonly Regex regex = new Regex("^(<?c>.+)@(?<g>.+)$");
         public int Priority => 12000;
-        private readonly IEntityStore<BaseResourceEntity> entityStore;
+        private readonly IEntityStore<AppResourceEntity> entityStore;
         private readonly AppResourceOptions options;
         private readonly HttpClient httpClient;
         public bool CanLoad(string templateUri)

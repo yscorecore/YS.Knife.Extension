@@ -42,9 +42,6 @@ namespace YS.Knife.AppRes
         {
             [Required]
             public string Content { get; set; } = null!;
-            [StringLength(64)]
-            [Required]
-            public string Group { get; set; } = null!;
 
             [StringLength(64)]
             [Required]

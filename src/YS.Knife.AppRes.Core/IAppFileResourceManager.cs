@@ -50,9 +50,6 @@ namespace YS.Knife.AppRes
             public long FileSize { get; set; }
             [StringLength(8)]
             public string? FileExt { get; set; }
-            [StringLength(64)]
-            [Required]
-            public string Group { get; set; } = null!;
 
             [StringLength(64)]
             [Required]
