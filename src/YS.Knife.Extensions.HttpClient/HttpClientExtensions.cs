@@ -10,18 +10,7 @@ using YS.Knife;
 
 namespace System.Net.Http
 {
-    public static class HttpClientDownloadExtensions
-    {
-        public static Task<string> DownloadWithCache(this HttpClient client, string url, string cacheFolder, CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult("");
-        }
-        public static async Task<Stream> DownloadStreamWithCache(this HttpClient client, string url, string cacheFolder, CancellationToken cancellationToken = default)
-        {
-            var file = await client.DownloadWithCache(url, cacheFolder, cancellationToken);
-            return File.OpenRead(file);
-        }
-    }
+   
     public static class HttpClientExtensions
     {
         private static JsonSerializerOptions DefaultJsonOptions = new JsonSerializerOptions
