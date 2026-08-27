@@ -48,10 +48,10 @@ namespace YS.Knife.AppRes.Impl.EFCore
             return StreamBody.FromBytes(bytes, MediaTypeNames.Text.Plain, $"{entity.Name}.txt");
         }
 
-       
 
 
-     
+
+
 
     }
 }

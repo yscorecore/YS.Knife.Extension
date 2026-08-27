@@ -10,7 +10,7 @@ using YS.Knife;
 
 namespace System.Net.Http
 {
-   
+
     public static class HttpClientExtensions
     {
         private static JsonSerializerOptions DefaultJsonOptions = new JsonSerializerOptions
