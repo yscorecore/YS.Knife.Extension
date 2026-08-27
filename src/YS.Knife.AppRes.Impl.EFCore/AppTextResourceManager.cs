@@ -26,18 +26,25 @@ namespace YS.Knife.AppRes.Impl.EFCore
     public partial class AppTextResourceManager : IAppTextResourceManager, IAppTextResourceService
     {
         private readonly IEntityStore<AppTextResourceEntity> entityStore;
-        private static readonly Regex keyRegex = new Regex("^(?<c>.+)@(?<g>.+)$");
+        internal static readonly Regex KeyRegex = new Regex("^(?<c>.+)@(?<g>.+)$");
 
-        public async Task<StreamBody> GetContent(string key, CancellationToken cancellationToken)
+        public async Task<StreamBody> Download(string key, CancellationToken cancellationToken)
+        {
+            var entity = await GetTextEntityByKey(key, cancellationToken);
+            var bytes = Encoding.UTF8.GetBytes(entity.Content ?? string.Empty);
+            return StreamBody.FromBytes(bytes, MediaTypeNames.Text.Plain, $"{entity.Name}.txt");
+        }
+
+        private async Task<AppTextResourceEntity> GetTextEntityByKey(string key, CancellationToken cancellationToken)
         {
             AppTextResourceEntity entity;
             if (Guid.TryParse(key, out var id))
             {
                 entity = await entityStore.Current.Where(p => p.Id == id).FindOrThrowAsync(cancellationToken);
             }
-            else if (keyRegex.IsMatch(key))
+            else if (KeyRegex.IsMatch(key))
             {
-                var match = keyRegex.Match(key);
+                var match = KeyRegex.Match(key);
                 var code = match.Groups["c"].Value;
                 var group = match.Groups["g"].Value;
                 entity = await entityStore.Current.Where(p => p.Group == group && p.Code == code).FindOrThrowAsync(cancellationToken);
@@ -46,14 +53,20 @@ namespace YS.Knife.AppRes.Impl.EFCore
             {
                 throw new InvalidOperationException($"Invalid key format: '{key}', expected guid or code@group.");
             }
-            var bytes = Encoding.UTF8.GetBytes(entity.Content ?? string.Empty);
-            return StreamBody.FromBytes(bytes, MediaTypeNames.Text.Plain, $"{entity.Name}.txt");
+
+            return entity;
         }
 
         public Task<PagedList<AppGroupTextResourceInfo>> Query(string group, LimitQueryInfo req, CancellationToken cancellationToken = default)
         {
             return entityStore.Current.Where(p => p.Group == group).OrderBy(p => p.Order).To<AppGroupTextResourceInfo>().QueryPageAsync(req, cancellationToken);
 
+        }
+
+        public async Task<string> GetContent(string key, CancellationToken cancellationToken)
+        {
+            var entity = await GetTextEntityByKey(key, cancellationToken);
+            return entity.Content;
         }
     }
 }

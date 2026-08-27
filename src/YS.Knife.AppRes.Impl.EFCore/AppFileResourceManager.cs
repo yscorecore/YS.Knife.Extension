@@ -1,4 +1,5 @@
-﻿using YS.Knife.AppRes.Entity.EFCore;
+﻿using Microsoft.EntityFrameworkCore;
+using YS.Knife.AppRes.Entity.EFCore;
 using YS.Knife.EFCore.Services;
 using YS.Knife.Entity;
 using YS.Knife.Query;
@@ -21,10 +22,32 @@ namespace YS.Knife.AppRes.Impl.EFCore
     [System.Diagnostics.CodeAnalysis.SuppressMessage("FlyTiger.Mapper", "FT50000:The mapper is not being used", Justification = "<挂起>")]
     public partial class AppFileResourceManager : IAppFileResourceManager, IAppFileResourceService
     {
-        private readonly IEntityStore<AppFileResourceEntity> _entityStore;
+        private readonly IEntityStore<AppFileResourceEntity> entityStore;
+
+        public async Task<string> GetUrl(string key, CancellationToken cancellationToken)
+        {
+            AppFileResourceEntity entity;
+            if (Guid.TryParse(key, out var id))
+            {
+                entity = await entityStore.Current.Where(p => p.Id == id).FindOrThrowAsync(cancellationToken);
+            }
+            else if (AppTextResourceManager.KeyRegex.IsMatch(key))
+            {
+                var match = AppTextResourceManager.KeyRegex.Match(key);
+                var code = match.Groups["c"].Value;
+                var group = match.Groups["g"].Value;
+                entity = await entityStore.Current.Where(p => p.Group == group && p.Code == code).FindOrThrowAsync(cancellationToken);
+            }
+            else
+            {
+                throw new InvalidOperationException($"Invalid key format: '{key}', expected guid or code@group.");
+            }
+            return entity.FileUrl;
+        }
+
         public Task<PagedList<IAppFileResourceService.AppGroupFileResourceInfo>> Query(string group, LimitQueryInfo req, CancellationToken cancellationToken = default)
         {
-            return _entityStore.Current.Where(p => p.Group == group).OrderBy(p => p.Order).To<IAppFileResourceService.AppGroupFileResourceInfo>().QueryPageAsync(req, cancellationToken);
+            return entityStore.Current.Where(p => p.Group == group).OrderBy(p => p.Order).To<IAppFileResourceService.AppGroupFileResourceInfo>().QueryPageAsync(req, cancellationToken);
         }
     }
 

@@ -5,6 +5,7 @@ namespace YS.Knife.AppRes
 {
     public interface IAppFileResourceService
     {
+        Task<string> GetUrl(string key, CancellationToken cancellationToken);
         Task<PagedList<AppGroupFileResourceInfo>> Query(string group, LimitQueryInfo req, CancellationToken cancellationToken = default);
         public record AppGroupFileResourceInfo : BaseDto<Guid>
         {

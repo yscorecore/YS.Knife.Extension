@@ -6,7 +6,8 @@ namespace YS.Knife.AppRes
 {
     public interface IAppTextResourceService
     {
-        Task<StreamBody> GetContent(string key, CancellationToken cancellationToken);
+        Task<string> GetContent(string key, CancellationToken cancellationToken);
+        Task<StreamBody> Download(string key, CancellationToken cancellationToken);
         Task<PagedList<AppGroupTextResourceInfo>> Query(string group, LimitQueryInfo req, CancellationToken cancellationToken = default);
 
         public record AppGroupTextResourceInfo : BaseDto<Guid>
