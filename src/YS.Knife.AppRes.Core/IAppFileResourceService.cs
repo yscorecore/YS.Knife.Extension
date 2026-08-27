@@ -4,9 +4,8 @@ using static YS.Knife.AppRes.IAppFileResourceManager;
 
 namespace YS.Knife.AppRes
 {
-    public interface IAppFileResourceService
+    public interface IAppFileResourceService : IQueryPageApi<AppFileResourceInfo>
     {
-        Task<PagedList<AppFileResourceInfo>> QueryByGroup(string group, LimitQueryInfo req, CancellationToken cancellationToken = default);
 
     }
 }

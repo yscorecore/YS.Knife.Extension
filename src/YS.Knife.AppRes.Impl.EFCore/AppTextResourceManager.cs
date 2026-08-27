@@ -48,25 +48,10 @@ namespace YS.Knife.AppRes.Impl.EFCore
             return StreamBody.FromBytes(bytes, MediaTypeNames.Text.Plain, $"{entity.Name}.txt");
         }
 
-        public Task<PagedList<AppTextResourceInfo>> QueryByGroup(string group, LimitQueryInfo req, CancellationToken cancellationToken = default)
-        {
-            var newQuery = req with { Filter = CombinFilter(Builder.CreateFilter<AppTextResourceInfo>(p => p.Group.StartsWith(group)), req.Filter) };
-            return this.QueryPagedList(newQuery, cancellationToken);
-        }
+       
 
 
-        private static string CombinFilter(string filter1, string filter2)
-        {
-            if (string.IsNullOrEmpty(filter1))
-            {
-                return filter2;
-            }
-            if (string.IsNullOrEmpty(filter2))
-            {
-                return filter1;
-            }
-            return $"({filter1}) and ({filter2})";
-        }
+     
 
     }
 }

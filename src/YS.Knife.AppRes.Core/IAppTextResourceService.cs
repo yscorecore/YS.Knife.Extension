@@ -5,11 +5,10 @@ using static YS.Knife.AppRes.IAppTextResourceManager;
 
 namespace YS.Knife.AppRes
 {
-    public interface IAppTextResourceService
+    public interface IAppTextResourceService : IQueryPageApi<AppTextResourceInfo>
     {
         Task<StreamBody> GetContent(string key, CancellationToken cancellationToken);
 
-        Task<PagedList<AppTextResourceInfo>> QueryByGroup(string group, LimitQueryInfo req, CancellationToken cancellationToken = default);
 
 
     }
