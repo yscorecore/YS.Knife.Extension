@@ -7,6 +7,7 @@ using YS.Knife.EFCore.Services;
 using YS.Knife.Entity;
 using YS.Knife.Query;
 using static YS.Knife.AppRes.IAppTextResourceManager;
+using static YS.Knife.AppRes.IAppTextResourceService;
 
 namespace YS.Knife.AppRes.Impl.EFCore
 {
@@ -18,6 +19,7 @@ namespace YS.Knife.AppRes.Impl.EFCore
     [Mixin(typeof(UpdateApi<AppTextResourceEntity, EditAppTextResourceDto, Guid>))]
     [Mixin(typeof(DeleteApi<AppTextResourceEntity, Guid>))]
     [Mapper(typeof(AppTextResourceEntity), typeof(AppTextResourceInfo), MapperType = MapperType.Query, CheckType = CheckType.TargetMembersFullFilled)]
+    [Mapper(typeof(AppTextResourceEntity), typeof(AppGroupTextResourceInfo), MapperType = MapperType.Query, CheckType = CheckType.TargetMembersFullFilled)]
     [Mapper(typeof(AddAppTextResourceDto), typeof(AppTextResourceEntity), MapperType = MapperType.Convert, CheckType = CheckType.SourceMembersFullUsed)]
     [Mapper(typeof(EditAppTextResourceDto), typeof(AppTextResourceEntity), MapperType = MapperType.Update, CheckType = CheckType.SourceMembersFullUsed)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("FlyTiger.Mapper", "FT50000:The mapper is not being used", Justification = "<挂起>")]
@@ -48,10 +50,10 @@ namespace YS.Knife.AppRes.Impl.EFCore
             return StreamBody.FromBytes(bytes, MediaTypeNames.Text.Plain, $"{entity.Name}.txt");
         }
 
+        public Task<PagedList<AppGroupTextResourceInfo>> Query(string group, LimitQueryInfo req, CancellationToken cancellationToken = default)
+        {
+            return entityStore.Current.Where(p => p.Group == group).OrderBy(p => p.Order).To<AppGroupTextResourceInfo>().QueryPageAsync(req, cancellationToken);
 
-
-
-
-
+        }
     }
 }
