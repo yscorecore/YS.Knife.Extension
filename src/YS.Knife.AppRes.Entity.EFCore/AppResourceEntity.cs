@@ -6,7 +6,7 @@ namespace YS.Knife.AppRes.Entity.EFCore
 {
     [Index(nameof(Group))]
     [Index(nameof(Group), nameof(Code), IsUnique = true)]
-    public abstract class AppResourceEntity<T> : BaseEntity<T>, IExtensibleEntity
+    public abstract class AppResourceEntity<T> : BaseEntity<T>, IExtensibleEntity, ISortableEntity
         where T : notnull
     {
         [StringLength(64)]
@@ -26,6 +26,7 @@ namespace YS.Knife.AppRes.Entity.EFCore
 
         [JsonContent]
         public Dictionary<string, object>? Properties { get; set; }
+        public int Order { get; set; }
     }
 
     public abstract class AppResourceEntity : AppResourceEntity<Guid> { }

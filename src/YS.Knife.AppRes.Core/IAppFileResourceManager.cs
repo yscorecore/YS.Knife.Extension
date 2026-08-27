@@ -19,6 +19,8 @@ namespace YS.Knife.AppRes
             public string Name { get; set; } = null!;
             public string Code { get; set; } = null!;
             public string? Description { get; set; }
+            public int Order { get; set; }
+
             public Dictionary<string, object>? Properties { get; set; }
         }
         public record AddAppFileResourceDto
@@ -41,6 +43,8 @@ namespace YS.Knife.AppRes
 
             [StringLength(256)]
             public string? Description { get; set; }
+            public int Order { get; set; }
+
             public Dictionary<string, object>? Properties { get; set; }
         }
         public record EditAppFileResourceDto : IdDto<Guid>
@@ -60,6 +64,8 @@ namespace YS.Knife.AppRes
 
             [StringLength(256)]
             public string? Description { get; set; }
+            public int Order { get; set; }
+
             public Dictionary<string, object>? Properties { get; set; }
         }
     }

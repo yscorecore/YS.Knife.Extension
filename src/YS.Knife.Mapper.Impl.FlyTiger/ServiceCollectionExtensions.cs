@@ -62,7 +62,7 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
         }
-        private static void AddFlyTigerCoreService(this IServiceCollection services)
+        internal static void AddFlyTigerCoreService(this IServiceCollection services)
         {
             services.AddSingleton<FlytigerMapper>();
             services.AddSingleton<IQuerableMapper>(sp => sp.GetRequiredService<FlytigerMapper>());
