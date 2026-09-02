@@ -9,7 +9,7 @@ namespace YS.Knife.Resource.AppFileResLoader
     [AutoConstructor]
     public partial class AppResourceNameGroupLoader : IResourceLoader
     {
-        private static readonly Regex regex = new Regex("^(<?c>.+)@(?<g>.+)$");
+        private static readonly Regex regex = new Regex("^(?<c>.+)@(?<g>.+)$");
         public int Priority => 12000;
         private readonly IEntityStore<AppResourceEntity> entityStore;
         private readonly AppResourceOptions options;
