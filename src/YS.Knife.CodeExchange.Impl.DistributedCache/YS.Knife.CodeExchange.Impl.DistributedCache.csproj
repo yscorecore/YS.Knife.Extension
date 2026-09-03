@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.CodeExchange.Core\YS.Knife.CodeExchange.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.Extensions.DistributedCache\YS.Knife.Extensions.DistributedCache.csproj" />
+  </ItemGroup>
+ <ItemGroup>
+        <Using Include="YS.Knife" />
+        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+    </ItemGroup>
+</Project>
