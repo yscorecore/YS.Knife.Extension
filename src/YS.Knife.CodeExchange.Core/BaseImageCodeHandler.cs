@@ -16,7 +16,7 @@
 
         public Task OnDataPushed(object args, object data, CancellationToken cancellationToken)
         {
-            return OnDataPushed(args.AsJsonElement().AsJsonObject<TArg>(), data.AsJsonElement().AsJsonObject<TData>(), cancellationToken);
+            return OnDataPushed(args.AsJsonElement().AsJsonObject<TArg>(IImageCodeHandler.JsonOptions), data.AsJsonElement().AsJsonObject<TData>(IImageCodeHandler.JsonOptions), cancellationToken);
         }
         public abstract Task OnDataPushed(TArg args, TData data, CancellationToken cancellationToken);
     }

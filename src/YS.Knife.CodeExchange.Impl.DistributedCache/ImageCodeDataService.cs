@@ -14,12 +14,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
     {
         private readonly IDistributedCache distributedCache;
         private readonly IEnumerable<IImageCodeHandler> imageCodeHandlers;
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions()
-        {
-            PropertyNameCaseInsensitive = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        };
+
         public async Task<ImageCodeInfo> CreateImageCode(string name, object args, CancellationToken cancellationToken)
         {
             var id = Guid.NewGuid();
@@ -30,8 +25,8 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
             var res = new ImageCodeInfo(id, DateTimeOffset.Now.Add(handler.Expired), bytes);
             var dataKind = handler.DataKind;
             var defaultData = dataKind == ImageCodeDataKind.Single ? default(object) : Array.Empty<object>();
-            await distributedCache.SetObjectAsync($"{id}", new TempDataInfo(dataKind, sence, res.Exipred, defaultData), handler.Expired, jsonSerializerOptions);
-            await distributedCache.SetObjectAsync(sence, new TempSenceInfo(name, id, args, res.Exipred), handler.Expired, jsonSerializerOptions);
+            await distributedCache.SetObjectAsync($"{id}", new TempDataInfo(dataKind, sence, res.Exipred, defaultData), handler.Expired, IImageCodeHandler.JsonOptions);
+            await distributedCache.SetObjectAsync(sence, new TempSenceInfo(name, id, args, res.Exipred), handler.Expired, IImageCodeHandler.JsonOptions);
             return res;
         }
         private IImageCodeHandler FindHandlerByName(string name)
@@ -42,7 +37,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
         }
         public async Task<bool> Release(Guid id, CancellationToken cancellationToken)
         {
-            var data = await distributedCache.GetObjectAsync<TempDataInfo>($"{id}", jsonSerializerOptions);
+            var data = await distributedCache.GetObjectAsync<TempDataInfo>($"{id}", IImageCodeHandler.JsonOptions);
             if (data == null)
             {
                 return false;
@@ -63,11 +58,11 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
             }
             else
             {
-                var dataObj = data.AsJsonObject<TempDataInfo>(jsonSerializerOptions);
+                var dataObj = data.AsJsonObject<TempDataInfo>(IImageCodeHandler.JsonOptions);
                 if (dataObj.DataKind == ImageCodeDataKind.Queue)
                 {
                     var newData = dataObj with { Data = Array.Empty<object>() };
-                    await distributedCache.SetObjectAsync($"{id}", newData, new DistributedCacheEntryOptions { AbsoluteExpiration = dataObj.Exipred }, jsonSerializerOptions);
+                    await distributedCache.SetObjectAsync($"{id}", newData, new DistributedCacheEntryOptions { AbsoluteExpiration = dataObj.Exipred }, IImageCodeHandler.JsonOptions);
                     return new ImageCodeRequest(true, dataObj.Data);
                 }
                 else
@@ -78,12 +73,12 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
         }
         public Task<SenceInfo> QuerySenceInfo(string sence, CancellationToken cancellationToken)
         {
-            return distributedCache.GetObjectAsync<SenceInfo>(sence, jsonSerializerOptions);
+            return distributedCache.GetObjectAsync<SenceInfo>(sence, IImageCodeHandler.JsonOptions);
         }
 
         public async Task<bool> SendData(string sence, object data, CancellationToken cancellationToken)
         {
-            var tempSence = await distributedCache.GetObjectAsync<TempSenceInfo?>(sence, jsonSerializerOptions);
+            var tempSence = await distributedCache.GetObjectAsync<TempSenceInfo?>(sence, IImageCodeHandler.JsonOptions);
             if (tempSence == null)
             {
                 logger.LogWarning("Sence '{sence}' is not exist.", sence);
@@ -92,7 +87,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
             else
             {
                 var handler = FindHandlerByName(tempSence.Name);
-                var dataObj = await distributedCache.GetObjectAsync<TempDataInfo>($"{tempSence.Id}", jsonSerializerOptions);
+                var dataObj = await distributedCache.GetObjectAsync<TempDataInfo>($"{tempSence.Id}", IImageCodeHandler.JsonOptions);
                 if (dataObj != null)
                 {
                     if (dataObj.DataKind == ImageCodeDataKind.Queue)
@@ -101,12 +96,12 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                         var current = dataObj.Data as object[] ?? Array.Empty<object>();
                         var newTempData = dataObj with { Data = current.ConcatItems(data).ToArray() };
                         await handler.OnDataPushed(tempSence.Argument, data, cancellationToken);
-                        await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, jsonSerializerOptions);
+                        await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
                         return true;
                     }
                     else
                     {
-                        if(dataObj.Data != null)
+                        if (dataObj.Data != null)
                         {
                             logger.LogWarning("Data '{id}' is already exists", tempSence.Id);
                             return false;
@@ -114,7 +109,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                         //单对象
                         var newTempData = dataObj with { Data = data };
                         await handler.OnDataPushed(tempSence.Argument, data, cancellationToken);
-                        await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, jsonSerializerOptions);
+                        await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
                         return true;
                     }
                 }
