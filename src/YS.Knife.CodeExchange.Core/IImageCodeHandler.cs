@@ -15,6 +15,6 @@ namespace YS.Knife.CodeExchange
         TimeSpan Expired { get; }
         ImageCodeDataKind DataKind { get; }
         Task<(string Sence, Stream ImageStream)> GeneratorCode(object args, CancellationToken cancellationToken);
-        Task OnDataPushed(object args, object data, CancellationToken cancellationToken);
+        Task<object> ProcessData(object args, object data, CancellationToken cancellationToken);
     }
 }

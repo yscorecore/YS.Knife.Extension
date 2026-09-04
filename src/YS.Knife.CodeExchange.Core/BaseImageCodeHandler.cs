@@ -14,10 +14,14 @@
         }
         public abstract Task<(string Sence, Stream ImageStream)> GeneratorCode(TArg args, CancellationToken cancellationToken);
 
-        public Task OnDataPushed(object args, object data, CancellationToken cancellationToken)
+        public async Task<object> ProcessData(object args, object userInputData, CancellationToken cancellationToken)
         {
-            return OnDataPushed(args.AsJsonElement().AsJsonObject<TArg>(IImageCodeHandler.JsonOptions), data.AsJsonElement().AsJsonObject<TData>(IImageCodeHandler.JsonOptions), cancellationToken);
+            var res = await OnProcessData(args.AsJsonElement().AsJsonObject<TArg>(IImageCodeHandler.JsonOptions), userInputData.AsJsonElement().AsJsonObject<TData>(IImageCodeHandler.JsonOptions), cancellationToken);
+            return res!;
         }
-        public abstract Task OnDataPushed(TArg args, TData data, CancellationToken cancellationToken);
+        public virtual Task<TData> OnProcessData(TArg args, TData data, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(data);
+        }
     }
 }

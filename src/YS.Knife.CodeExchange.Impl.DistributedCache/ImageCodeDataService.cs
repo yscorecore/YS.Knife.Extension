@@ -93,9 +93,9 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                     if (dataObj.DataKind == ImageCodeDataKind.Queue)
                     {
                         //队列
-                        var current = dataObj.Data as object[] ?? Array.Empty<object>();
-                        var newTempData = dataObj with { Data = current.ConcatItems(data).ToArray() };
-                        await handler.OnDataPushed(tempSence.Argument, data, cancellationToken);
+                        var processedData = await handler.ProcessData(tempSence.Args, data, cancellationToken);
+                        var current = (dataObj.Data).AsJsonElement().AsJsonObject<object[]>(IImageCodeHandler.JsonOptions) ?? Array.Empty<object>();
+                        var newTempData = dataObj with { Data = current.ConcatItems(processedData).ToArray() };
                         await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
                         return true;
                     }
@@ -106,9 +106,9 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                             logger.LogWarning("Data '{id}' is already exists", tempSence.Id);
                             return false;
                         }
+                        var processedData = await handler.ProcessData(tempSence.Args, data, cancellationToken);
                         //单对象
-                        var newTempData = dataObj with { Data = data };
-                        await handler.OnDataPushed(tempSence.Argument, data, cancellationToken);
+                        var newTempData = dataObj with { Data = processedData };
                         await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
                         return true;
                     }
@@ -121,7 +121,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
             }
         }
 
-        private record TempSenceInfo(string Name, Guid Id, object Argument, DateTimeOffset Expired);
+        private record TempSenceInfo(string Name, Guid Id, object Args, DateTimeOffset Expired);
         private record TempDataInfo(ImageCodeDataKind DataKind, string Sence, DateTimeOffset Exipred, object? Data);
 
     }

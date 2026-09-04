@@ -4,6 +4,6 @@
     {
         Task<bool> SendData(string sence, object data, CancellationToken cancellationToken);
         Task<SenceInfo> QuerySenceInfo(string sence, CancellationToken cancellationToken);
-        public record SenceInfo(string Name, object Arugments, DateTimeOffset Expired);
+        public record SenceInfo(string Name, object Args, DateTimeOffset Expired);
     }
 }
