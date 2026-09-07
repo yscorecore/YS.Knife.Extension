@@ -13,11 +13,11 @@ namespace YS.Knife.Function
 
         Task RemoveSetting(string group, CancellationToken cancellationToken = default);
 
-        Task SaveSetting(SettingInfo setting, SaveMode saveMode = SaveMode.Merge, CancellationToken cancellationToken = default);
+        Task SaveSetting(SettingInfo setting, CollectionSaveMode saveMode = CollectionSaveMode.Merge, CancellationToken cancellationToken = default);
 
         Task<SettingInfo> LoadFromFile(StreamBody file, CancellationToken cancellationToken = default);
 
-        public async Task ImportFromFile(StreamBody file, SaveMode saveMode = SaveMode.Merge, CancellationToken cancellationToken = default)
+        public async Task ImportFromFile(StreamBody file, CollectionSaveMode saveMode = CollectionSaveMode.Merge, CancellationToken cancellationToken = default)
         {
             var setting = await LoadFromFile(file, cancellationToken);
             await SaveSetting(setting, saveMode, cancellationToken);
