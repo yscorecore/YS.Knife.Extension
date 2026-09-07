@@ -27,6 +27,8 @@ namespace YS.Knife.AppRes.Entity.EFCore
         [JsonContent]
         public Dictionary<string, object>? Properties { get; set; }
         public int Order { get; set; }
+
+        public bool Fixed { get; set; }
     }
 
     public abstract class AppResourceEntity : AppResourceEntity<Guid> { }
