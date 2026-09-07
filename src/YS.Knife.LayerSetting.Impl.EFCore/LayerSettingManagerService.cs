@@ -39,7 +39,7 @@ namespace YS.Knife.LayerSetting.Impl.EFCore
             {
                 settings.AddRange(Assembly.Load(ass).FindLayerSettings().ToList());
             }
-            return SaveSettings(settings.ToArray(), saveMode: SaveMode.Merge, cancellationToken);
+            return SaveSettings(settings.ToArray(), saveMode: CollectionSaveMode.Merge, cancellationToken);
         }
 
         public async Task RemoveSetting(string group, CancellationToken cancellationToken = default)
@@ -49,7 +49,7 @@ namespace YS.Knife.LayerSetting.Impl.EFCore
             settingStore.Delete(setting);
             await settingStore.SaveChangesAsync(cancellationToken);
         }
-        private async Task SaveSettings(IList<SettingInfo> settings, SaveMode saveMode = SaveMode.Merge, CancellationToken cancellationToken = default)
+        private async Task SaveSettings(IList<SettingInfo> settings, CollectionSaveMode saveMode = CollectionSaveMode.Merge, CancellationToken cancellationToken = default)
         {
             if (settings.Count == 0)
             {
@@ -74,7 +74,7 @@ namespace YS.Knife.LayerSetting.Impl.EFCore
             }
             await settingStore.SaveChangesAsync(cancellationToken);
         }
-        public Task SaveSetting(SettingInfo setting, SaveMode saveMode = SaveMode.Merge, CancellationToken cancellationToken = default)
+        public Task SaveSetting(SettingInfo setting, CollectionSaveMode saveMode = CollectionSaveMode.Merge, CancellationToken cancellationToken = default)
         {
             return SaveSettings(setting.AsList(), saveMode, cancellationToken);
         }
