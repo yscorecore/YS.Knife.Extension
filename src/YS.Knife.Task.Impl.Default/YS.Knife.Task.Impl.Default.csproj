@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+    <ItemGroup>
+        <Using Include="YS.Knife" />
+        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.Task.Core\YS.Knife.Task.Core.csproj" />
+    </ItemGroup>
+</Project>

@@ -17,6 +17,25 @@ namespace System
                 throw new Exception($"Cannot convert type {val.GetType().FullName} to JsonElement.");
             }
         }
+        public static T AsJsonObject<T>(this object val, JsonSerializerOptions options = default)
+        {
+            if (val is T t)
+            {
+                return t;
+            }
+            else if (val is JsonElement je)
+            {
+                return je.AsJsonObject<T>(options);
+            }
+            else if (val is string str)
+            {
+                return str.AsJsonObject<T>(options);
+            }
+            else
+            {
+                throw new Exception($"Cannot convert type {val.GetType().FullName} to {typeof(T).FullName}.");
+            }
+        }
         public static T AsJsonObject<T>(this JsonElement val, JsonSerializerOptions options = default)
         {
             return JsonSerializer.Deserialize<T>(val.GetRawText(), options);
