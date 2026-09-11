@@ -9,11 +9,15 @@ namespace YS.Knife.DataSource.AspnetCore
     /// datasource 重写规则:把 <c>{DataSourceEndpointTemplate}</c> 形式的路径重写到真实 endpoint,
     /// 同时按 <see cref="DataSourceInfo.Filter"/> 注入 / 合并 query string 里的 <c>filter</c>。
     ///
-    /// 内置的 <see cref="RewriteOptions.AddRewrite(string, string, bool)"/> 是纯正则替换,
-    /// 没法读请求的 query string 再做条件分支,所以 Filter 不为空时改用这个自定义规则。
+    /// 内置的 <see cref="RewriteOptions.AddRewrite(string, string, bool)"/> 是大小写敏感的正则替换
+    /// (源码里 new Regex(..., RegexOptions.CultureInvariant | RegexOptions.ECMAScript) 不带 IgnoreCase),
+    /// 也读不到请求的 query string,做不了 filter 合并,所以所有 datasource 重写统一走这个自定义规则。
+    ///
+    /// 路径匹配:大小写不敏感(与 ASP.NET Core attribute routing 的默认行为对齐,
+    /// 让 <c>api/datasource/xxx</c> 和 <c>api/DataSource/xxx</c> 都能命中)。
     ///
     /// 合并规则(参数名大小写不敏感,<c>filter</c> / <c>Filter</c> 视为同一个参数):
-    ///   1. Filter 为空              -> 不在本规则的职责范围(调用方走 AddRewrite),查询字符串原样保留
+    ///   1. Filter 为空              -> 只重写路径,查询字符串原样保留
     ///   2. Filter 有值,请求无 filter -> 追加 <c>filter=(Filter)</c>,值做 URL 转义
     ///   3. Filter 有值,请求有 filter -> <c>filter=(Filter) and (原 filter 反转义后)</c>,整体再转义
     /// </summary>
@@ -27,13 +31,15 @@ namespace YS.Knife.DataSource.AspnetCore
 
         private readonly Regex _sourcePattern;
         private readonly string _targetPath;
-        private readonly string _filter;
+        private readonly string? _filter;
 
-        public DataSourceRewriteRule(string sourcePath, string targetPath, string filter)
+        public DataSourceRewriteRule(string sourcePath, string targetPath, string? filter)
         {
             _sourcePattern = new Regex(
                 "^" + Regex.Escape(sourcePath) + "/?$",
-                RegexOptions.Compiled | RegexOptions.CultureInvariant,
+                RegexOptions.Compiled
+                | RegexOptions.CultureInvariant
+                | RegexOptions.IgnoreCase,
                 RegexTimeout);
             _targetPath = targetPath;
             _filter = filter;
@@ -57,8 +63,11 @@ namespace YS.Knife.DataSource.AspnetCore
             // 路径重写:PathString 会自动补前导 '/'
             request.Path = new PathString("/" + _targetPath);
 
-            // query string 重写:在原有参数基础上注入 / 合并 filter
-            request.QueryString = MergeFilter(request.QueryString, _filter);
+            // query string 重写:只在配置了 Filter 时做注入 / 合并
+            if (!string.IsNullOrWhiteSpace(_filter))
+            {
+                request.QueryString = MergeFilter(request.QueryString, _filter!);
+            }
 
             // ContinueRules(枚举默认值) = 继续执行后面的规则,跟 AddRewrite(..., skipRemainingRules: false) 语义一致
             context.Result = RuleResult.ContinueRules;

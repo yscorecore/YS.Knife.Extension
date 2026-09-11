@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Options;
 using YS.Knife.DataSource.AspnetCore;
@@ -63,17 +62,10 @@ namespace Microsoft.AspNetCore.Builder
                 var sourcePath = string.Format(template, name);
                 var finalTarget = info.EndPointPath.Trim('/');
 
-                if (string.IsNullOrWhiteSpace(info.Filter))
-                {
-                    // 规则 1:没有配置 Filter -> 纯路径重写,query string 一律不动
-                    var pattern = "^" + Regex.Escape(sourcePath) + "/?$";
-                    rewriteOptions.AddRewrite(pattern, finalTarget, skipRemainingRules: false);
-                }
-                else
-                {
-                    // 规则 2/3:要读请求的 query string 决定"注入"还是"合并",静态正则做不到
-                    rewriteOptions.Add(new DataSourceRewriteRule(sourcePath, finalTarget, info.Filter!));
-                }
+                // 统一用自定义规则:大小写不敏感地匹配源路径,顺便处理 Filter 注入/合并。
+                // 内置 AddRewrite 源码里用的是 new Regex(..., CultureInvariant | ECMAScript),不识别 IgnoreCase,
+                // 也没法读 query string,放在这里两个都做不到,所以不再用。
+                rewriteOptions.Add(new DataSourceRewriteRule(sourcePath, finalTarget, info.Filter));
             }
 
             return rewriteOptions;
