@@ -20,7 +20,7 @@ namespace YS.Knife.Task
         }
         public static TaskAttribute GetFromType(Type type)
         {
-            return type.GetCustomAttribute<TaskAttribute>(true) ?? throw new InvalidOperationException($"Task {typeof(T).FullName} does not have TaskAttribute"); ;
+            return type.GetCustomAttribute<TaskAttribute>(true) ?? throw new InvalidOperationException($"Task {type.FullName} does not have TaskAttribute"); ;
         }
     }
 
