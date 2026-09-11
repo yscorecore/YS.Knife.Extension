@@ -13,7 +13,7 @@
         <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.4.0" />
         <PackageReference Include="YS.Knife.Hosting.Web" Version="2.0.2" />
         <Using Include="FlyTiger" />
-        <PackageReference Include="FlyTiger" Version="0.0.15" >
+        <PackageReference Include="FlyTiger" Version="0.0.15">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
@@ -21,10 +21,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\YS.Knife.AspnetCore\YS.Knife.AspnetCore.csproj" />
-        <ProjectReference Include="..\..\src\YS.Knife.DataSource.Api.AspnetCore\YS.Knife.DataSource.Api.AspnetCore.csproj" />
-        <ProjectReference Include="..\..\src\YS.Knife.DataSource.Impl.Default\YS.Knife.DataSource.Impl.Default.csproj" />
-        <ProjectReference Include="..\..\src\YS.Knife.Metadata.Api\YS.Knife.Metadata.Api.AspnetCore.csproj" />
-        <ProjectReference Include="..\..\src\YS.Knife.Metadata.Impl.Mvc\YS.Knife.Metadata.Impl.Mvc.csproj" />
+        <ProjectReference Include="..\..\src\YS.Knife.DataSource.AspnetCore\YS.Knife.DataSource.AspnetCore.csproj" />
     </ItemGroup>
 
 </Project>

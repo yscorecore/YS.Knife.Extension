@@ -5,7 +5,6 @@ namespace YS.Knife.NotifyMessages
 {
     public interface INotifyMessageService
     {
-        [DataSource("topics")]
         Task<PagedList<MessageTopicDto<Guid>>> QueryPagedList(LimitQueryInfo req, CancellationToken cancellationToken = default);
     }
 }
