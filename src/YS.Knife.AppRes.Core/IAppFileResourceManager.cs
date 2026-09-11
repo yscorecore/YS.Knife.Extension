@@ -37,7 +37,7 @@ namespace YS.Knife.AppRes
             [StringLength(64)]
             [Required]
             public string Name { get; set; } = null!;
-            [StringLength(32)]
+            [StringLength(64)]
             public string Code { get; set; } = null!;
 
             [StringLength(256)]
