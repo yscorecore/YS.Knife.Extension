@@ -15,7 +15,11 @@ namespace YS.Knife.LayerSetting.Impl.EFCore
     [AutoConstructor]
     [Mapper(typeof(SettingEntity), typeof(SettingInfo), MapperType = MapperType.Query)]
     [Mapper(typeof(SettingInfo), typeof(SettingEntity), MapperType = MapperType.Convert)]
-    [Mapper(typeof(SettingPropertyInfo), typeof(SettingPropertyEntity), MapperType = MapperType.BatchUpdate)]
+    [Mapper(typeof(SettingPropertyInfo), typeof(SettingPropertyEntity), CustomMappings = new string[]
+    {
+        "Config =  $.Config"
+
+    }, MapperType = MapperType.BatchUpdate)]
     public partial class LayerSettingManagerService : ILayerSettingManagerService
     {
         private readonly IEntityStore<SettingEntity> settingStore;

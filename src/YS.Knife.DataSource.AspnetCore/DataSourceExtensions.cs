@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Options;
-using System.Text.RegularExpressions;
 using YS.Knife.DataSource.AspnetCore;
 using YS.Knife.Query;
 

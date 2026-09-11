@@ -14,5 +14,7 @@ namespace YS.Knife.LayerSetting.Files
         public string Type { get; set; }
         [JsonPropertyOrder(5)]
         public string DataSource { get; set; }
+        [JsonPropertyOrder(6)]
+        public Dictionary<string, object> Config { get; set; }
     }
 }

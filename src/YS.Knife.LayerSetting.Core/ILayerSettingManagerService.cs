@@ -56,6 +56,8 @@ namespace YS.Knife.Function
         public string DataSource { get; set; }
 
         public int Order { get; set; }
+
+        public Dictionary<string, object> Config { get; set; }
     }
 
 }

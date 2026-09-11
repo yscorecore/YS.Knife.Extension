@@ -75,7 +75,7 @@ namespace YS.Knife.LayerSetting
                 Order = displayAttribute?.Order ?? 0,
                 DataSource = editor,
                 IsArray = isArray,
-                Type = typeCode,
+                Type = typeCode
             };
         }
 

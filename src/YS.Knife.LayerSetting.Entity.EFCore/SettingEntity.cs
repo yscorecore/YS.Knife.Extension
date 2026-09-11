@@ -43,5 +43,7 @@ namespace YS.Knife.LayerSetting.Entity.EFCore
 
         [StringLength(1024)]
         public string? DataSource { get; set; }
+        [JsonContent]
+        public Dictionary<string, object>? Config { get; set; } = new();
     }
 }

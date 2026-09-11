@@ -26,6 +26,7 @@ namespace YS.Knife.LayerSetting.Files
                     IsArray = p.Value.IsArray,
                     Order = i * 100,
                     DataSource = p.Value.DataSource,
+                    Config = p.Value.Config,
                 }).ToList(),
             };
         }
@@ -44,6 +45,7 @@ namespace YS.Knife.LayerSetting.Files
                     Type = p.Type,
                     IsArray = p.IsArray,
                     DataSource = p.DataSource,
+                    Config = p.Config
                 }),
             };
         }
