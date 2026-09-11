@@ -135,15 +135,25 @@ namespace YS.Knife.DataSource.AspnetCore
 
         private static string ResolveActionPath(MethodInfo action, Type controllerType)
         {
-            var httpAttribute = action
-                .GetCustomAttributes<HttpMethodAttribute>(inherit: true)
-                .FirstOrDefault();
+            // MVC 属性路由规则: 方法级 [Route("xxx")] 模板与类级模板组合,
+            // 典型场景是源生成器(如 ExposeApi)输出的 [Route("QueryPagedList")] + 裸 [HttpGet]
+            var template = action
+                .GetCustomAttributes<RouteAttribute>(inherit: true)
+                .Select(attribute => attribute.Template)
+                .FirstOrDefault(t => !string.IsNullOrWhiteSpace(t));
 
-            // 没有 HTTP verb attribute -> 按 MVC 约定以 action 名作为路由段;
-            // 裸 [HttpGet] / [HttpPost] 的 Template 为 null -> 该段为空,路径就是 controller 前缀
-            var template = httpAttribute is null
-                ? "[action]"
-                : httpAttribute.Template ?? string.Empty;
+            if (template is null)
+            {
+                var httpAttribute = action
+                    .GetCustomAttributes<HttpMethodAttribute>(inherit: true)
+                    .FirstOrDefault();
+
+                // 没有 HTTP verb attribute -> 按 MVC 约定以 action 名作为路由段;
+                // 裸 [HttpGet] / [HttpPost] 的 Template 为 null -> 该段为空,路径就是 controller 前缀
+                template = httpAttribute is null
+                    ? "[action]"
+                    : httpAttribute.Template ?? string.Empty;
+            }
 
             return ReplaceRouteTokens(template, controllerType, action.Name).Trim('/');
         }
