@@ -38,7 +38,6 @@ namespace YS.Knife.AppRes
             [Required]
             public string Name { get; set; } = null!;
             [StringLength(32)]
-            [NameRule]
             public string Code { get; set; } = null!;
 
             [StringLength(256)]
@@ -59,7 +58,6 @@ namespace YS.Knife.AppRes
             [Required]
             public string Name { get; set; } = null!;
             [StringLength(32)]
-            [NameRule]
             public string Code { get; set; } = null!;
 
             [StringLength(256)]
