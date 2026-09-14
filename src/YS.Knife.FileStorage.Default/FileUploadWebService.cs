@@ -32,6 +32,8 @@ namespace YS.Knife.FileStorage.Default
             var categoryObj = await fileCategoryProvider.CreateCategory(category) ?? throw new Exception($"The file category '{category}' is not defined");
             var formFile = request.Form.Files[categoryObj.FileFormName] ?? throw new Exception($"Missing form file field '{categoryObj.FileFormName}'");
             var userArgs = request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
+            var userFormArgs = request.Form.ToDictionary(p => p.Key, v => v.Value.ToString());
+            userArgs.Merge(userFormArgs);
             return await fileUploadService.Upload(category, categoryObj, formFile.OpenReadStream(), formFile.FileName, formFile.Length, formFile.ContentType, userArgs, cancellationToken);
         }
     }
