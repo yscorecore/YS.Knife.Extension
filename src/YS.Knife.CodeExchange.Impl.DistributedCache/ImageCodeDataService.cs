@@ -99,7 +99,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                         await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
                         return true;
                     }
-                    else if (dataObj.DataKind == ImageCodeDataKind.Multiple) 
+                    else if (dataObj.DataKind == ImageCodeDataKind.Multiple)
                     {
                         //可以多次扫码覆盖
                         var processedData = await handler.ProcessData(tempSence.Args, data, cancellationToken);
