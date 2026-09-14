@@ -3,6 +3,7 @@
     public enum ImageCodeDataKind
     {
         Single = 0,
-        Queue = 1
+        Multiple = 1,
+        Queue = 9
     }
 }
