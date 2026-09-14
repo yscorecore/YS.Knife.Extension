@@ -28,8 +28,8 @@ namespace YS.Knife.Resource.AppFileResLoader
         {
             if (appresourceEntity is AppFileResourceEntity appFile)
             {
-                var url = appFile.FileUrl;
-                return await httpClient.DownloadStreamWithCache(appFile.FileUrl, options.CacheFolder, options.RefreshCache, cancellationToken);
+                var url = ReplaceUrl(appFile.FileUrl, options.UrlMappings);
+                return await httpClient.DownloadStreamWithCache(url, options.CacheFolder, options.RefreshCache, cancellationToken);
             }
             else if (appresourceEntity is AppTextResourceEntity appText)
             {
@@ -43,6 +43,22 @@ namespace YS.Knife.Resource.AppFileResLoader
             {
                 throw new Exception($"Can not know appResource type '{appresourceEntity.GetType()}.'");
             }
+        }
+
+        internal static string ReplaceUrl(string url, Dictionary<string, string>? urlMappings)
+        {
+            if (urlMappings == null || urlMappings.Count == 0 || string.IsNullOrEmpty(url))
+            {
+                return url;
+            }
+            foreach (var mapping in urlMappings)
+            {
+                if (url.StartsWith(mapping.Key, StringComparison.OrdinalIgnoreCase))
+                {
+                    return mapping.Value + url.Substring(mapping.Key.Length);
+                }
+            }
+            return url;
         }
 
     }
