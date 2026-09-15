@@ -93,19 +93,21 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                     if (dataObj.DataKind == ImageCodeDataKind.Queue)
                     {
                         //队列
-                        var processedData = await handler.ProcessData(tempSence.Args, data, cancellationToken);
+                        var (newArg, processedData) = await handler.ProcessData(tempSence.Args, data, cancellationToken);
                         var current = (dataObj.Data).AsJsonElement().AsJsonObject<object[]>(IImageCodeHandler.JsonOptions) ?? Array.Empty<object>();
                         var newTempData = dataObj with { Data = current.ConcatItems(processedData).ToArray() };
                         await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
+                        await distributedCache.SetObjectAsync(sence, tempSence with { Args = newArg }, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
                         return true;
                     }
                     else if (dataObj.DataKind == ImageCodeDataKind.Multiple)
                     {
                         //可以多次扫码覆盖
-                        var processedData = await handler.ProcessData(tempSence.Args, data, cancellationToken);
+                        var (newArg, processedData) = await handler.ProcessData(tempSence.Args, data, cancellationToken);
                         //单对象
                         var newTempData = dataObj with { Data = processedData };
                         await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
+                        await distributedCache.SetObjectAsync(sence, tempSence with { Args = newArg }, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
                         return true;
                     }
                     else
@@ -115,10 +117,11 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                             logger.LogWarning("Data '{id}' is already exists", tempSence.Id);
                             return false;
                         }
-                        var processedData = await handler.ProcessData(tempSence.Args, data, cancellationToken);
+                        var (newArg, processedData) = await handler.ProcessData(tempSence.Args, data, cancellationToken);
                         //单对象
                         var newTempData = dataObj with { Data = processedData };
                         await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
+                        await distributedCache.SetObjectAsync(sence, tempSence with { Args = newArg }, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
                         return true;
                     }
                 }

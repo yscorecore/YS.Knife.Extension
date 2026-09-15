@@ -1,4 +1,6 @@
-﻿namespace YS.Knife.CodeExchange
+﻿using static YS.Knife.CodeExchange.IImageCodeHandler;
+
+namespace YS.Knife.CodeExchange
 {
     public abstract class BaseImageCodeHandler<TArg, TData> : IImageCodeHandler
     {
@@ -10,18 +12,24 @@
 
         public Task<(string Sence, Stream ImageStream)> GeneratorCode(object args, CancellationToken cancellationToken)
         {
-            return GeneratorCode(args.AsJsonElement().AsJsonObject<TArg>(), cancellationToken);
+            return GeneratorCode(args.AsJsonObject<TArg>(JsonOptions), cancellationToken);
         }
         public abstract Task<(string Sence, Stream ImageStream)> GeneratorCode(TArg args, CancellationToken cancellationToken);
 
-        public async Task<object> ProcessData(object args, object userInputData, CancellationToken cancellationToken)
+        public virtual Task<ArgDataPair> OnProcessData(TArg args, TData data, CancellationToken cancellationToken)
         {
-            var res = await OnProcessData(args.AsJsonElement().AsJsonObject<TArg>(IImageCodeHandler.JsonOptions), userInputData.AsJsonElement().AsJsonObject<TData>(IImageCodeHandler.JsonOptions), cancellationToken);
-            return res!;
+            return Task.FromResult(new ArgDataPair(args, data));
         }
-        public virtual Task<TData> OnProcessData(TArg args, TData data, CancellationToken cancellationToken)
+
+        public async Task<IImageCodeHandler.ArgDataPair> ProcessData(object args, object data, CancellationToken cancellationToken)
         {
-            return Task.FromResult(data);
+            var (arg, dataObj) = await OnProcessData(
+                args.AsJsonObject<TArg>(JsonOptions),
+                data.AsJsonObject<TData>(JsonOptions), cancellationToken);
+            return new IImageCodeHandler.ArgDataPair(arg!, dataObj!);
         }
+
+        public record ArgDataPair(TArg Args, TData Data);
+
     }
 }
