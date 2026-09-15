@@ -8,8 +8,6 @@ namespace YS.Knife.FileStorage
 {
     public interface IFileStreamInterceptor
     {
-        string Name { get; }
-
         Stream HandlerStream(Stream inputStream, IDictionary<string, string> userArgs, CancellationToken cancellationToken);
     }
     public interface ISystemArgProvider

@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\YS.Knife.Document.Converter.Pdf2Image\YS.Knife.Document.Converter.Pdf2Image.csproj" />
+    </ItemGroup>
+
+</Project>

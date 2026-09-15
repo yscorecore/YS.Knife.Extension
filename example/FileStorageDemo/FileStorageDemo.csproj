@@ -18,7 +18,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\YS.Knife.FileStorage.Api.AspnetCore\YS.Knife.FileStorage.Api.AspnetCore.csproj" />
       <ProjectReference Include="..\..\src\YS.Knife.FileStorage.CategoryProvider.Default\YS.Knife.FileStorage.CategoryProvider.Default.csproj" />
       <ProjectReference Include="..\..\src\YS.Knife.FileStorage.Impl.Local\YS.Knife.FileStorage.Impl.Local.csproj" />
       <ProjectReference Include="..\..\src\YS.Knife.FileStorage.SystemArguments.Default\YS.Knife.FileStorage.SystemArguments.Default.csproj" />

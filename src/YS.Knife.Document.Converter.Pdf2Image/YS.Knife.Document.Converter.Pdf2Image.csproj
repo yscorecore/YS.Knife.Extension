@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+    <ItemGroup>
+        <Using Include="YS.Knife" />
+        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+        <PackageReference Include="PdfiumRaster" Version="2.0.4" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.Document.Core\YS.Knife.Document.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <InternalsVisibleTo Include="YS.Knife.Document.Converter.Pdf2Image.UnitTest" />
+    </ItemGroup>
+</Project>
