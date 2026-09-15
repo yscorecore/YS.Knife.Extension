@@ -6,7 +6,7 @@ namespace YS.Knife.CodeExchange
     {
         public abstract string Name { get; }
 
-        public abstract TimeSpan Expired { get; }
+        public abstract TimeSpan ExpiresIn { get; }
 
         public abstract ImageCodeDataKind DataKind { get; }
 

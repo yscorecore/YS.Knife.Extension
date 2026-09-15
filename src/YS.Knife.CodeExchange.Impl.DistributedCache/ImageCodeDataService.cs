@@ -22,11 +22,12 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
             var (sence, stream) = await handler.GeneratorCode(args, cancellationToken);
             var bytes = new byte[stream.Length];
             _ = await stream.ReadAsync(bytes, cancellationToken);
-            var res = new ImageCodeInfo(id, DateTimeOffset.Now.Add(handler.Expired), bytes);
+            var res = new ImageCodeInfo(id, Convert.ToInt32(handler.ExpiresIn.TotalSeconds), bytes);
             var dataKind = handler.DataKind;
             var defaultData = dataKind == ImageCodeDataKind.Single ? default(object) : Array.Empty<object>();
-            await distributedCache.SetObjectAsync($"{id}", new TempDataInfo(dataKind, sence, res.Exipred, defaultData), handler.Expired, IImageCodeHandler.JsonOptions);
-            await distributedCache.SetObjectAsync(sence, new TempSenceInfo(name, id, args, res.Exipred), handler.Expired, IImageCodeHandler.JsonOptions);
+            var exiresAt = DateTimeOffset.UtcNow.Add(handler.ExpiresIn);
+            await distributedCache.SetObjectAsync($"{id}", new TempDataInfo(dataKind, sence, exiresAt, defaultData), handler.ExpiresIn, IImageCodeHandler.JsonOptions);
+            await distributedCache.SetObjectAsync(sence, new TempSenceInfo(name, id, args, exiresAt), handler.ExpiresIn, IImageCodeHandler.JsonOptions);
             return res;
         }
         private IImageCodeHandler FindHandlerByName(string name)
@@ -62,7 +63,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                 if (dataObj.DataKind == ImageCodeDataKind.Queue)
                 {
                     var newData = dataObj with { Data = Array.Empty<object>() };
-                    await distributedCache.SetObjectAsync($"{id}", newData, new DistributedCacheEntryOptions { AbsoluteExpiration = dataObj.Exipred }, IImageCodeHandler.JsonOptions);
+                    await distributedCache.SetObjectAsync($"{id}", newData, new DistributedCacheEntryOptions { AbsoluteExpiration = dataObj.ExpiresAt }, IImageCodeHandler.JsonOptions);
                     return new ImageCodeRequest(true, dataObj.Data);
                 }
                 else
@@ -96,8 +97,8 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                         var (newArg, processedData) = await handler.ProcessData(tempSence.Args, data, cancellationToken);
                         var current = (dataObj.Data).AsJsonElement().AsJsonObject<object[]>(IImageCodeHandler.JsonOptions) ?? Array.Empty<object>();
                         var newTempData = dataObj with { Data = current.ConcatItems(processedData).ToArray() };
-                        await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
-                        await distributedCache.SetObjectAsync(sence, tempSence with { Args = newArg }, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
+                        await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.ExpiresAt }, IImageCodeHandler.JsonOptions);
+                        await distributedCache.SetObjectAsync(sence, tempSence with { Args = newArg }, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.ExpiresAt }, IImageCodeHandler.JsonOptions);
                         return true;
                     }
                     else if (dataObj.DataKind == ImageCodeDataKind.Multiple)
@@ -106,8 +107,8 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                         var (newArg, processedData) = await handler.ProcessData(tempSence.Args, data, cancellationToken);
                         //单对象
                         var newTempData = dataObj with { Data = processedData };
-                        await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
-                        await distributedCache.SetObjectAsync(sence, tempSence with { Args = newArg }, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
+                        await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.ExpiresAt }, IImageCodeHandler.JsonOptions);
+                        await distributedCache.SetObjectAsync(sence, tempSence with { Args = newArg }, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.ExpiresAt }, IImageCodeHandler.JsonOptions);
                         return true;
                     }
                     else
@@ -120,8 +121,8 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                         var (newArg, processedData) = await handler.ProcessData(tempSence.Args, data, cancellationToken);
                         //单对象
                         var newTempData = dataObj with { Data = processedData };
-                        await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
-                        await distributedCache.SetObjectAsync(sence, tempSence with { Args = newArg }, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.Expired }, IImageCodeHandler.JsonOptions);
+                        await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.ExpiresAt }, IImageCodeHandler.JsonOptions);
+                        await distributedCache.SetObjectAsync(sence, tempSence with { Args = newArg }, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.ExpiresAt }, IImageCodeHandler.JsonOptions);
                         return true;
                     }
                 }
@@ -133,8 +134,8 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
             }
         }
 
-        private record TempSenceInfo(string Name, Guid Id, object Args, DateTimeOffset Expired);
-        private record TempDataInfo(ImageCodeDataKind DataKind, string Sence, DateTimeOffset Exipred, object? Data);
+        private record TempSenceInfo(string Name, Guid Id, object Args, DateTimeOffset ExpiresAt);
+        private record TempDataInfo(ImageCodeDataKind DataKind, string Sence, DateTimeOffset ExpiresAt, object? Data);
 
     }
 }
