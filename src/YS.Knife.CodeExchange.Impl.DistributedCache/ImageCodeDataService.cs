@@ -26,7 +26,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
             var dataKind = handler.DataKind;
             var defaultData = dataKind == ImageCodeDataKind.Single ? default(object) : Array.Empty<object>();
             var exiresAt = DateTimeOffset.UtcNow.Add(handler.ExpiresIn);
-            await distributedCache.SetObjectAsync($"{id}", new TempDataInfo(dataKind, sence, exiresAt, defaultData), handler.ExpiresIn, IImageCodeHandler.JsonOptions);
+            await distributedCache.SetObjectAsync($"{id}", new TempDataInfo(dataKind, sence, exiresAt, defaultData, 0L), handler.ExpiresIn, IImageCodeHandler.JsonOptions);
             await distributedCache.SetObjectAsync(sence, new TempSenceInfo(name, id, args, exiresAt), handler.ExpiresIn, IImageCodeHandler.JsonOptions);
             return res;
         }
@@ -96,7 +96,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                         //队列
                         var (newArg, processedData) = await handler.ProcessData(tempSence.Args, data, cancellationToken);
                         var current = (dataObj.Data).AsJsonElement().AsJsonObject<object[]>(IImageCodeHandler.JsonOptions) ?? Array.Empty<object>();
-                        var newTempData = dataObj with { Data = current.ConcatItems(processedData).ToArray() };
+                        var newTempData = dataObj with { Data = current.ConcatItems(processedData).ToArray(), Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
                         await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.ExpiresAt }, IImageCodeHandler.JsonOptions);
                         await distributedCache.SetObjectAsync(sence, tempSence with { Args = newArg }, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.ExpiresAt }, IImageCodeHandler.JsonOptions);
                         return true;
@@ -106,7 +106,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                         //可以多次扫码覆盖
                         var (newArg, processedData) = await handler.ProcessData(tempSence.Args, data, cancellationToken);
                         //单对象
-                        var newTempData = dataObj with { Data = processedData };
+                        var newTempData = dataObj with { Data = processedData, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
                         await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.ExpiresAt }, IImageCodeHandler.JsonOptions);
                         await distributedCache.SetObjectAsync(sence, tempSence with { Args = newArg }, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.ExpiresAt }, IImageCodeHandler.JsonOptions);
                         return true;
@@ -120,7 +120,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                         }
                         var (newArg, processedData) = await handler.ProcessData(tempSence.Args, data, cancellationToken);
                         //单对象
-                        var newTempData = dataObj with { Data = processedData };
+                        var newTempData = dataObj with { Data = processedData, Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
                         await distributedCache.SetObjectAsync($"{tempSence.Id}", newTempData, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.ExpiresAt }, IImageCodeHandler.JsonOptions);
                         await distributedCache.SetObjectAsync(sence, tempSence with { Args = newArg }, new DistributedCacheEntryOptions { AbsoluteExpiration = tempSence.ExpiresAt }, IImageCodeHandler.JsonOptions);
                         return true;
@@ -135,7 +135,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
         }
 
         private record TempSenceInfo(string Name, Guid Id, object Args, DateTimeOffset ExpiresAt);
-        private record TempDataInfo(ImageCodeDataKind DataKind, string Sence, DateTimeOffset ExpiresAt, object? Data);
+        private record TempDataInfo(ImageCodeDataKind DataKind, string Sence, DateTimeOffset ExpiresAt, object? Data, long Timestamp);
 
     }
 }

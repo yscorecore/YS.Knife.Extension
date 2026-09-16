@@ -7,7 +7,7 @@
         Task<ImageCodeRequest> QueryData(Guid id, CancellationToken cancellationToken);
         Task<bool> Release(Guid id, CancellationToken cancellationToken);
         public record ImageCodeInfo(Guid Id, int ExpiresIn, byte[] Image);
-        public record ImageCodeRequest(bool IsValid, object? Data);
+        public record ImageCodeRequest(bool IsValid, object? Data, long Timestamp);
     }
     public record ArgDataPair(object Args, object Data);
     public record ArgDataPair<TArg, TData>(TArg args, TData data);
