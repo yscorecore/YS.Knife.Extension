@@ -55,7 +55,7 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
             var data = await distributedCache.GetStringAsync($"{id}", cancellationToken);
             if (data == null)
             {
-                return new ImageCodeRequest(false, null);
+                return new ImageCodeRequest(false, null, 0);
             }
             else
             {
@@ -64,11 +64,11 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
                 {
                     var newData = dataObj with { Data = Array.Empty<object>() };
                     await distributedCache.SetObjectAsync($"{id}", newData, new DistributedCacheEntryOptions { AbsoluteExpiration = dataObj.ExpiresAt }, IImageCodeHandler.JsonOptions);
-                    return new ImageCodeRequest(true, dataObj.Data);
+                    return new ImageCodeRequest(true, dataObj.Data, dataObj.Timestamp);
                 }
                 else
                 {
-                    return new ImageCodeRequest(true, dataObj.Data);
+                    return new ImageCodeRequest(true, dataObj.Data, dataObj.Timestamp);
                 }
             }
         }
