@@ -22,9 +22,9 @@ namespace YS.Knife.CodeExchange.Impl.DistributedCache
             var (sence, stream) = await handler.GeneratorCode(args, cancellationToken);
             var bytes = new byte[stream.Length];
             _ = await stream.ReadAsync(bytes, cancellationToken);
-            var res = new ImageCodeInfo(id, Convert.ToInt32(handler.ExpiresIn.TotalSeconds), bytes);
             var dataKind = handler.DataKind;
-            var defaultData = dataKind == ImageCodeDataKind.Single ? default(object) : Array.Empty<object>();
+            var res = new ImageCodeInfo(id, Convert.ToInt32(handler.ExpiresIn.TotalSeconds), bytes, dataKind);
+            var defaultData = dataKind == ImageCodeDataKind.Queue ? Array.Empty<object>() : default(object);
             var exiresAt = DateTimeOffset.UtcNow.Add(handler.ExpiresIn);
             await distributedCache.SetObjectAsync($"{id}", new TempDataInfo(dataKind, sence, exiresAt, defaultData, 0L), handler.ExpiresIn, IImageCodeHandler.JsonOptions);
             await distributedCache.SetObjectAsync(sence, new TempSenceInfo(name, id, args, exiresAt), handler.ExpiresIn, IImageCodeHandler.JsonOptions);

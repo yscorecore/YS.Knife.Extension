@@ -6,7 +6,7 @@
         //可以考虑使用SingalR来实现实时推送数据到客户端，减少轮询请求
         Task<ImageCodeRequest> QueryData(Guid id, CancellationToken cancellationToken);
         Task<bool> Release(Guid id, CancellationToken cancellationToken);
-        public record ImageCodeInfo(Guid Id, int ExpiresIn, byte[] Image);
+        public record ImageCodeInfo(Guid Id, int ExpiresIn, byte[] Image, ImageCodeDataKind Kind);
         public record ImageCodeRequest(bool IsValid, object? Data, long Timestamp);
     }
     public record ArgDataPair(object Args, object Data);
