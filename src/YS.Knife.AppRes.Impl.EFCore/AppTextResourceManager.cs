@@ -31,11 +31,11 @@ namespace YS.Knife.AppRes.Impl.EFCore
         public async Task<StreamBody> Download(string key, CancellationToken cancellationToken)
         {
             var entity = await GetTextEntityByKey(key, cancellationToken);
-            var bytes = Encoding.UTF8.GetBytes(entity.Content ?? string.Empty);
-            return StreamBody.FromBytes(bytes, MediaTypeNames.Text.Plain, $"{entity.Name}.txt");
+            var bytes = Encoding.UTF8.GetBytes(entity?.Content ?? string.Empty);
+            return StreamBody.FromBytes(bytes, MediaTypeNames.Text.Plain, $"{entity?.Name ?? key}.txt");
         }
 
-        private async Task<AppTextResourceEntity> GetTextEntityByKey(string key, CancellationToken cancellationToken)
+        private async Task<AppTextResourceEntity?> GetTextEntityByKey(string key, CancellationToken cancellationToken)
         {
             AppTextResourceEntity entity;
             if (Guid.TryParse(key, out var id))
@@ -63,10 +63,10 @@ namespace YS.Knife.AppRes.Impl.EFCore
 
         }
 
-        public async Task<string> GetContent(string key, CancellationToken cancellationToken)
+        public async Task<string?> GetContent(string key, CancellationToken cancellationToken)
         {
             var entity = await GetTextEntityByKey(key, cancellationToken);
-            return entity.Content;
+            return entity?.Content;
         }
     }
 }
