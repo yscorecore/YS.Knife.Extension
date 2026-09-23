@@ -1,6 +1,6 @@
 # YS.Knife.Extensions.Crypt
 
-国密 SM4 对称加密算法实现，继承 `System.Security.Cryptography.SymmetricAlgorithm`，可直接用于 .NET 加密体系。
+国密 SM4 对称加密算法实现，继承 `System.Security.Cryptography.SymmetricAlgorithm`，可直接用于 .NET 加密体系。底层使用 [BouncyCastle.Cryptography](https://www.nuget.org/packages/BouncyCastle.Cryptography) 经过安全审计的实现。
 
 ## 快速开始
 
@@ -53,4 +53,6 @@ var cipher = encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
 |------|-----|
 | 密钥长度 | 128 位（16 字节） |
 | 分组长度 | 128 位（16 字节） |
+| 工作模式 | CBC |
+| 填充方式 | PKCS7 |
 | 轮数 | 32 |
