@@ -4,20 +4,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Microsoft.EntityFrameworkCore
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-    public sealed class EncryptedAttribute : Attribute, IModelPropertyAttribute
+    public sealed class SymmetricEncryptionAttribute : Attribute, IModelPropertyAttribute
     {
-        private readonly Type providerType;
-        private readonly object[] providerArgs;
+        private readonly string algorithmName;
+
+        public string KeyName { get; }
 
         public string Prefix { get; set; } = "enc:";
 
-        public EncryptedAttribute(Type providerType, params object[] args)
+        public SymmetricEncryptionAttribute(string algorithmName, string keyName)
         {
-            if (!typeof(IEncryptionProvider).IsAssignableFrom(providerType))
-                throw new ArgumentException(
-                    $"{providerType.Name} must implement IEncryptionProvider.", nameof(providerType));
-            this.providerType = providerType;
-            this.providerArgs = args;
+            this.algorithmName = algorithmName;
+            KeyName = keyName;
         }
 
         public void Apply(PropertyBuilder property)
@@ -27,22 +25,22 @@ namespace Microsoft.EntityFrameworkCore
             if (underlyingType != typeof(string))
             {
                 throw new InvalidOperationException(
-                    $"The property '{property.Metadata.Name}' must be of type 'string' to use [Encrypted].");
+                    $"The property '{property.Metadata.Name}' must be of type 'string' to use [SymmetricEncryption].");
             }
 
-            var provider = (IEncryptionProvider)Activator.CreateInstance(providerType, providerArgs);
+            var provider = new SymmetricEncryptionProvider(algorithmName, KeyName);
 
             var maxLength = property.Metadata.GetMaxLength() ?? 256;
             var encryptedSize = Prefix.Length + provider.GetEncryptedLength(maxLength);
             var hints = new ConverterMappingHints(size: encryptedSize);
 
-            var converter = new EncryptedValueConvert(provider, Prefix, hints);
+            var converter = new SymmetricEncryptionValueConvert(provider, Prefix, hints);
             property.HasConversion(converter);
         }
 
-        private class EncryptedValueConvert : ValueConverter<string, string>
+        private class SymmetricEncryptionValueConvert : ValueConverter<string, string>
         {
-            public EncryptedValueConvert(IEncryptionProvider provider, string prefix, ConverterMappingHints hints)
+            public SymmetricEncryptionValueConvert(IEncryptionProvider provider, string prefix, ConverterMappingHints hints)
                 : base(
                     v => v == null ? null : prefix + provider.Encrypt(v),
                     v => string.IsNullOrEmpty(v) || !v.StartsWith(prefix)
