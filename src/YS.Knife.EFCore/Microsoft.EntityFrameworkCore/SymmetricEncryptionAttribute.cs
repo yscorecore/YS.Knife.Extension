@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Microsoft.EntityFrameworkCore
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-    public sealed class SymmetricEncryptionAttribute : Attribute, IModelPropertyAttribute
+    public class SymmetricEncryptionAttribute : Attribute, IModelPropertyAttribute
     {
         private readonly string algorithmName;
 
