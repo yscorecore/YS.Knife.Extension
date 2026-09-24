@@ -59,7 +59,8 @@ namespace YS.Knife.Extensions.Crypt
             public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount,
                 byte[] outputBuffer, int outputOffset)
             {
-                var processed = cipher.ProcessBytes(inputBuffer, inputOffset, inputCount);
+                var processed = cipher.ProcessBytes(inputBuffer, inputOffset, inputCount)
+                    ?? System.Array.Empty<byte>();
                 if (processed.Length > 0)
                 {
                     Buffer.BlockCopy(processed, 0, outputBuffer, outputOffset, processed.Length);
@@ -69,8 +70,9 @@ namespace YS.Knife.Extensions.Crypt
 
             public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
             {
-                var processed = cipher.ProcessBytes(inputBuffer, inputOffset, inputCount);
-                var final = cipher.DoFinal();
+                var processed = cipher.ProcessBytes(inputBuffer, inputOffset, inputCount)
+                    ?? System.Array.Empty<byte>();
+                var final = cipher.DoFinal() ?? System.Array.Empty<byte>();
 
                 var result = new byte[processed.Length + final.Length];
                 if (processed.Length > 0)
