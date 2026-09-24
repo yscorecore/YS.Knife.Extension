@@ -33,7 +33,7 @@ namespace Microsoft.EntityFrameworkCore
             var maxLength = property.Metadata.GetMaxLength() ?? 256;
             var encryptedSize = Prefix.Length + provider.GetEncryptedLength(maxLength);
             var hints = new ConverterMappingHints(size: encryptedSize);
-
+            property.HasMaxLength(encryptedSize);
             var converter = new SymmetricEncryptionValueConvert(provider, Prefix, hints);
             property.HasConversion(converter);
         }
