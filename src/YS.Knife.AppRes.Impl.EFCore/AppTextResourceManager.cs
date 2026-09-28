@@ -37,17 +37,17 @@ namespace YS.Knife.AppRes.Impl.EFCore
 
         private async Task<AppTextResourceEntity?> GetTextEntityByKey(string key, CancellationToken cancellationToken)
         {
-            AppTextResourceEntity entity;
+            AppTextResourceEntity? entity;
             if (Guid.TryParse(key, out var id))
             {
-                entity = await entityStore.Current.Where(p => p.Id == id).FindOrThrowAsync(cancellationToken);
+                entity = await entityStore.Current.Where(p => p.Id == id).FirstOrDefaultAsync(cancellationToken);
             }
             else if (KeyRegex.IsMatch(key))
             {
                 var match = KeyRegex.Match(key);
                 var code = match.Groups["c"].Value;
                 var group = match.Groups["g"].Value;
-                entity = await entityStore.Current.Where(p => p.Group == group && p.Code == code).FindOrThrowAsync(cancellationToken);
+                entity = await entityStore.Current.Where(p => p.Group == group && p.Code == code).FirstOrDefaultAsync(cancellationToken);
             }
             else
             {
