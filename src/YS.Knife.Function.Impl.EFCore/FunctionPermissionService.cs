@@ -4,8 +4,9 @@ using YS.Knife.LogicRoles;
 namespace YS.Knife.Function.Impl.EFCore
 {
     [AutoConstructor]
-    [Service]
-    public partial class FunctionPermissionService : IFunctionPermissionService
+    [Service(typeof(IFunctionPermissionService))]
+    [Service(typeof(IFunctionMockService))]
+    public partial class FunctionPermissionService : IFunctionPermissionService, IFunctionMockService
     {
         public const string PIPE = "-";
         private readonly ILayerService layerService;
@@ -51,11 +52,15 @@ namespace YS.Knife.Function.Impl.EFCore
             return providerNamesWithPipe.Where(p => !string.IsNullOrEmpty(p) && p != PIPE).ToArray();
         }
 
-        public async Task<FunctionTreeInfo> GetPermissionTree(string appId, string functionCode)
+        public Task<FunctionTreeInfo> MockPermissionTree(string appId, string[] logicRoles)
+        {
+            return GetPermissionTreeInternal(appId, null, logicRoles);
+        }
+
+        private async Task<FunctionTreeInfo> GetPermissionTreeInternal(string appId, string functionCode, string[] allRoleCodes)
         {
             var tree = await functionManagerService.GetFunctionTree(appId);
             var providers = GetAppRoleProviders(tree);
-            var allRoleCodes = await logicRoleService.GetAllRoleCodes();
 
             //所有的分层数据
             var allLayerValues = await layerService.GetLayerValuesByRoleCodes(appId, allRoleCodes.FilterByProviders(providers));
@@ -71,6 +76,12 @@ namespace YS.Knife.Function.Impl.EFCore
             {
                 return tree.ExpandTree().Where(p => p.Code == functionCode).FirstOrDefault();
             }
+        }
+
+        public async Task<FunctionTreeInfo> GetPermissionTree(string appId, string functionCode)
+        {
+            var allRoleCodes = await logicRoleService.GetAllRoleCodes();
+            return await GetPermissionTreeInternal(appId, functionCode, allRoleCodes);
         }
 
         private FunctionTreeInfo GetAssignedTree(FunctionTreeInfo tree, string[] roleProviderNames, List<LayerValueInfo> allValues)
@@ -153,6 +164,7 @@ namespace YS.Knife.Function.Impl.EFCore
             }
             return false;
         }
+
 
     }
 }
