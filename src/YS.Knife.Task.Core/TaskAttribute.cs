@@ -1,11 +1,12 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel;
+using System.Reflection;
 
 namespace YS.Knife.Task
 {
     [System.AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
-    public sealed class TaskAttribute : Attribute
+    public sealed class TaskAttribute : DescriptionAttribute
     {
-        public TaskAttribute(string name, string? version = default)
+        public TaskAttribute(string name, string description, string? version = default) : base(description)
         {
             Name = name;
             Version = version;
@@ -13,7 +14,7 @@ namespace YS.Knife.Task
 
         public string Name { get; }
         public string? Version { get; }
-
+        public string? Group { get; }
         public static TaskAttribute GetFromType<T>()
         {
             return GetFromType(typeof(T));

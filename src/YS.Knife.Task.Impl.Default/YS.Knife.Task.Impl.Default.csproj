@@ -10,6 +10,7 @@
 
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.Metadata.Core\YS.Knife.Metadata.Core.csproj" />
       <ProjectReference Include="..\YS.Knife.Task.Core\YS.Knife.Task.Core.csproj" />
     </ItemGroup>
 </Project>
