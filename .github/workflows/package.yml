@@ -6,6 +6,9 @@ on:
 jobs:
   package:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
     - name: 01 Checkout Code
       uses: actions/checkout@v4
@@ -36,5 +39,12 @@ jobs:
       run: echo PACK_VERSION=${GIT_TAG#v} >> $GITHUB_ENV
     - name: 11 Create Package
       run: dotnet pack -p:PackageVersion=${PACK_VERSION} -p:RepositoryUrl=${{github.event.repository.url}} -p:PackageProjectUrl=${{github.event.repository.url}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o .publish --configuration Release
-    - name: 12 Push Package
-      run: bash ./.github/scripts/pushpack.sh .publish ${{secrets.NUGET_APIKEY}}
+    - name: 12 Get OIDC Token
+      id: idtoken
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const token = await core.getIDToken();
+          core.setOutput('value', token);
+    - name: 13 Push Package
+      run: bash ./.github/scripts/pushpack.sh .publish ${{ steps.idtoken.outputs.value }}
