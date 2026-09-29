@@ -46,5 +46,24 @@ jobs:
         script: |
           const token = await core.getIDToken();
           core.setOutput('value', token);
+    - name: 12.5 Debug OIDC Claims
+      env:
+        OIDC_TOKEN: ${{ steps.idtoken.outputs.value }}
+      run: |
+        echo "Token length: ${#OIDC_TOKEN}"
+        if [ -z "$OIDC_TOKEN" ]; then
+          echo "ERROR: OIDC token is empty!"
+          exit 1
+        fi
+        PAYLOAD=$(echo "$OIDC_TOKEN" | cut -d'.' -f2)
+        REMAINDER=$(( ${#PAYLOAD} % 4 ))
+        if [ $REMAINDER -ne 0 ]; then
+          PAYLOAD="${PAYLOAD}$(printf '=%.0s' $(seq 1 $((4 - REMAINDER))))"
+        fi
+        echo "=== JWT Claims (sent to NuGet) ==="
+        echo "$PAYLOAD" | base64 -d 2>/dev/null | jq '.'
+        echo "=== End Claims ==="
     - name: 13 Push Package
-      run: bash ./.github/scripts/pushpack.sh .publish ${{ steps.idtoken.outputs.value }}
+      env:
+        NUGET_APIKEY: ${{ steps.idtoken.outputs.value }}
+      run: bash ./.github/scripts/pushpack.sh .publish "$NUGET_APIKEY"
