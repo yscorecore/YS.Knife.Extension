@@ -52,16 +52,23 @@ namespace YS.Knife.Function.Impl.EFCore
             return providerNamesWithPipe.Where(p => !string.IsNullOrEmpty(p) && p != PIPE).ToArray();
         }
 
-        public Task<FunctionTreeInfo> MockPermissionTree(string appId, string[] logicRoles)
+        public Task<FunctionTreeInfo> MockPermissionTree(string appId, string[] logicRoles, string stopProvider)
         {
-            return GetPermissionTreeInternal(appId, null, logicRoles);
+            return GetPermissionTreeInternal(appId, null, logicRoles, stopProvider);
         }
 
-        private async Task<FunctionTreeInfo> GetPermissionTreeInternal(string appId, string functionCode, string[] allRoleCodes)
+        private async Task<FunctionTreeInfo> GetPermissionTreeInternal(string appId, string functionCode, string[] allRoleCodes, string stopProvider)
         {
             var tree = await functionManagerService.GetFunctionTree(appId);
             var providers = GetAppRoleProviders(tree);
-
+            if (!string.IsNullOrEmpty(stopProvider))
+            {
+                var index = Array.IndexOf(providers, stopProvider);
+                if (index >= 0)
+                {
+                    providers = providers[..(index + 1)];
+                }
+            }
             //所有的分层数据
             var allLayerValues = await layerService.GetLayerValuesByRoleCodes(appId, allRoleCodes.FilterByProviders(providers));
             foreach (var group in SplitPipeArray(providers))
@@ -81,7 +88,7 @@ namespace YS.Knife.Function.Impl.EFCore
         public async Task<FunctionTreeInfo> GetPermissionTree(string appId, string functionCode)
         {
             var allRoleCodes = await logicRoleService.GetAllRoleCodes();
-            return await GetPermissionTreeInternal(appId, functionCode, allRoleCodes);
+            return await GetPermissionTreeInternal(appId, functionCode, allRoleCodes, null);
         }
 
         private FunctionTreeInfo GetAssignedTree(FunctionTreeInfo tree, string[] roleProviderNames, List<LayerValueInfo> allValues)

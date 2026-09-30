@@ -2,6 +2,6 @@
 {
     public interface IFunctionMockService
     {
-        Task<FunctionTreeInfo> MockPermissionTree(string appId, string[] logicRoles);
+        Task<FunctionTreeInfo> MockPermissionTree(string appId, string[] logicRoles, string stopProvider);
     }
 }

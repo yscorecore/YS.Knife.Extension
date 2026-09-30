@@ -12,6 +12,7 @@ namespace YS.Knife.Function
         public string Type { get; set; } = null!;
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public Dictionary<string, object>? Config { get; set; } = null!;
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string? ParentCode { get; set; }
         public int Sequence { get; set; }
 
