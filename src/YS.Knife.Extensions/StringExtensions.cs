@@ -19,7 +19,11 @@ namespace System
         }
         public static T AsJsonObject<T>(this object val, JsonSerializerOptions options = default)
         {
-            if (val is T t)
+            if (val is null || val is DBNull)
+            {
+                return default;
+            }
+            else if (val is T t)
             {
                 return t;
             }
