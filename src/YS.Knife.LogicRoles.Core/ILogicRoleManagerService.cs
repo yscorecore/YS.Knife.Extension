@@ -8,6 +8,9 @@ namespace YS.Knife.LogicRoles
         {
             public string Name { get; set; }
             public string Description { get; set; }
+            public bool IsTreeNode { get; set; }
+            public bool LeafNodeOnly { get; set; }
+            public bool MultipleSelection { get; set; }
         }
         public record LogicRoleInfo
         {
@@ -23,6 +26,9 @@ namespace YS.Knife.LogicRoles
     {
         string Name { get; }
         string Description { get; }
+        bool IsTreeNode { get; }
+        bool LeafNodeOnly { get; }
+        bool MultipleSelection { get; }
         Task<LogicRoleInfo[]> GetLogicRoles();
     }
 }

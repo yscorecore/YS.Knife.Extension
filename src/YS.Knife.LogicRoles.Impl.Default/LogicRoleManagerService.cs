@@ -29,10 +29,17 @@ namespace YS.Knife.LogicRoles.Impl.Default
 
         public Task<List<LogicRoleProviderInfo>> GetProviders(string[] names)
         {
-            var providers = names.Select((s, i) => new LogicRoleProviderInfo
+            var providers = names.Select((s, i) =>
             {
-                Name = s,
-                Description = services.Where(p => p.Name == s).Select(p => p.Description).FirstOrDefault() ?? s
+                var detail = services.Where(p => p.Name == s).Single();
+                return new LogicRoleProviderInfo
+                {
+                    Name = s,
+                    Description = detail.Description,
+                    IsTreeNode = detail.IsTreeNode,
+                    LeafNodeOnly = detail.LeafNodeOnly,
+                    MultipleSelection = detail.MultipleSelection
+                };
             })
             .ToList();
             return Task.FromResult(providers);
