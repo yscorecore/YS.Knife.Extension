@@ -38,7 +38,8 @@ namespace YS.Knife.LogicRoles.Impl.Default
                     Description = detail.Description,
                     IsTreeNode = detail.IsTreeNode,
                     LeafNodeOnly = detail.LeafNodeOnly,
-                    MultipleSelection = detail.MultipleSelection
+                    MultipleSelection = detail.MultipleSelection,
+                    TreeSelection = detail.TreeSelection,
                 };
             })
             .ToList();
