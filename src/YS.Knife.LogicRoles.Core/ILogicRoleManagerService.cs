@@ -27,6 +27,7 @@ namespace YS.Knife.LogicRoles
         }
         public record LogicRoleInfo
         {
+            public string ProviderName { get; set; }
             public string Code { get; set; }
             public string Name { get; set; }
             public string Description { get; set; }

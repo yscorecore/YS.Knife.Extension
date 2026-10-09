@@ -20,7 +20,7 @@ namespace YS.Knife.LogicRoles.Impl.Default
                 info.Children.Select(t => CopyRoleInfo(t, providerName)).ToList() : null;
             return new LogicRoleInfo
             {
-                Code = $"{providerName}::{info.Code}",
+                Code = string.IsNullOrEmpty(info.ProviderName) ? $"{providerName}::{info.Code}" : $"{info.ProviderName}::{info.Code}",
                 Description = info.Description,
                 Name = info.Name,
                 Children = children
