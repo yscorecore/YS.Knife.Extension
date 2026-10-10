@@ -31,15 +31,15 @@ namespace YS.Knife.LogicRoles.Impl.Default
         {
             var providers = names.Select((s, i) =>
             {
-                var detail = services.Where(p => p.Name == s).Single();
+                var detail = services.Where(p => p.Name == s).FirstOrDefault();
                 return new LogicRoleProviderInfo
                 {
                     Name = s,
-                    Description = detail.Description,
-                    IsTreeNode = detail.IsTreeNode,
-                    LeafNodeOnly = detail.LeafNodeOnly,
-                    MultipleSelection = detail.MultipleSelection,
-                    TreeSelection = detail.TreeSelection,
+                    Description = detail?.Description,
+                    IsTreeNode = detail?.IsTreeNode ?? false,
+                    LeafNodeOnly = detail?.LeafNodeOnly ?? false,
+                    MultipleSelection = detail?.MultipleSelection ?? false,
+                    TreeSelection = detail?.TreeSelection ?? false,
                 };
             })
             .ToList();
