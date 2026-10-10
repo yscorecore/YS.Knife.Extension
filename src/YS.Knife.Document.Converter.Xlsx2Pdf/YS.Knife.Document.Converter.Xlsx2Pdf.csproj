@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- LibreOfficeKit (netstandard2.0) pulls in net10-era BCL packages; their buildTransitive
+         targets emit NETStandardCompat warnings on net6.0 that are expected and harmless. -->
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Using Include="YS.Knife" />
+    <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+    <PackageReference Include="LibreOfficeKit" Version="1.1.7" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.Document.Core\YS.Knife.Document.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="YS.Knife.Document.Converter.Xlsx2Pdf.UnitTest" />
+  </ItemGroup>
+</Project>
