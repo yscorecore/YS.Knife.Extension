@@ -17,6 +17,8 @@
         <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <GenerateLaunchSettings>false</GenerateLaunchSettings>
+        <Nullable>annotations</Nullable>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     </PropertyGroup>
     <ItemGroup>
         <!--<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">

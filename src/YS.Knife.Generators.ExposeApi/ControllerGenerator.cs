@@ -354,7 +354,7 @@ namespace {namespaceName}");
                     {
                         var includes = includesArg.Value.Values
                             .Where(v => v.Value is string)
-                            .Select(v => (string)v.Value)
+                            .Select(v => (string)v.Value!)
                             .ToArray();
                         if (includes.Length > 0)
                         {
@@ -367,7 +367,7 @@ namespace {namespaceName}");
                     {
                         var excludes = excludesArg.Value.Values
                             .Where(v => v.Value is string)
-                            .Select(v => (string)v.Value)
+                            .Select(v => (string)v.Value!)
                             .ToArray();
                         if (excludes.Length > 0)
                         {
@@ -446,7 +446,7 @@ namespace {namespaceName}");
             {
                 return arg.Value.Values
                     .Where(v => v.Value is string)
-                    .Select(v => (string)v.Value)
+                    .Select(v => (string)v.Value!)
                     .ToArray();
             }
             return Array.Empty<string>();
@@ -502,7 +502,7 @@ namespace {namespaceName}");
                         return $"'{c}'";
                     return constant.Value?.ToString() ?? "null";
                 case TypedConstantKind.Enum:
-                    var enumType = constant.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                    var enumType = constant.Type!.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
                     return $"({enumType}){constant.Value}";
                 case TypedConstantKind.Type:
                     if (constant.Value is INamedTypeSymbol typeSymbol)

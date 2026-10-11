@@ -33,12 +33,12 @@ namespace YS.Knife.Mapper.Impl.FlyTiger
             }
         }
 
-        public void Copy<From, T>(From source, T target, Action<object> onAddItem, Action<object> onRemoveItem)
+        public void Copy<From, T>(From source, T target, Action<object>? onAddItem, Action<object>? onRemoveItem)
             where T : class
         {
             if (options.Value.CopyFuncs.TryGetValue((typeof(From), typeof(T)), out var fun))
             {
-                var fun1 = (Action<From, T, Action<object>, Action<object>>)fun;
+                var fun1 = (Action<From, T, Action<object>?, Action<object>?>)fun;
                 fun1(source, target, onAddItem, onRemoveItem);
             }
             else

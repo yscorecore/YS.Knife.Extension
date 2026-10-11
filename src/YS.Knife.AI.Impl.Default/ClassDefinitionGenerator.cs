@@ -222,7 +222,7 @@ namespace YS.Knife.AI.Impl.Default
             }
 
             // 处理关键字类型
-            if (_typeKeywords.TryGetValue(type, out string keyword))
+            if (_typeKeywords.TryGetValue(type, out string? keyword))
             {
                 return keyword;
             }

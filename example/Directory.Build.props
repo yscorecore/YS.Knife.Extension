@@ -1,5 +1,7 @@
 <Project>
     <PropertyGroup>
         <IsPackable>false</IsPackable>
+        <Nullable>annotations</Nullable>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     </PropertyGroup>
 </Project>

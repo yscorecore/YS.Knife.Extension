@@ -25,7 +25,7 @@ namespace YS.Knife.Function
                     var functionInfo = tree with { };
                     if (tree.SubItems != null)
                     {
-                        var subItems = tree.SubItems.Select(p => CreateFunctionInfo(assignType == AssignType.AllowInherrites, p)).Where(p => p != null).ToList();
+                        var subItems = tree.SubItems.Select(p => CreateFunctionInfo(assignType == AssignType.AllowInherrites, p)).Where(p => p != null).Select(p => p!).ToList();
                         functionInfo.SubItems = subItems;
                     }
                     return functionInfo;
@@ -60,7 +60,7 @@ namespace YS.Knife.Function
         {
             foreach (var (_, v) in allFunctionTree)
             {
-                if (allFunctionTree.TryGetValue(v.ParentCode, out var parent))
+                if (allFunctionTree.TryGetValue(v.ParentCode!, out var parent))
                 {
                     if (parent.SubItems == null)
                     {

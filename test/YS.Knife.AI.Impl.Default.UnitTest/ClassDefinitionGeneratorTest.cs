@@ -10,43 +10,43 @@ namespace YS.Knife.AI.Impl.Default.UnitTest
 
     public class SimpleTestClass
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
         public int Age { get; set; }
     }
 
     public class ClassWithDescriptionAttribute
     {
         [Description("Name of the person")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
         public int Age { get; set; }
     }
 
     public class ClassWithDisplayAttribute
     {
         [Display(Name = "FullName", Description = "The full name", Order = 1)]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
     }
 
     public class ClassWithNestedType
     {
-        public string Title { get; set; }
-        public NestedType Nested { get; set; }
+        public string Title { get; set; } = null!;
+        public NestedType Nested { get; set; } = null!;
     }
 
     public class NestedType
     {
         public int Id { get; set; }
-        public string Data { get; set; }
+        public string Data { get; set; } = null!;
     }
 
     public class ClassWithGenericType
     {
-        public System.Collections.Generic.List<NestedType> Items { get; set; }
+        public System.Collections.Generic.List<NestedType> Items { get; set; } = null!;
     }
 
     public class ClassWithArrayType
     {
-        public NestedType[] Items { get; set; }
+        public NestedType[] Items { get; set; } = null!;
     }
 
     public class ClassWithNullableType
@@ -58,14 +58,14 @@ namespace YS.Knife.AI.Impl.Default.UnitTest
     public struct TestStruct
     {
         public double Value { get; set; }
-        public string Label { get; set; }
+        public string Label { get; set; } = null!;
     }
 
     public class ClassWithSystemTypes
     {
-        public string StringProperty { get; set; }
+        public string StringProperty { get; set; } = null!;
         public int IntProperty { get; set; }
-        public System.Collections.Generic.List<string> StringList { get; set; }
+        public System.Collections.Generic.List<string> StringList { get; set; } = null!;
         public System.DateTime DateProperty { get; set; }
     }
 
@@ -84,7 +84,7 @@ namespace YS.Knife.AI.Impl.Default.UnitTest
 
             // Assert
             Assert.Contains("public class SimpleTestClass", result);
-            Assert.Contains("public string Name { get; set; }", result);
+            Assert.Contains("public string Name { get; set; } = null!;", result);
             Assert.Contains("public int Age { get; set; }", result);
         }
 
@@ -129,7 +129,7 @@ namespace YS.Knife.AI.Impl.Default.UnitTest
             // Assert
             Assert.Contains("public class ClassWithNestedType", result);
             Assert.Contains("public class NestedType", result);
-            Assert.Contains("public NestedType Nested { get; set; }", result);
+            Assert.Contains("public NestedType Nested { get; set; } = null!;", result);
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace YS.Knife.AI.Impl.Default.UnitTest
             var result = _generator.GetClassDefinition(type);
 
             // Assert
-            Assert.Contains("public NestedType[] Items { get; set; }", result);
+            Assert.Contains("public NestedType[] Items { get; set; } = null!;", result);
         }
 
         [Fact]

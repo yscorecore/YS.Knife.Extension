@@ -88,17 +88,17 @@ namespace YS.Knife.Mapper.Impl.FlyTiger.IntegrationTest
 
         public record User1
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = null!;
             public int Age { get; set; }
         }
         public record User2
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = null!;
             public int Age { get; set; }
         }
         public record User3
         {
-            public string Name { get; set; }
+            public string Name { get; set; } = null!;
             public int Age { get; set; }
         }
     }

@@ -24,14 +24,14 @@ namespace TagsDemo
 
     public class SchoolEntity : FullAuditedEntity<Guid>, ITagOwnerEntity<SchoolEntity, SchoolTag, Guid>
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
         public List<SchoolTag> Tags { get; set; } = new();
     }
     public class SchoolTag : Tag<SchoolEntity, Guid> { }
     public class UserTag : Tag<UserEntity, Guid> { }
     public class UserEntity : FullAuditedEntity<Guid>, ITagOwnerEntity<UserEntity, UserTag, Guid>
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
         public List<UserTag> Tags { get; set; } = new();
     }
 

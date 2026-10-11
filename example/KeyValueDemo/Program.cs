@@ -38,12 +38,9 @@ namespace KeyValueDemo
             base.ConfigureWebApp(app, env);
             var scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
             using var scope = scopeFactory.CreateScope();
-            using (var context = scope.ServiceProvider.GetService<KeyValueContext>())
-            {
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
-
-            }
+            using var context = scope.ServiceProvider.GetRequiredService<KeyValueContext>();
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
         }
     }
 }

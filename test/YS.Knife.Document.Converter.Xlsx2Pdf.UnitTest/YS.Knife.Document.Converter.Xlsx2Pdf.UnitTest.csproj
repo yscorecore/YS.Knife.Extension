@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CS0436</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\YS.Knife.Document.Converter.Xlsx2Pdf\YS.Knife.Document.Converter.Xlsx2Pdf.csproj" />
   </ItemGroup>

@@ -331,7 +331,7 @@ namespace System.Data
                 {
                     await connection.OpenAsync(cancellationToken);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     throw;
                 }

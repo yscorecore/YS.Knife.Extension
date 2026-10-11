@@ -6,7 +6,6 @@ namespace YS.Knife.Sms.Impl.Submail.IntegrationTest
 
     public class SubmailSmsServiceTest : YS.Knife.Hosting.KnifeHost
     {
-        private ITestOutputHelper output;
         // test
         [InjectConfiguration("Submail:AppId")]
         private const string AppId = "95331";

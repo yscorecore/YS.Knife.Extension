@@ -29,7 +29,7 @@ namespace TagsDemo
             base.ConfigureWebApp(app, env);
             var scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
             using var scope = scopeFactory.CreateScope();
-            using (var context = scope.ServiceProvider.GetService<TagDbContext>())
+            using (var context = scope.ServiceProvider.GetRequiredService<TagDbContext>())
             {
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();

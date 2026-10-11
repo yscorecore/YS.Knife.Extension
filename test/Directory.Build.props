@@ -3,6 +3,8 @@
         <TargetFramework>net6</TargetFramework>
         <IsPackable>false</IsPackable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>annotations</Nullable>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     </PropertyGroup>
     <ItemGroup>
         <Using Include="FlyTiger" />
