@@ -350,4 +350,5 @@ MigrationBackup/
 .ionide/
 .vscode/
 .idea/
-/.workbuddy/memory/2026-10-10.md
+/.workbuddy/*
+/.workbuddy/
