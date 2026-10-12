@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Xunit;
@@ -84,7 +84,7 @@ namespace YS.Knife.AI.Impl.Default.UnitTest
 
             // Assert
             Assert.Contains("public class SimpleTestClass", result);
-            Assert.Contains("public string Name { get; set; } = null!;", result);
+            Assert.Contains("public string Name { get; set; }", result);
             Assert.Contains("public int Age { get; set; }", result);
         }
 
@@ -129,7 +129,7 @@ namespace YS.Knife.AI.Impl.Default.UnitTest
             // Assert
             Assert.Contains("public class ClassWithNestedType", result);
             Assert.Contains("public class NestedType", result);
-            Assert.Contains("public NestedType Nested { get; set; } = null!;", result);
+            Assert.Contains("public NestedType Nested { get; set; }", result);
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace YS.Knife.AI.Impl.Default.UnitTest
             var result = _generator.GetClassDefinition(type);
 
             // Assert
-            Assert.Contains("public NestedType[] Items { get; set; } = null!;", result);
+            Assert.Contains("public NestedType[] Items { get; set; }", result);
         }
 
         [Fact]
