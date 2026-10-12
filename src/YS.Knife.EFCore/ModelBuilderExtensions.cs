@@ -25,7 +25,7 @@ namespace Microsoft.EntityFrameworkCore
             {
                 foreach (var modelMethodAttribute in method.Attr.FilterAndSort(provider))
                 {
-                    modelMethodAttribute.Apply(modelBuilder, method.MethodInfo);
+                    modelMethodAttribute.Apply(modelBuilder, dbContext, method.MethodInfo);
                 }
             }
 

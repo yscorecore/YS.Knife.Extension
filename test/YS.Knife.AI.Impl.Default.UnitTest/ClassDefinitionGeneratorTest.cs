@@ -58,7 +58,7 @@ namespace YS.Knife.AI.Impl.Default.UnitTest
     public struct TestStruct
     {
         public double Value { get; set; }
-        public string Label { get; set; } = null!;
+        public string Label { get; set; }
     }
 
     public class ClassWithSystemTypes

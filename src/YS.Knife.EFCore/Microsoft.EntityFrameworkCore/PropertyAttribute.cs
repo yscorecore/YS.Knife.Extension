@@ -20,6 +20,6 @@ namespace Microsoft.EntityFrameworkCore
     }
     public interface IModelMethodAttribute
     {
-        void Apply(ModelBuilder modelBuilder, MethodInfo methodInfo);
+        void Apply(ModelBuilder modelBuilder, DbContext dbContext, MethodInfo methodInfo);
     }
 }

@@ -20,7 +20,7 @@ namespace Microsoft.EntityFrameworkCore
         }
         public string Name { get; set; }
         public string Schema { get; set; }
-        public void Apply(ModelBuilder modelBuilder, MethodInfo methodInfo)
+        public void Apply(ModelBuilder modelBuilder, DbContext dbContext, MethodInfo methodInfo)
         {
             var returnType = methodInfo.ReturnType;
             if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(IQueryable<>))
