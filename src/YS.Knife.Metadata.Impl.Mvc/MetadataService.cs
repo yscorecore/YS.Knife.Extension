@@ -107,6 +107,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 DataSource = GetEditorSource(p, type),
                 QueryFilter = GetQueryFilterInfo(p),
                 Tags = BuildTags(p.Attributes.PropertyAttributes.OfType<TagAttribute>()),
+                Prompt = GetPrompt(p),
             };
         }
         private DataSourceInfo GetEditorSource(DefaultModelMetadata metadata, Type itemType)
@@ -159,6 +160,10 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 return displayNameAttribute.DisplayName;
             }
             return metadata.PropertyName;
+        }
+        private static string GetPrompt(DefaultModelMetadata metadata)
+        {
+            return metadata.Attributes.PropertyAttributes.OfType<DisplayAttribute>().FirstOrDefault()?.Prompt;
         }
         private static string GetDescription(DefaultModelMetadata metadata)
         {

@@ -7,7 +7,7 @@
 - `IMetadataService`：元数据查询接口
   - `ListAll()`：列出所有已注册的元数据名称
   - `GetMetadataInfo(name)`：获取指定名称的元数据详情
-- `MetadataInfo` / `MetadataClolumnInfo`：元数据描述模型，包含显示名、描述、列路径、数据类型、显示格式、排序、数据源（`DataSourceInfo`）与查询过滤器（`QueryFilterInfo`）
+- `MetadataInfo` / `MetadataClolumnInfo`：元数据描述模型，包含显示名、描述、列路径、数据类型、显示格式、排序、数据源（`DataSourceInfo`）、查询过滤器（`QueryFilterInfo`）、标签（`Tags`）与输入提示（`Prompt`）
 - 特性标注：
   - `[Metadata("name")]`：标注类为元数据实体（可多个）
   - `[MetadataInterceptor("interceptorName")]`：为类指定命名的元数据拦截器

@@ -13,6 +13,7 @@
   - 编辑器数据源：枚举属性自动附加 `EditorEnumSource`，显式标注的 `EditorSourceAttribute` 优先
   - 查询过滤器：读取 `[QueryFilter]` 特性
   - 标签收集：读取类与属性上的 `[Tag("key", "value")]` 特性，组织为 `Dictionary<string, string>`；同名 key 重复时抛 `InvalidOperationException`
+  - 输入提示：读取 `[Display(Prompt = "...")]` 特性的 `Prompt` 字段，作为界面 placeholder 提示
 - 拦截器管线：全局拦截器（`IMetadataInterceptor.IsGlobal`）与类上 `[MetadataInterceptor("name")]` 指定的拦截器按 `Priority` 依次执行，可动态改写元数据
 - `ServiceRegister`：启动时自动扫描程序集中所有带 `[Metadata]` 特性的类型并注册到 `MetadataOptions`
 
