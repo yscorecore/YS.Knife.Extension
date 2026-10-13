@@ -10,43 +10,43 @@ namespace YS.Knife.AI.Impl.Default.UnitTest
 
     public class SimpleTestClass
     {
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
         public int Age { get; set; }
     }
 
     public class ClassWithDescriptionAttribute
     {
         [Description("Name of the person")]
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
         public int Age { get; set; }
     }
 
     public class ClassWithDisplayAttribute
     {
         [Display(Name = "FullName", Description = "The full name", Order = 1)]
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
     }
 
     public class ClassWithNestedType
     {
-        public string Title { get; set; } = null!;
-        public NestedType Nested { get; set; } = null!;
+        public string Title { get; set; }
+        public NestedType Nested { get; set; }
     }
 
     public class NestedType
     {
         public int Id { get; set; }
-        public string Data { get; set; } = null!;
+        public string Data { get; set; }
     }
 
     public class ClassWithGenericType
     {
-        public System.Collections.Generic.List<NestedType> Items { get; set; } = null!;
+        public System.Collections.Generic.List<NestedType> Items { get; set; }
     }
 
     public class ClassWithArrayType
     {
-        public NestedType[] Items { get; set; } = null!;
+        public NestedType[] Items { get; set; }
     }
 
     public class ClassWithNullableType
@@ -63,9 +63,9 @@ namespace YS.Knife.AI.Impl.Default.UnitTest
 
     public class ClassWithSystemTypes
     {
-        public string StringProperty { get; set; } = null!;
+        public string StringProperty { get; set; }
         public int IntProperty { get; set; }
-        public System.Collections.Generic.List<string> StringList { get; set; } = null!;
+        public System.Collections.Generic.List<string> StringList { get; set; }
         public System.DateTime DateProperty { get; set; }
     }
 

@@ -24,11 +24,11 @@ namespace FlyTiger
         }
         public static string ToDisplayFullString(this ISymbol symbol)
         {
-            return symbol?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)!;
+            return symbol?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
         }
         public static string ToErrorFullString(this ISymbol symbol)
         {
-            return symbol?.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)!;
+            return symbol?.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
         }
         private static bool SafeEquals(this INamedTypeSymbol symbol, string globalTypeMetaName)
         {
@@ -73,7 +73,7 @@ namespace FlyTiger
         public static bool HasAttribute(this ISymbol symbol, string attributeMetaType)
         {
             return symbol.GetAttributes().Any(ad =>
-                ad.AttributeClass!.ToDisplayString() == attributeMetaType);
+                ad.AttributeClass.ToDisplayString() == attributeMetaType);
         }
 
 
@@ -107,7 +107,7 @@ namespace FlyTiger
                 }
                 else
                 {
-                    classSymbol = (classSymbol.ContainingSymbol as INamedTypeSymbol)!;
+                    classSymbol = classSymbol.ContainingSymbol as INamedTypeSymbol;
                 }
             }
 
@@ -140,7 +140,7 @@ namespace FlyTiger
             {
                 SemanticModel model = codeWriter.Compilation.GetSemanticModel(clazz.SyntaxTree);
                 var clazzSymbol = model.GetDeclaredSymbol(clazz) as INamedTypeSymbol;
-                if (classSymbols.Contains(clazzSymbol!.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
+                if (classSymbols.Contains(clazzSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
                 {
                     continue;
                 }

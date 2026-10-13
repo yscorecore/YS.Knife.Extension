@@ -3,7 +3,6 @@
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <IsTestProject>true</IsTestProject>
-        <NoWarn>$(NoWarn);NU1608</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

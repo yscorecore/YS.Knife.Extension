@@ -124,14 +124,14 @@ namespace YS.Knife.Generators.ExposeApi.UnitTest
 
             var expectedOutputs = outputElements?.Select(o => new ExpectedOutput
             {
-                FileName = o.Attribute("file")?.Value!,
+                FileName = o.Attribute("file")?.Value,
                 Code = o.Value
             }).ToList() ?? new List<ExpectedOutput>();
 
             return new TestCase
             {
                 Name = caseName,
-                InputCode = inputCode!,
+                InputCode = inputCode,
                 ExpectedOutputs = expectedOutputs
             };
         }
