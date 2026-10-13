@@ -1,4 +1,4 @@
-﻿
+
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -57,7 +57,8 @@ namespace YS.Knife.Metadata.Impl.Mvc
             {
                 DisplayName = model.DisplayName ?? type.Name,
                 Description = model.Description,
-                Columns = GetMetadataColumns(model, new HashSet<Type>()).ToList()
+                Columns = GetMetadataColumns(model, new HashSet<Type>()).ToList(),
+                Tags = BuildTags(type.GetCustomAttributes<TagAttribute>())
             },
             type.GetCustomAttributes<MetadataInterceptorAttribute>().Select(p => p.InterceptorName).ToArray()
             );
@@ -105,6 +106,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 DisplayOrder = p.Order,
                 DataSource = GetEditorSource(p, type),
                 QueryFilter = GetQueryFilterInfo(p),
+                Tags = BuildTags(p.Attributes.PropertyAttributes.OfType<TagAttribute>()),
             };
         }
         private DataSourceInfo GetEditorSource(DefaultModelMetadata metadata, Type itemType)
@@ -163,6 +165,19 @@ namespace YS.Knife.Metadata.Impl.Mvc
             return metadata.Description ?? (
                 metadata.Attributes.PropertyAttributes.OfType<DescriptionAttribute>().Select(p => p.Description).FirstOrDefault()
                 );
+        }
+        private static Dictionary<string, string> BuildTags(IEnumerable<TagAttribute> tagAttributes)
+        {
+            var tags = new Dictionary<string, string>();
+            foreach (var attr in tagAttributes)
+            {
+                if (tags.ContainsKey(attr.Key))
+                {
+                    throw new InvalidOperationException($"Duplicate tag key '{attr.Key}'.");
+                }
+                tags[attr.Key] = attr.Value;
+            }
+            return tags.Count > 0 ? tags : null;
         }
         private static (bool, string, Type) GetTypeCode(Type type)
         {

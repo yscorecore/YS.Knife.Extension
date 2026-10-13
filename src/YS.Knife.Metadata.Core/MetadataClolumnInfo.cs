@@ -1,4 +1,6 @@
-﻿namespace YS.Knife.Metadata
+using System.Text.Json.Serialization;
+
+namespace YS.Knife.Metadata
 {
     public record MetadataClolumnInfo
     {
@@ -13,6 +15,8 @@
         public int DisplayOrder { get; set; }
         public DataSourceInfo DataSource { get; set; }
         public QueryFilterInfo QueryFilter { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Dictionary<string, string> Tags { get; set; }
     }
     public record DataSourceInfo
     {

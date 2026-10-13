@@ -13,6 +13,7 @@
   - `[MetadataInterceptor("interceptorName")]`：为类指定命名的元数据拦截器
   - `[QueryFilter(Operators.Equal)]`：标注属性为查询过滤字段，可指定操作符与默认值
   - 编辑器数据源：`[EditorDataSource]`、`[EditorEnumSource]`、`[EditorConstantSource]`、`[EditorNamedConstantSource]`
+  - `[Tag("key", "value")]`：为类或属性添加自定义标签，可叠加多个；同名 key 重复时抛异常
 - `Operators`：内置查询操作符常量（`==`、`!=`、`between`、`in`、`contains` 等）
 - `IMetadataInterceptor`：元数据拦截器接口，支持全局或按名称拦截并修改生成的 `MetadataInfo`，按 `Priority` 排序执行
 - `MetadataOptions`：元数据注册表，提供 `AddMeta` / `AddOrReplaceMeta` 等注册方法
@@ -27,9 +28,11 @@ using YS.Knife.Metadata;
 
 [Metadata("user")]
 [MetadataInterceptor("tenantFilter")]
+[Tag("category", "user")]
 public class UserDto
 {
     [Display(Name = "用户名")]
+    [Tag("sensitive", "true")]
     public string Name { get; set; }
 
     [Display(Name = "状态")]
@@ -51,6 +54,9 @@ foreach (var col in info.Columns)
 {
     Console.WriteLine($"{col.PropertyPath} {col.DisplayName} {col.DataTypeName}");
 }
+
+// info.Tags => { "category" => "user" }
+// col.Tags  => { "sensitive" => "true" }（仅配置了 [Tag] 的属性才有值）
 ```
 
 ## 依赖说明
