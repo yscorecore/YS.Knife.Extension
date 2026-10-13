@@ -4,7 +4,6 @@
         <LangVersion>11.0</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Authors>Pengbo Yang</Authors>
         <Product>YS.Knife</Product>
         <PackageIcon>icon.png</PackageIcon>
@@ -68,4 +67,7 @@
         </None>
         <Compile Include="..\AssemblyInfo.cs"></Compile>
     </ItemGroup>
+    <PropertyGroup Condition="Exists('README.md')">
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
 </Project>
