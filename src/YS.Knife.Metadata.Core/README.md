@@ -1,4 +1,4 @@
-# YS.Knife.Metadata.Core
+﻿# YS.Knife.Metadata.Core
 
 实体元数据（Metadata）抽象层。定义了用于向前端/低代码场景描述实体结构（列、显示名、数据源、查询过滤器等）的核心模型与接口。
 

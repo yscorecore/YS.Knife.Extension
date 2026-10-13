@@ -1,4 +1,4 @@
-# YS.Knife.Metadata.Impl.Mvc
+﻿# YS.Knife.Metadata.Impl.Mvc
 
 `IMetadataService` 的 MVC 实现：基于 ASP.NET Core MVC 的 `IModelMetadataProvider`，从标注了 `[Metadata]` 的实体类型自动生成结构化元数据。
 

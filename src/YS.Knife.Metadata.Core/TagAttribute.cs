@@ -1,4 +1,4 @@
-namespace YS.Knife.Metadata
+﻿namespace YS.Knife.Metadata
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = true)]
     public class TagAttribute : Attribute
