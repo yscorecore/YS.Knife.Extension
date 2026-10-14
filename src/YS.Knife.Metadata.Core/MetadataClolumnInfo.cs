@@ -26,6 +26,7 @@ namespace YS.Knife.Metadata
         public SourceType Type { get; set; }
         public object Value { get; set; }
         public object Config { get; set; }
+        public string Expression { get; set; }
     }
 
 }

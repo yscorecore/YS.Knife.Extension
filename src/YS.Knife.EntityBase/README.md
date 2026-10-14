@@ -8,6 +8,7 @@
 - `ISoftDeleteEntity`：软删除实体接口（`IsDeleted` 属性），配套 `FilterDeleted()` / `IgnoreDeleted()` 查询扩展。
 - `ISortableEntity`：可排序实体接口（`Order` 属性），配套 `SortByOrder()` / `SortDescByOrder()` 查询扩展。
 - `IEntityStore<T>`：通用实体存储接口（查询、添加、删除、保存），配套 `AddRange` / `DeleteRange` 扩展方法。
+- `IStatusFlowEntity<TStatus, TFlow>`：状态流转实体接口（`Status` 状态字段 + `Flows` 流转记录列表），配套 `AppendInitStatusFlow` / `UpdateStatusAndAppendFlow` 扩展方法与 `[FromStatus]` 流转约束特性。
 
 ## 使用示例
 
@@ -36,6 +37,45 @@ var items = await dbContext.Categories
 var topItems = dbContext.Categories
     .IgnoreDeleted()
     .SortDescByOrder();   // 按 Order 降序
+```
+
+### 状态流转
+
+在状态枚举字段上用 `[FromStatus]` 声明允许流转到的目标状态（未标注的状态不限制流转）：
+
+```csharp
+public enum OrderStatus
+{
+    Created,
+    [FromStatus(typeof(OrderStatus), OrderStatus.Shipped, OrderStatus.Cancelled)]
+    Paid,
+    Shipped,
+    Completed,
+    Cancelled,
+}
+
+public class Order : IStatusFlowEntity<OrderStatus, OrderStatusFlow>
+{
+    public OrderStatus Status { get; set; }
+    public List<OrderStatusFlow> Flows { get; set; }
+}
+
+public class OrderStatusFlow : IStatusChangeFlowEntity<OrderStatus>
+{
+    public int Order { get; set; }
+    public OrderStatus? From { get; set; }
+    public OrderStatus To { get; set; }
+    public DateTimeOffset OperationTime { get; set; }
+    [StringLength(64)]
+    public string Operator { get; set; }
+}
+```
+
+使用扩展方法初始化状态或流转状态，每次流转会自动校验合法性并追加一条流转记录：
+
+```csharp
+order.AppendInitStatusFlow(OrderStatus.Created, "admin");    // 初始化状态（From 为 null，不校验）
+order.UpdateStatusAndAppendFlow(OrderStatus.Paid, "admin");  // 校验并流转，非法流转抛出 InvalidOperationException
 ```
 
 ### 实体存储

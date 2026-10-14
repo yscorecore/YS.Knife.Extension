@@ -73,7 +73,7 @@ namespace YS.Knife.Metadata
     }
     public class EditorNamedConstantSourceAttribute : EditorSourceAttribute
     {
-        public EditorNamedConstantSourceAttribute(string[] names, object[] values, bool flag)
+        public EditorNamedConstantSourceAttribute(string[] names, string[] values, bool flag)
             : base(SourceType.Dic,
                   names.Zip(values).ToDictionary(p => p.First, p => p.Second), new DicSourceConfig(flag))
         {

@@ -122,7 +122,8 @@ namespace YS.Knife.Metadata.Impl.Mvc
             {
                 Type = source.SourceType,
                 Value = source.Value,
-                Config = source.Config
+                Config = source.Config,
+                Expression = source.Expression,
             };
         }
         private QueryFilterInfo GetQueryFilterInfo(DefaultModelMetadata metadata)
