@@ -254,12 +254,11 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
             var info = await service.GetMetadataInfo("GetMetadataInfo_DataSource_From_EditorEnumSourceAttribute");
             info.Columns.Count.Should().Be(1);
             var firstColumn = info.Columns.First();
-            firstColumn.DataSource.Should().BeEquivalentTo(new DataSourceInfo
-            {
-                Value = "abc",
-                Type = SourceType.Enum,
-                Config = new EnumSourceConfig(false)
-            });
+            firstColumn.DataSource.Type.Should().Be(SourceType.Enum);
+            firstColumn.DataSource.Value.Should().Be("abc");
+            var config = firstColumn.DataSource.Config.Should().BeOfType<EnumSourceConfig>().Subject;
+            config.Flag.Should().BeFalse();
+            firstColumn.DataSource.Expression.Should().NotBeNull();
         }
         [Metadata("GetMetadataInfo_DataSource_From_EditorEnumSourceAttribute")]
         internal class User_GetMetadataInfo_DataSource_From_EditorEnumSourceAttribute
