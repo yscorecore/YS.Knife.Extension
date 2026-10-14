@@ -57,7 +57,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
             {
                 DisplayName = model.DisplayName ?? type.Name,
                 Description = model.Description,
-                Columns = GetMetadataColumns(model, new HashSet<Type>()).ToList(),
+                Columns = GetMetadataColumns(model, new HashSet<Type>()).OrderBy(p => p.DisplayOrder).ToList(),
                 Tags = BuildTags(type.GetCustomAttributes<TagAttribute>())
             },
             type.GetCustomAttributes<MetadataInterceptorAttribute>().Select(p => p.InterceptorName).ToArray()
@@ -99,6 +99,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 PropertyPath = GetPropertyPath(p),
                 DisplayName = GetDisplayName(p),
                 ShowForDisplay = p.ShowForDisplay,
+                Required = p.IsRequired,
                 DisplayFormat = p.DisplayFormatString,
                 Description = GetDescription(p),
                 IsArray = isArray,
@@ -120,7 +121,8 @@ namespace YS.Knife.Metadata.Impl.Mvc
             return source == null ? null : new DataSourceInfo
             {
                 Type = source.SourceType,
-                Value = source.Value
+                Value = source.Value,
+                Config = source.Config
             };
         }
         private QueryFilterInfo GetQueryFilterInfo(DefaultModelMetadata metadata)

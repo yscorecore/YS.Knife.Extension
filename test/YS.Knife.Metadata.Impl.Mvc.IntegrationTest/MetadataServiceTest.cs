@@ -230,11 +230,13 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
             var info = await service.GetMetadataInfo("GetMetadataInfo_DataSource_From_EditorDataSourceAttribute");
             info.Columns.Count.Should().Be(1);
             var firstColumn = info.Columns.First();
-            firstColumn.DataSource.Should().BeEquivalentTo(new DataSourceInfo
-            {
-                Value = "abc",
-                Type = SourceType.DataSource
-            });
+            firstColumn.DataSource.Type.Should().Be(SourceType.DataSource);
+            firstColumn.DataSource.Value.Should().Be("abc");
+            var config = firstColumn.DataSource.Config.Should().BeOfType<DataSourceConfig>().Subject;
+            config.RefName.Should().BeNull();
+            config.IsArray.Should().BeFalse();
+            config.SingleProperty.Should().BeTrue();
+            config.Properties.Should().BeEmpty();
         }
         [Metadata("GetMetadataInfo_DataSource_From_EditorDataSourceAttribute")]
         internal class User_GetMetadataInfo_DataSource_From_EditorDataSourceAttribute
@@ -255,7 +257,8 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
             firstColumn.DataSource.Should().BeEquivalentTo(new DataSourceInfo
             {
                 Value = "abc",
-                Type = SourceType.Enum
+                Type = SourceType.Enum,
+                Config = new EnumSourceConfig(false)
             });
         }
         [Metadata("GetMetadataInfo_DataSource_From_EditorEnumSourceAttribute")]
@@ -275,7 +278,7 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
             info.Columns.Count.Should().Be(1);
             var firstColumn = info.Columns.First();
             firstColumn.DataSource.Should().NotBeNull();
-            firstColumn.DataSource.Type.Should().Be(SourceType.Constant);
+            firstColumn.DataSource.Type.Should().Be(SourceType.Const);
             firstColumn.DataSource.Value.Should().BeEquivalentTo(new object[] { "a", "b" });
         }
         [Metadata("GetMetadataInfo_DataSource_From_EditorConstantSourceAttribute")]
@@ -339,6 +342,39 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
         internal class GetNullableDateTimeType_Meta
         {
             public DateTime? Name { get; set; }
+        }
+        #endregion
+
+        #region Required
+        [Fact]
+        public async Task Should_GetMetadataInfo_Required_False_When_No_RequiredAttribute()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetMetadataInfo_Required_NoAttribute");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.Required.Should().BeFalse();
+        }
+        [Metadata("GetMetadataInfo_Required_NoAttribute")]
+        internal class User_GetMetadataInfo_Required_NoAttribute
+        {
+            public string Name { get; set; }
+        }
+
+        [Fact]
+        public async Task Should_GetMetadataInfo_Required_True_When_Define_RequiredAttribute()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetMetadataInfo_Required_WithAttribute");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.Required.Should().BeTrue();
+        }
+        [Metadata("GetMetadataInfo_Required_WithAttribute")]
+        internal class User_GetMetadataInfo_Required_WithAttribute
+        {
+            [Required]
+            public string Name { get; set; }
         }
         #endregion
 

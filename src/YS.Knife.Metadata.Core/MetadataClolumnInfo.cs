@@ -9,6 +9,7 @@ namespace YS.Knife.Metadata
         public string DisplayName { get; set; }
         public string Description { get; set; }
         public bool ShowForDisplay { get; set; }
+        public bool Required { get; set; }
         public string DisplayFormat { get; set; }
         public bool IsArray { get; set; }
         public string DataTypeName { get; set; }
@@ -24,6 +25,7 @@ namespace YS.Knife.Metadata
     {
         public SourceType Type { get; set; }
         public object Value { get; set; }
+        public object Config { get; set; }
     }
 
 }
