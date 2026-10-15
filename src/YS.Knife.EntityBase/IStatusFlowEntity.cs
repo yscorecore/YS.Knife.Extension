@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using YS.Knife;
 
 namespace YS.Knife.Entity
 {
@@ -31,36 +32,9 @@ namespace YS.Knife.Entity
         [StringLength(64)]
         public string Operator { get; set; }
     }
-    /// <summary>
-    /// 标注在状态枚举字段上，声明从该状态允许流转到的目标状态集合；未标注的状态不限制流转。
-    /// </summary>
-    [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    public sealed class FromStatusAttribute : Attribute
-    {
-        public FromStatusAttribute(Type enumType, params object[] values)
-        {
-            if (!enumType.IsEnum)
-            {
-                throw new ArgumentException("enumType must be an enum type", nameof(enumType));
-            }
-            Array.ForEach(values, v =>
-            {
-                if (v == null || v.GetType() != enumType)
-                {
-                    throw new ArgumentException("values must be of the same type as enumType", nameof(values));
-                }
-            });
-            this.EnumType = enumType;
-            this.Values = values;
-        }
-        public object[] Values { get; set; }
-        public Type EnumType { get; set; }
-    }
-
     public static class EnumStatusExtensions
     {
-
-        public static void AppendInitStatusFlow<TStatus, TFlow>(this IStatusFlowEntity<TStatus, TFlow> obj, TStatus newValue, string operatorName, Action<TFlow> action = null)
+        public static void AppendInitStatusFlow<TStatus, TFlow>(this IStatusFlowEntity<TStatus, TFlow> obj, string operatorName, Action<TFlow> action = null)
             where TStatus : struct, Enum
             where TFlow : IStatusChangeFlowEntity<TStatus>, new()
 
@@ -69,7 +43,7 @@ namespace YS.Knife.Entity
             var flow = new TFlow
             {
                 From = null,
-                To = newValue,
+                To = obj.Status,
                 OperationTime = DateTimeOffset.Now,
                 Operator = operatorName,
                 Order = obj.Flows.Count + 1
@@ -99,20 +73,10 @@ namespace YS.Knife.Entity
         public static void CheckTransition<TStatus>(this IStatusEntity<TStatus> obj, TStatus newValue)
              where TStatus : struct, Enum
         {
-            if (!IsValidTransition(obj.Status, newValue))
+            if (!FromStatusAttribute.IsValidTransition(obj.Status, newValue))
             {
                 throw new InvalidOperationException("Invalid status transition from " + obj.Status.ToString() + " to " + newValue.ToString());
             }
-        }
-        public static bool IsValidTransition<TStatus>(TStatus current, TStatus newValue)
-             where TStatus : struct, Enum
-        {
-            var currentField = typeof(TStatus).GetField(current.ToString());
-            if (currentField == null || currentField.GetCustomAttributes(typeof(FromStatusAttribute), false).FirstOrDefault() is not FromStatusAttribute fromStatusAttr)
-            {
-                return true;
-            }
-            return fromStatusAttr.Values.Contains(newValue);
         }
 
     }

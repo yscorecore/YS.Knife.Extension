@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.Extensions.Options;
+using YS.Knife;
 
 namespace YS.Knife.Metadata.Impl.Mvc
 {
@@ -58,7 +59,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 DisplayName = model.DisplayName ?? type.Name,
                 Description = model.Description,
                 Columns = GetMetadataColumns(model, new HashSet<Type>()).OrderBy(p => p.DisplayOrder).ToList(),
-                Tags = BuildTags(type.GetCustomAttributes<TagAttribute>())
+                Tags = TagAttribute.GetTags(type)
             },
             type.GetCustomAttributes<MetadataInterceptorAttribute>().Select(p => p.InterceptorName).ToArray()
             );
@@ -107,7 +108,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 DisplayOrder = p.Order,
                 DataSource = GetEditorSource(p, type),
                 QueryFilter = GetQueryFilterInfo(p),
-                Tags = BuildTags(p.Attributes.PropertyAttributes.OfType<TagAttribute>()),
+                Tags = BuildTags(p),
                 Prompt = GetPrompt(p),
             };
         }
@@ -174,18 +175,10 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 metadata.Attributes.PropertyAttributes.OfType<DescriptionAttribute>().Select(p => p.Description).FirstOrDefault()
                 );
         }
-        private static Dictionary<string, string> BuildTags(IEnumerable<TagAttribute> tagAttributes)
+        private static Dictionary<string, object> BuildTags(DefaultModelMetadata metadata)
         {
-            var tags = new Dictionary<string, string>();
-            foreach (var attr in tagAttributes)
-            {
-                if (tags.ContainsKey(attr.Key))
-                {
-                    throw new InvalidOperationException($"Duplicate tag key '{attr.Key}'.");
-                }
-                tags[attr.Key] = attr.Value;
-            }
-            return tags.Count > 0 ? tags : null;
+            var property = metadata.ContainerType?.GetProperty(metadata.PropertyName);
+            return property == null ? null : TagAttribute.GetTags(property);
         }
         private static (bool, string, Type) GetTypeCode(Type type)
         {

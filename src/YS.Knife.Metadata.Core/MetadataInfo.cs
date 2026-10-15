@@ -9,7 +9,7 @@ namespace YS.Knife.Metadata
         public string Description { get; set; }
         public List<MetadataClolumnInfo> Columns { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Dictionary<string, string> Tags { get; set; }
+        public Dictionary<string, object> Tags { get; set; }
     }
 
 }

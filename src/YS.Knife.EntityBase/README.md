@@ -74,7 +74,7 @@ public class OrderStatusFlow : IStatusChangeFlowEntity<OrderStatus>
 使用扩展方法初始化状态或流转状态，每次流转会自动校验合法性并追加一条流转记录：
 
 ```csharp
-order.AppendInitStatusFlow(OrderStatus.Created, "admin");    // 初始化状态（From 为 null，不校验）
+order.AppendInitStatusFlow("admin");                         // 以当前 Status 初始化（From 为 null，不校验）
 order.UpdateStatusAndAppendFlow(OrderStatus.Paid, "admin");  // 校验并流转，非法流转抛出 InvalidOperationException
 ```
 

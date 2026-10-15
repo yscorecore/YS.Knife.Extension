@@ -17,7 +17,7 @@ namespace YS.Knife.Metadata
         public DataSourceInfo DataSource { get; set; }
         public QueryFilterInfo QueryFilter { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Dictionary<string, string> Tags { get; set; }
+        public Dictionary<string, object> Tags { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Prompt { get; set; }
     }
