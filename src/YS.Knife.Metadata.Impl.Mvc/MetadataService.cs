@@ -72,7 +72,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 .OrderBy(p => p.Order)
                 .Select(p => PropertyToMetadataClolumnInfo(p)))
             {
-                if (c.IsArray == false && c.DataTypeName == "object")
+                if (c.IsArray == false && c.DataTypeName == "object" && !IsDictionaryType(c.PropertyModel.ModelType))
                 {
                     var newSet = handledTypes.ToHashSet();
                     foreach (var v in GetMetadataColumns(c.PropertyModel, newSet))
@@ -180,6 +180,17 @@ namespace YS.Knife.Metadata.Impl.Mvc
             var property = metadata.ContainerType?.GetProperty(metadata.PropertyName);
             return property == null ? null : TagAttribute.GetTags(property);
         }
+        private static bool IsDictionaryType(Type type)
+        {
+            return typeof(IDictionary).IsAssignableFrom(type)
+                || IsDictionaryInterface(type)
+                || type.GetInterfaces().Any(IsDictionaryInterface);
+            static bool IsDictionaryInterface(Type t)
+            {
+                return t.IsGenericType && (t.GetGenericTypeDefinition() == typeof(IDictionary<,>)
+                    || t.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>));
+            }
+        }
         private static (bool, string, Type) GetTypeCode(Type type)
         {
             type = ExcludeNullableType(type);
@@ -188,6 +199,10 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 return (true, GetTypeCode(type!.GetElementType()), type!.GetElementType());
             }
             if (Type.GetTypeCode(type) != TypeCode.Object)
+            {
+                return (false, GetTypeCode(type), type);
+            }
+            if (IsDictionaryType(type))
             {
                 return (false, GetTypeCode(type), type);
             }

@@ -377,5 +377,38 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
         }
         #endregion
 
+        #region DictionaryType
+        [Fact]
+        public async Task Should_GetDictionaryType_Meta()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetDictionaryType_Meta");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.IsArray.Should().BeFalse();
+            firstColumn.DataTypeName.Should().Be("object");
+        }
+        [Metadata("GetDictionaryType_Meta")]
+        internal class GetDictionaryType_Meta
+        {
+            public Dictionary<string, string> Name { get; set; }
+        }
+        [Fact]
+        public async Task Should_GetReadOnlyDictionaryType_Meta()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetReadOnlyDictionaryType_Meta");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.IsArray.Should().BeFalse();
+            firstColumn.DataTypeName.Should().Be("object");
+        }
+        [Metadata("GetReadOnlyDictionaryType_Meta")]
+        internal class GetReadOnlyDictionaryType_Meta
+        {
+            public IReadOnlyDictionary<string, string> Name { get; set; }
+        }
+        #endregion
+
     }
 }
