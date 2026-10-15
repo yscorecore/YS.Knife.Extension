@@ -41,16 +41,19 @@ var topItems = dbContext.Categories
 
 ### 状态流转
 
-在状态枚举字段上用 `[FromStatus]` 声明允许流转到的目标状态（未标注的状态不限制流转）：
+在状态枚举字段上用 `[FromStatus]` 声明允许从哪些状态流转到该状态（未标注的状态不限制来源）：
 
 ```csharp
 public enum OrderStatus
 {
     Created,
-    [FromStatus(OrderStatus.Shipped, OrderStatus.Cancelled)]
+    [FromStatus(OrderStatus.Created)]
     Paid,
+    [FromStatus(OrderStatus.Paid)]
     Shipped,
+    [FromStatus(OrderStatus.Shipped)]
     Completed,
+    [FromStatus(OrderStatus.Created, OrderStatus.Paid)]
     Cancelled,
 }
 

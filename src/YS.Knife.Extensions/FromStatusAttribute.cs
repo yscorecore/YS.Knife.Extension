@@ -1,7 +1,7 @@
 ﻿namespace YS.Knife
 {
     /// <summary>
-    /// 标注在状态枚举字段上，声明从该状态允许流转到的目标状态集合；未标注的状态不限制流转。
+    /// 标注在状态枚举字段上，声明允许从哪些状态流转到该状态；未标注的状态不限制来源。
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
     public sealed class FromStatusAttribute : Attribute
@@ -13,17 +13,21 @@
         public object[] Values { get; set; }
 
         /// <summary>
-        /// 判断从 current 状态是否允许流转到 newValue 状态；未标注 [FromStatus] 的状态不限制流转。
+        /// 判断是否允许从 current 状态流转到 newValue 状态；目标状态未标注 [FromStatus] 时不限制来源。
         /// </summary>
         public static bool IsValidTransition<TStatus>(TStatus current, TStatus newValue)
              where TStatus : struct, Enum
         {
-            var currentField = typeof(TStatus).GetField(current.ToString());
-            if (currentField == null || currentField.GetCustomAttributes(typeof(FromStatusAttribute), false).FirstOrDefault() is not FromStatusAttribute fromStatusAttr)
+            var targetField = typeof(TStatus).GetField(newValue.ToString());
+            if (targetField == null || targetField.GetCustomAttributes(typeof(FromStatusAttribute), false).FirstOrDefault() is not FromStatusAttribute fromStatusAttr)
             {
                 return true;
             }
-            return fromStatusAttr.Values.Contains(newValue);
+            if (fromStatusAttr.Values.Any(v => v is not TStatus))
+            {
+                throw new InvalidOperationException($"[FromStatus] values on field '{typeof(TStatus).Name}.{targetField.Name}' must be of enum type '{typeof(TStatus).Name}'.");
+            }
+            return fromStatusAttr.Values.Contains(current);
         }
     }
 }

@@ -14,26 +14,27 @@ namespace YS.Knife.Wechat.MiniProgram.IntegrationTest
         {
             this.GetService<WechatClient>().Should().NotBeNull();
         }
-        [Fact]
-        public async Task ShouldGetWechatAccessToken()
-        {
-            var client = this.GetService<WechatClient>();
-            var token = await client.GetAccessToken(TestWechatAppId, TestWechatAppSecret);
-            token.AccessToken.Should().NotBeNullOrEmpty();
-        }
+        // 以下两个用例需要真实网络请求，CI 环境网络不稳定，注释掉
+        //[Fact]
+        //public async Task ShouldGetWechatAccessToken()
+        //{
+        //    var client = this.GetService<WechatClient>();
+        //    var token = await client.GetAccessToken(TestWechatAppId, TestWechatAppSecret);
+        //    token.AccessToken.Should().NotBeNullOrEmpty();
+        //}
 
-        [Fact]
-        public async Task ShouldThrowErrorWhenGetUnlimitedQrCodeWithInvalidAccesstoken()
-        {
-            var client = this.GetService<WechatClient>();
-            Func<Task<Stream>> act = () => client.GetUnlimited("abc", new GetWxacodeunlimitRequest
-            {
-                Scene = "abc",
-                Page = "abc",
-                CheckPath = false
-            });
-            await act.Should().ThrowAsync<WechatException>();
-        }
+        //[Fact]
+        //public async Task ShouldThrowErrorWhenGetUnlimitedQrCodeWithInvalidAccesstoken()
+        //{
+        //    var client = this.GetService<WechatClient>();
+        //    Func<Task<Stream>> act = () => client.GetUnlimited("abc", new GetWxacodeunlimitRequest
+        //    {
+        //        Scene = "abc",
+        //        Page = "abc",
+        //        CheckPath = false
+        //    });
+        //    await act.Should().ThrowAsync<WechatException>();
+        //}
         //[Fact]
         //public async Task ShouldGetUnlimitedQrCode()
         //{
