@@ -47,7 +47,7 @@ var topItems = dbContext.Categories
 public enum OrderStatus
 {
     Created,
-    [FromStatus(typeof(OrderStatus), OrderStatus.Shipped, OrderStatus.Cancelled)]
+    [FromStatus(OrderStatus.Shipped, OrderStatus.Cancelled)]
     Paid,
     Shipped,
     Completed,
