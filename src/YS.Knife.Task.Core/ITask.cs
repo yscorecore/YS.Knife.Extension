@@ -10,7 +10,6 @@ namespace YS.Knife.Task
     }
 
     public interface ITask<TArgs> : ITask
-        where TArgs : new()
     {
         Task<TaskExecuteResult> ExecuteAsync(TArgs args, CancellationToken cancellationToken = default);
     }

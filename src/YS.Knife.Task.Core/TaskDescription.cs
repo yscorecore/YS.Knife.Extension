@@ -7,5 +7,6 @@
         public string Description { get; set; } = null!;
         public string? Group { get; set; }
         public string? ArgumentMeta { get; set; }
+        public bool IsArray { get; set; }
     }
 }

@@ -7,7 +7,6 @@ namespace YS.Knife.Task
     [Service(typeof(ITaskService))]
     [Service(typeof(ITaskExecutor))]
     [AutoConstructor]
-
     public partial class TaskService : ITaskExecutor, ITaskService
     {
         private readonly IEnumerable<ITask> allTasks;
@@ -32,28 +31,50 @@ namespace YS.Knife.Task
         private TaskDescription CreateDescriptionFromType(Type type)
         {
             var attr = TaskAttribute.GetFromType(type);
-            var argType = GetArgumentType(type);
-            var argumentMeta = argType == null ? null : (argType?.GetCustomAttribute<MetadataAttribute>()?.Name ?? argType?.FullName);
+            var (argType, isArray) = GetArgumentType(type);
+            var argumentMeta = argType == null ? null : (argType.GetCustomAttribute<MetadataAttribute>()?.Name ?? argType.FullName);
             return new TaskDescription
             {
                 Name = attr.Name,
                 Version = attr.Version,
                 Description = attr.Description,
                 Group = attr.Group,
-                ArgumentMeta = argumentMeta
+                ArgumentMeta = argumentMeta,
+                IsArray = isArray
             };
         }
 
-        private Type? GetArgumentType(Type type)
+        private (Type? ArgType, bool IsArray) GetArgumentType(Type type)
         {
             var baseType = type.BaseType;
 
             if (baseType != null && baseType.IsGenericType && baseType.GetGenericTypeDefinition() == typeof(BaseTask<>))
             {
-                var argType = baseType.GetGenericArguments().Single();
-                return argType;
+                return GetItemType(baseType.GetGenericArguments().Single());
             }
-            return null;
+            return (null, false);
+        }
+
+        private static (Type? ArgType, bool IsArray) GetItemType(Type type)
+        {
+            if (type.IsArray)
+            {
+                return (type.GetElementType(), true);
+            }
+            if (type != typeof(string))
+            {
+                var itemType = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+                    ? type.GetGenericArguments()[0]
+                    : type.GetInterfaces()
+                        .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                        .Select(p => p.GetGenericArguments()[0])
+                        .FirstOrDefault();
+                if (itemType != null)
+                {
+                    return (itemType, true);
+                }
+            }
+            return (type, false);
         }
         private async Task<TaskExecuteResult> Execute(string name, string? version, object args, CancellationToken cancellationToken)
         {

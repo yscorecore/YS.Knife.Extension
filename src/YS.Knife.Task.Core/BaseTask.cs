@@ -1,6 +1,6 @@
 ﻿namespace YS.Knife.Task
 {
-    public abstract class BaseTask<TArgs> : ITask<TArgs> where TArgs : new()
+    public abstract class BaseTask<TArgs> : ITask<TArgs>
     {
         public abstract Task<TaskExecuteResult> ExecuteAsync(TArgs args, CancellationToken cancellationToken = default);
 
