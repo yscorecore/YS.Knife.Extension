@@ -15,6 +15,8 @@ namespace YS.Knife.Metadata
         public string DataTypeName { get; set; }
         public int DisplayOrder { get; set; }
         public DataSourceInfo DataSource { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public DataSourceConfig BindTo { get; set; }
         public QueryFilterInfo QueryFilter { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Dictionary<string, object> Tags { get; set; }

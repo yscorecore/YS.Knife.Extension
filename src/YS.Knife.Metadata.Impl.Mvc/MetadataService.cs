@@ -107,6 +107,7 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 DataTypeName = typeCode,
                 DisplayOrder = p.Order,
                 DataSource = GetEditorSource(p, type),
+                BindTo = GetBindToSource(p),
                 QueryFilter = GetQueryFilterInfo(p),
                 Tags = BuildTags(p),
                 Prompt = GetPrompt(p),
@@ -126,6 +127,10 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 Config = source.Config,
                 Expression = source.Expression,
             };
+        }
+        private DataSourceConfig GetBindToSource(DefaultModelMetadata metadata)
+        {
+            return metadata.Attributes.PropertyAttributes.OfType<BindToSourceAttribute>().FirstOrDefault()?.Config;
         }
         private QueryFilterInfo GetQueryFilterInfo(DefaultModelMetadata metadata)
         {

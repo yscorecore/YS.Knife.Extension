@@ -1,4 +1,4 @@
-﻿# YS.Knife.Metadata.Core
+# YS.Knife.Metadata.Core
 
 实体元数据（Metadata）抽象层。定义了用于向前端/低代码场景描述实体结构（列、显示名、数据源、查询过滤器等）的核心模型与接口。
 
@@ -13,6 +13,7 @@
   - `[MetadataInterceptor("interceptorName")]`：为类指定命名的元数据拦截器
   - `[QueryFilter(Operators.Equal)]`：标注属性为查询过滤字段，可指定操作符与默认值
   - 编辑器数据源：`[EditorDataSource]`、`[EditorEnumSource]`、`[EditorConstantSource]`、`[EditorNamedConstantSource]`
+  - `[BindToSource("refName")]`：声明列的绑定数据源，输出到列的 `BindTo` 字段；与编辑器数据源并行，可同时标注
   - `[Tag("key", "value")]`：为类或属性添加自定义标签，可叠加多个；同名 key 重复时抛异常
 - `Operators`：内置查询操作符常量（`==`、`!=`、`between`、`in`、`contains` 等）
 - `IMetadataInterceptor`：元数据拦截器接口，支持全局或按名称拦截并修改生成的 `MetadataInfo`，按 `Priority` 排序执行

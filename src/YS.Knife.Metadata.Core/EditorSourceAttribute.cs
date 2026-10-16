@@ -40,8 +40,7 @@ namespace YS.Knife.Metadata
         DataSource = 0,
         Enum = 1,
         Const = 2,
-        Dic = 3,
-        Ref = 4
+        Dic = 3
     }
 
     public record DataSourceConfig(string RefName, bool IsArray, bool SingleProperty, string[] Properties);
@@ -79,13 +78,16 @@ namespace YS.Knife.Metadata
         {
         }
     }
+    /// <summary>
+    /// 声明列的绑定数据源，与编辑器数据源（DataSource）并行存在，二者可同时标注在同一属性上。
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class EditorRefDataSourceAttribute : EditorSourceAttribute
+    public class BindToSourceAttribute : Attribute
     {
-        public EditorRefDataSourceAttribute(string refName = null, bool isArray = false, bool singleProperty = true, params string[] properties)
-            : base(SourceType.Ref, refName, new DataSourceConfig(refName, isArray, singleProperty, properties))
+        public BindToSourceAttribute(string refName = null, bool isArray = false, bool singleProperty = true, params string[] properties)
         {
-
+            this.Config = new DataSourceConfig(refName, isArray, singleProperty, properties);
         }
+        public DataSourceConfig Config { get; }
     }
 }

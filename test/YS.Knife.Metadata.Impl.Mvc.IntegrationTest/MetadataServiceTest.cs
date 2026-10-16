@@ -246,6 +246,58 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
         }
         #endregion
 
+        #region BindToSource
+        [Fact]
+        public async Task Should_GetMetadataInfo_BindToSource_From_BindToSourceAttribute()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetMetadataInfo_BindToSource_From_BindToSourceAttribute");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.BindTo.Should().NotBeNull();
+            firstColumn.BindTo.RefName.Should().Be("userRef");
+            firstColumn.BindTo.IsArray.Should().BeTrue();
+            firstColumn.BindTo.SingleProperty.Should().BeFalse();
+            firstColumn.BindTo.Properties.Should().BeEquivalentTo("Id", "Name");
+        }
+        [Metadata("GetMetadataInfo_BindToSource_From_BindToSourceAttribute")]
+        internal class User_GetMetadataInfo_BindToSource_From_BindToSourceAttribute
+        {
+            [BindToSource("userRef", isArray: true, singleProperty: false, "Id", "Name")]
+            public string Name { get; set; }
+        }
+        [Fact]
+        public async Task Should_GetNullBindToSource_When_NoAttribute()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetMetadataInfo_BindToSource_NoAttribute");
+            info.Columns.First().BindTo.Should().BeNull();
+        }
+        [Metadata("GetMetadataInfo_BindToSource_NoAttribute")]
+        internal class User_GetMetadataInfo_BindToSource_NoAttribute
+        {
+            public string Name { get; set; }
+        }
+        [Fact]
+        public async Task Should_GetBindToSource_And_EnumDataSource_Together()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetBindToSource_And_EnumDataSource_Together");
+            var firstColumn = info.Columns.First();
+            firstColumn.BindTo.Should().NotBeNull();
+            firstColumn.BindTo.RefName.Should().Be("auditRef");
+            firstColumn.DataSource.Should().NotBeNull();
+            firstColumn.DataSource.Type.Should().Be(SourceType.Enum);
+        }
+        [Metadata("GetBindToSource_And_EnumDataSource_Together")]
+        internal class User_GetBindToSource_And_EnumDataSource_Together
+        {
+            [BindToSource("auditRef")]
+            [EditorEnumSource("abc")]
+            public string Name { get; set; }
+        }
+        #endregion
+
         #region EnumDataSource
         [Fact]
         public async Task Should_GetMetadataInfo_DataSource_From_EditorEnumSourceAttribute()
