@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using YS.Knife.EFCore;
 using YS.Knife.Entity;
 
 namespace YS.Knife.AppRes.Entity.EFCore
@@ -16,6 +17,7 @@ namespace YS.Knife.AppRes.Entity.EFCore
         [StringLength(64)]
         [Required]
         public string Name { get; set; } = null!;
+        [UniqueName(nameof(Group), ErrorMessage = "编码已经存在", IgnoreCase = true)]
         [StringLength(64)]
         public string Code { get; set; } = null!;
 
