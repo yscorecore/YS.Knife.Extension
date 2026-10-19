@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Task
+﻿namespace YS.Knife.Tasks
 {
     public record class TaskDescription
     {

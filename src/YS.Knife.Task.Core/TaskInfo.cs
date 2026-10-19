@@ -3,7 +3,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 
-namespace YS.Knife.Task
+namespace YS.Knife.Tasks
 {
     public record class TaskInfo
     {

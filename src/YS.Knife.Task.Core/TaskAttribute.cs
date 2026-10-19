@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 
-namespace YS.Knife.Task
+namespace YS.Knife.Tasks
 {
     [System.AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
     public sealed class TaskAttribute : DescriptionAttribute

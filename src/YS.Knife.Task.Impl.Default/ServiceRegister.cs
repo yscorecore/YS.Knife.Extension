@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using YS.Knife.Metadata;
+using YS.Knife.Tasks;
 
 namespace YS.Knife.Task.Impl.Default
 {

@@ -1,7 +1,7 @@
 ﻿using YS.Knife.Hosting;
 using YS.Knife.Metadata;
 using YS.Knife.Query;
-using YS.Knife.Task;
+using YS.Knife.Tasks;
 
 namespace YS.TaskImplDefault.UnitTest
 {
@@ -95,36 +95,36 @@ namespace YS.TaskImplDefault.UnitTest
         [Task("plain-arg-task", "plain argument task")]
         public class PlainArgTask : BaseTask<string>
         {
-            public override Task<TaskExecuteResult> ExecuteAsync(string args, CancellationToken cancellationToken = default)
-                => Task.FromResult(TaskExecuteResult.Ok);
+            public override Task ExecuteAsync(string args, CancellationToken cancellationToken = default)
+                => Task.CompletedTask;
         }
 
         [Task("array-arg-task", "array argument task")]
         public class ArrayArgTask : BaseTask<int[]>
         {
-            public override Task<TaskExecuteResult> ExecuteAsync(int[] args, CancellationToken cancellationToken = default)
-                => Task.FromResult(TaskExecuteResult.Ok);
+            public override Task ExecuteAsync(int[] args, CancellationToken cancellationToken = default)
+                => Task.CompletedTask;
         }
 
         [Task("list-arg-task", "list argument task")]
         public class ListArgTask : BaseTask<List<string>>
         {
-            public override Task<TaskExecuteResult> ExecuteAsync(List<string> args, CancellationToken cancellationToken = default)
-                => Task.FromResult(TaskExecuteResult.Ok);
+            public override Task ExecuteAsync(List<string> args, CancellationToken cancellationToken = default)
+                => Task.CompletedTask;
         }
 
         [Task("enumerable-arg-task", "enumerable argument task")]
         public class EnumerableArgTask : BaseTask<IEnumerable<int>>
         {
-            public override Task<TaskExecuteResult> ExecuteAsync(IEnumerable<int> args, CancellationToken cancellationToken = default)
-                => Task.FromResult(TaskExecuteResult.Ok);
+            public override Task ExecuteAsync(IEnumerable<int> args, CancellationToken cancellationToken = default)
+                => Task.CompletedTask;
         }
 
         [Task("custom-array-task", "custom array argument task")]
         public class CustomArrayArgTask : BaseTask<CustomArg[]>
         {
-            public override Task<TaskExecuteResult> ExecuteAsync(CustomArg[] args, CancellationToken cancellationToken = default)
-                => Task.FromResult(TaskExecuteResult.Ok);
+            public override Task ExecuteAsync(CustomArg[] args, CancellationToken cancellationToken = default)
+                => Task.CompletedTask;
         }
 
         [Metadata("CustomArgMeta")]

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace YS.Knife.Task
+namespace YS.Knife.Tasks
 {
     public interface ITaskExecutor
     {

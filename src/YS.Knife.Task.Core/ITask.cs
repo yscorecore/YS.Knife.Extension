@@ -2,15 +2,15 @@
 using System.Text.Json;
 using System.Text.Unicode;
 
-namespace YS.Knife.Task
+namespace YS.Knife.Tasks
 {
     public interface ITask
     {
-        Task<TaskExecuteResult> ExecuteAsync(object args, CancellationToken cancellationToken = default);
+        Task ExecuteAsync(object args, CancellationToken cancellationToken = default);
     }
 
     public interface ITask<TArgs> : ITask
     {
-        Task<TaskExecuteResult> ExecuteAsync(TArgs args, CancellationToken cancellationToken = default);
+        Task ExecuteAsync(TArgs args, CancellationToken cancellationToken = default);
     }
 }

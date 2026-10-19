@@ -1,12 +1,14 @@
 ﻿using System.Reflection;
+using Microsoft.Extensions.Logging;
 using YS.Knife.Metadata;
 using YS.Knife.Query;
 
-namespace YS.Knife.Task
+namespace YS.Knife.Tasks
 {
     [Service(typeof(ITaskService))]
     [Service(typeof(ITaskExecutor))]
     [AutoConstructor]
+    [Logger]
     public partial class TaskService : ITaskExecutor, ITaskService
     {
         private readonly IEnumerable<ITask> allTasks;
@@ -83,14 +85,14 @@ namespace YS.Knife.Task
             {
                 try
                 {
-                    return await task.Item1.ExecuteAsync(args, cancellationToken);
+                    await task.Item1.ExecuteAsync(args, cancellationToken);
+                    return TaskExecuteResult.Ok;
                 }
                 catch (Exception ex)
                 {
-
-                    return TaskExecuteResult.Failure($"Task {key} execution failed: {ex.Message}");
+                    logger.LogWarning(ex, $"Task {key} execution failed: {ex.Message}");
+                    return TaskExecuteResult.Failure(ex.Message);
                 }
-
             }
             return TaskExecuteResult.Failure($"Task {key} not found");
 

@@ -1,6 +1,6 @@
 ﻿
 using YS.Knife.Metadata;
-using YS.Knife.Task;
+using YS.Knife.Tasks;
 
 namespace TaskDemo
 {
@@ -22,12 +22,10 @@ namespace TaskDemo
     [AutoConstructor]
     public partial class HelloTask : BaseTask<HelloTaskReq>
     {
-        public override async Task<TaskExecuteResult> ExecuteAsync(HelloTaskReq args, CancellationToken cancellationToken = default)
+        public override async Task ExecuteAsync(HelloTaskReq args, CancellationToken cancellationToken = default)
         {
             await Task.Delay(1, cancellationToken);
             this.logger.LogInformation("Hello {message}", args.Message);
-            return TaskExecuteResult.Ok;
-
         }
     }
 

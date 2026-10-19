@@ -1,13 +1,13 @@
-﻿namespace YS.Knife.Task
+﻿namespace YS.Knife.Tasks
 {
     public abstract class BaseTask<TArgs> : ITask<TArgs>
     {
-        public abstract Task<TaskExecuteResult> ExecuteAsync(TArgs args, CancellationToken cancellationToken = default);
+        public abstract Task ExecuteAsync(TArgs args, CancellationToken cancellationToken = default);
 
 
-        public Task<TaskExecuteResult> ExecuteAsync(object args, CancellationToken cancellationToken = default)
+        public async Task ExecuteAsync(object args, CancellationToken cancellationToken = default)
         {
-            return ExecuteAsync(args.AsJsonObject<TArgs>(TaskInfo.JsonSerializerOptions), cancellationToken);
+            await ExecuteAsync(args.AsJsonObject<TArgs>(TaskInfo.JsonSerializerOptions), cancellationToken);
         }
     }
 }
