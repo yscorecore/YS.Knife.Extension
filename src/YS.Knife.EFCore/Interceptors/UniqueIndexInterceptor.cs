@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -11,14 +12,18 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.EFCore
 {
+    /// <summary>
+    /// 保存前校验实体上标注了 <see cref="IndexAttribute"/> 且 IsUnique 的属性组合不与已有数据冲突，
+    /// 冲突时抛出 <see cref="ValidationException"/>。
+    /// </summary>
     [Service(typeof(IInterceptor), Lifetime = ServiceLifetime.Singleton)]
-    public class UniqueNameInterceptor : SaveChangesInterceptor
+    public class UniqueIndexInterceptor : SaveChangesInterceptor
     {
-        // CLR 类型 → 该类上所有带 [UniqueName] 的属性
-        private static readonly ConcurrentDictionary<Type, (string PropName, UniqueNameAttribute Attr)[]> AttributeCache = new();
+        // CLR 类型 → 该类上所有 IsUnique 的 IndexAttribute
+        private static readonly ConcurrentDictionary<Type, IndexAttribute[]> UniqueIndexCache = new();
 
         // 泛型辅助方法的 MethodInfo（用于反射调用，内部走强类型 EF Core API）
-        private static readonly MethodInfo ExistsAsyncMethod = typeof(UniqueNameInterceptor)
+        private static readonly MethodInfo ExistsAsyncMethod = typeof(UniqueIndexInterceptor)
             .GetMethod(nameof(ExistsAsync), BindingFlags.NonPublic | BindingFlags.Static)!;
 
         private static Task<bool> ExistsAsync<T>(
@@ -53,24 +58,21 @@ namespace YS.Knife.EFCore
 
             foreach (var entry in entries)
             {
-                var uniqueProps = AttributeCache.GetOrAdd(entry.Metadata.ClrType, static clrType =>
-                    clrType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                        .Select(p => (p.Name, Attr: p.GetCustomAttribute<UniqueNameAttribute>(true)))
-                        .Where(x => x.Attr is not null)
-                        .Select(x => (x.Name, x.Attr!))
+                var uniqueIndexes = UniqueIndexCache.GetOrAdd(entry.Metadata.ClrType, static clrType =>
+                    clrType.GetCustomAttributes<IndexAttribute>(true)
+                        .Where(a => a.IsUnique)
                         .ToArray());
 
-                foreach (var (propName, attr) in uniqueProps)
+                foreach (var index in uniqueIndexes)
                 {
-                    // 更新场景：只有涉及唯一性判断的字段变化时才查库
-                    if (entry.State == EntityState.Modified)
+                    // 更新场景：只有唯一索引涉及的字段变化时才查库
+                    if (entry.State == EntityState.Modified
+                        && !index.PropertyNames.Any(p => entry.Property(p).IsModified))
                     {
-                        var relevant = new[] { propName }.Concat(attr.ScopeProperties);
-                        if (!relevant.Any(p => entry.Property(p).IsModified))
-                            continue;
+                        continue;
                     }
 
-                    await CheckOneAsync(context, entry, propName, attr, entries, ct);
+                    await CheckOneAsync(context, entry, index, entries, ct);
                 }
             }
         }
@@ -78,29 +80,21 @@ namespace YS.Knife.EFCore
         private static async Task CheckOneAsync(
             DbContext context,
             EntityEntry entry,
-            string propertyName,
-            UniqueNameAttribute attr,
+            IndexAttribute index,
             List<EntityEntry> allEntries,
             CancellationToken ct)
         {
             var entityType = entry.Metadata.ClrType;
-            var nameValue = entry.Property(propertyName).CurrentValue;
+            var values = index.PropertyNames.Select(p => entry.Property(p).CurrentValue).ToArray();
 
-            // 空值不参与唯一性校验（需强制非空请另加 [Required]）
-            if (nameValue is null) return;
+            // 任一列为空则不参与唯一性校验（唯一索引通常允许多个 NULL）
+            if (values.Any(v => v is null)) return;
 
-            // ---------- 1. 构造数据库端谓词 ----------
+            // ---------- 1. 构造数据库端谓词：所有索引列均相等 ----------
             var param = Expression.Parameter(entityType, "e");
-            Expression predicate = BuildEquals(
-                Expression.Property(param, propertyName), nameValue, attr.IgnoreCase);
-
-            foreach (var scopeProp in attr.ScopeProperties)
-            {
-                var scopeValue = entry.Property(scopeProp).CurrentValue;
-                predicate = Expression.AndAlso(
-                    predicate,
-                    BuildEquals(Expression.Property(param, scopeProp), scopeValue, false));
-            }
+            Expression predicate = index.PropertyNames
+                .Select((p, i) => BuildEquals(Expression.Property(param, p), values[i]))
+                .Aggregate(Expression.AndAlso);
 
             // 更新时排除自身：NOT(pk1 == v1 AND pk2 == v2 ...)，兼容复合主键
             if (entry.State == EntityState.Modified)
@@ -122,20 +116,23 @@ namespace YS.Knife.EFCore
                 other != entry
                 && other.Metadata.ClrType == entityType
                 && other.State is EntityState.Added or EntityState.Modified
-                && NameMatches(other, entry, propertyName, attr)
-                && attr.ScopeProperties.All(sp => Equals(
-                    other.Property(sp).CurrentValue,
-                    entry.Property(sp).CurrentValue)));
+                && index.PropertyNames.All(p => Equals(
+                    other.Property(p).CurrentValue,
+                    entry.Property(p).CurrentValue)));
 
             if (existsInDb || conflictInBatch)
             {
-                var scopeDesc = attr.ScopeProperties.Length == 0
-                    ? "（全局）"
-                    : $"（在相同 {string.Join(", ", attr.ScopeProperties)} 范围内）";
-
-                throw new ValidationException(string.Format(
-                    attr.ErrorMessage, propertyName, nameValue, scopeDesc));
+                var displayName = GetPropertyDisplayName(entityType, index.PropertyNames.Last());
+                throw new ValidationException($"{displayName} 重复");
             }
+        }
+
+        private static string GetPropertyDisplayName(Type entityType, string propertyName)
+        {
+            var prop = entityType.GetProperty(propertyName);
+            return prop?.GetCustomAttribute<DescriptionAttribute>(true)?.Description
+                ?? prop?.GetCustomAttribute<CommentAttribute>(true)?.Comment
+                ?? propertyName;
         }
 
         // 复合主键：拼接 (pk1 == v1 && pk2 == v2 && ...)
@@ -160,23 +157,8 @@ namespace YS.Knife.EFCore
             return result;
         }
 
-        private static bool NameMatches(
-            EntityEntry a, EntityEntry b, string propertyName, UniqueNameAttribute attr)
+        private static Expression BuildEquals(Expression property, object value)
         {
-            var va = a.Property(propertyName).CurrentValue;
-            var vb = b.Property(propertyName).CurrentValue;
-            if (va is null || vb is null) return false;
-
-            if (attr.IgnoreCase && va is string sa && vb is string sb)
-                return string.Equals(sa, sb, StringComparison.OrdinalIgnoreCase);
-            return Equals(va, vb);
-        }
-
-        private static Expression BuildEquals(Expression property, object? value, bool ignoreCase)
-        {
-            if (value is null)
-                return Expression.Equal(property, Expression.Constant(null, property.Type));
-
             Expression constant = Expression.Constant(value);
             if (constant.Type != property.Type)
             {
@@ -184,15 +166,6 @@ namespace YS.Knife.EFCore
                 if (Nullable.GetUnderlyingType(property.Type) == value.GetType())
                     constant = Expression.Convert(constant, property.Type);
             }
-
-            if (ignoreCase && property.Type == typeof(string) && value is string)
-            {
-                var toUpper = typeof(string).GetMethod(nameof(string.ToUpper), Type.EmptyTypes)!;
-                return Expression.Equal(
-                    Expression.Call(property, toUpper),
-                    Expression.Call(constant, toUpper));
-            }
-
             return Expression.Equal(property, constant);
         }
     }

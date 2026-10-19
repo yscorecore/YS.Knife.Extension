@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace YS.Knife.EFCore.UnitTest
 {
-    public class UniqueNameInterceptorTest
+    public class UniqueIndexInterceptorTest
     {
         private static UniqueTestContext CreateContext()
         {
@@ -12,7 +13,7 @@ namespace YS.Knife.EFCore.UnitTest
             connection.Open();
             var options = new DbContextOptionsBuilder<UniqueTestContext>()
                 .UseSqlite(connection)
-                .AddInterceptors(new UniqueNameInterceptor())
+                .AddInterceptors(new UniqueIndexInterceptor())
                 .Options;
             var context = new UniqueTestContext(options, connection);
             context.Database.EnsureCreated();
@@ -20,7 +21,7 @@ namespace YS.Knife.EFCore.UnitTest
         }
 
         [Fact]
-        public void Should_Not_Throw_When_Global_Name_Is_Unique()
+        public void Should_Not_Throw_When_Unique_Value_Is_New()
         {
             using var context = CreateContext();
             context.GlobalEntities.Add(new GlobalUniqueEntity { Name = "A" });
@@ -33,7 +34,7 @@ namespace YS.Knife.EFCore.UnitTest
         }
 
         [Fact]
-        public void Should_Throw_When_Global_Name_Duplicates_Existing_Row()
+        public void Should_Throw_When_Duplicate_Value_Exists_In_Database()
         {
             using var context = CreateContext();
             context.GlobalEntities.Add(new GlobalUniqueEntity { Name = "A" });
@@ -42,22 +43,22 @@ namespace YS.Knife.EFCore.UnitTest
             context.GlobalEntities.Add(new GlobalUniqueEntity { Name = "A" });
             var act = () => context.SaveChanges();
 
-            act.Should().Throw<ValidationException>().WithMessage("*'A'*");
+            act.Should().Throw<ValidationException>().WithMessage("Name 重复");
         }
 
         [Fact]
-        public void Should_Throw_When_Two_Duplicates_Added_In_Same_Batch()
+        public void Should_Throw_When_Duplicates_Added_In_Same_Batch()
         {
             using var context = CreateContext();
             context.GlobalEntities.Add(new GlobalUniqueEntity { Name = "Dup" });
             context.GlobalEntities.Add(new GlobalUniqueEntity { Name = "Dup" });
             var act = () => context.SaveChanges();
 
-            act.Should().Throw<ValidationException>().WithMessage("*'Dup'*");
+            act.Should().Throw<ValidationException>().WithMessage("Name 重复");
         }
 
         [Fact]
-        public void Should_Not_Validate_When_Unique_Value_Is_Null()
+        public void Should_Skip_When_Index_Value_Is_Null()
         {
             using var context = CreateContext();
             context.GlobalEntities.Add(new GlobalUniqueEntity { Name = null });
@@ -68,7 +69,7 @@ namespace YS.Knife.EFCore.UnitTest
         }
 
         [Fact]
-        public void Should_Throw_When_Duplicate_Within_Same_Scope()
+        public void Should_Throw_When_Composite_Index_Duplicated()
         {
             using var context = CreateContext();
             context.ScopedEntities.Add(new ScopedUniqueEntity { Name = "A", Scope = "S1" });
@@ -77,11 +78,11 @@ namespace YS.Knife.EFCore.UnitTest
             context.ScopedEntities.Add(new ScopedUniqueEntity { Name = "A", Scope = "S1" });
             var act = () => context.SaveChanges();
 
-            act.Should().Throw<ValidationException>().WithMessage("*'A'*");
+            act.Should().Throw<ValidationException>().WithMessage("Scope 重复");
         }
 
         [Fact]
-        public void Should_Not_Throw_When_Same_Name_In_Different_Scope()
+        public void Should_Not_Throw_When_Composite_Index_Part_Differs()
         {
             using var context = CreateContext();
             context.ScopedEntities.Add(new ScopedUniqueEntity { Name = "A", Scope = "S1" });
@@ -94,20 +95,7 @@ namespace YS.Knife.EFCore.UnitTest
         }
 
         [Fact]
-        public void Should_Throw_When_IgnoreCase_And_Different_Case()
-        {
-            using var context = CreateContext();
-            context.IgnoreCaseEntities.Add(new IgnoreCaseEntity { Name = "ABC" });
-            context.SaveChanges();
-
-            context.IgnoreCaseEntities.Add(new IgnoreCaseEntity { Name = "abc" });
-            var act = () => context.SaveChanges();
-
-            act.Should().Throw<ValidationException>();
-        }
-
-        [Fact]
-        public void Should_Not_Check_When_Uniqueness_Field_Not_Modified()
+        public void Should_Not_Check_When_Index_Field_Not_Modified()
         {
             using var context = CreateContext();
             context.GlobalEntities.Add(new GlobalUniqueEntity { Name = "A", Remark = "r1" });
@@ -121,7 +109,7 @@ namespace YS.Knife.EFCore.UnitTest
         }
 
         [Fact]
-        public void Should_Throw_When_Update_To_Existing_Value()
+        public void Should_Throw_When_Updated_To_Existing_Value()
         {
             using var context = CreateContext();
             context.GlobalEntities.Add(new GlobalUniqueEntity { Name = "A" });
@@ -132,20 +120,44 @@ namespace YS.Knife.EFCore.UnitTest
             entity.Name = "A";
             var act = () => context.SaveChanges();
 
-            act.Should().Throw<ValidationException>().WithMessage("*'A'*");
+            act.Should().Throw<ValidationException>().WithMessage("Name 重复");
         }
 
         [Fact]
-        public void Should_Use_Custom_ErrorMessage()
+        public void Should_Use_Description_In_Error_Message()
         {
             using var context = CreateContext();
-            context.CustomMessageEntities.Add(new CustomMessageEntity { Name = "A" });
+            context.DescriptionEntities.Add(new DescriptionEntity { Name = "A" });
             context.SaveChanges();
 
-            context.CustomMessageEntities.Add(new CustomMessageEntity { Name = "A" });
+            context.DescriptionEntities.Add(new DescriptionEntity { Name = "A" });
             var act = () => context.SaveChanges();
 
-            act.Should().Throw<ValidationException>().WithMessage("唯一冲突:Name=A");
+            act.Should().Throw<ValidationException>().WithMessage("名称 重复");
+        }
+
+        [Fact]
+        public void Should_Use_Comment_In_Error_Message_When_No_Description()
+        {
+            using var context = CreateContext();
+            context.CommentEntities.Add(new CommentEntity { Code = "C1" });
+            context.SaveChanges();
+
+            context.CommentEntities.Add(new CommentEntity { Code = "C1" });
+            var act = () => context.SaveChanges();
+
+            act.Should().Throw<ValidationException>().WithMessage("编码 重复");
+        }
+
+        [Fact]
+        public void Should_Ignore_Non_Unique_Index()
+        {
+            using var context = CreateContext();
+            context.NonUniqueEntities.Add(new NonUniqueIndexEntity { Name = "A" });
+            context.NonUniqueEntities.Add(new NonUniqueIndexEntity { Name = "A" });
+            var act = () => context.SaveChanges();
+
+            act.Should().NotThrow();
         }
 
         private class UniqueTestContext : BaseContext
@@ -165,43 +177,54 @@ namespace YS.Knife.EFCore.UnitTest
 
             public DbSet<GlobalUniqueEntity> GlobalEntities { get; set; }
             public DbSet<ScopedUniqueEntity> ScopedEntities { get; set; }
-            public DbSet<IgnoreCaseEntity> IgnoreCaseEntities { get; set; }
-            public DbSet<CustomMessageEntity> CustomMessageEntities { get; set; }
+            public DbSet<DescriptionEntity> DescriptionEntities { get; set; }
+            public DbSet<CommentEntity> CommentEntities { get; set; }
+            public DbSet<NonUniqueIndexEntity> NonUniqueEntities { get; set; }
         }
 
+        [Index(nameof(Name), IsUnique = true)]
         private class GlobalUniqueEntity
         {
             public int Id { get; set; }
 
-            [UniqueName]
             public string Name { get; set; }
 
             public string Remark { get; set; }
         }
 
+        [Index(nameof(Name), nameof(Scope), IsUnique = true)]
         private class ScopedUniqueEntity
         {
             public int Id { get; set; }
 
-            [UniqueName(nameof(Scope))]
             public string Name { get; set; }
 
             public string Scope { get; set; }
         }
 
-        private class IgnoreCaseEntity
+        [Index(nameof(Name), IsUnique = true)]
+        private class DescriptionEntity
         {
             public int Id { get; set; }
 
-            [UniqueName(IgnoreCase = true)]
+            [Description("名称")]
             public string Name { get; set; }
         }
 
-        private class CustomMessageEntity
+        [Index(nameof(Code), IsUnique = true)]
+        private class CommentEntity
         {
             public int Id { get; set; }
 
-            [UniqueName(ErrorMessage = "唯一冲突:{0}={1}")]
+            [Comment("编码")]
+            public string Code { get; set; }
+        }
+
+        [Index(nameof(Name))]
+        private class NonUniqueIndexEntity
+        {
+            public int Id { get; set; }
+
             public string Name { get; set; }
         }
     }
