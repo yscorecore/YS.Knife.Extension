@@ -353,3 +353,6 @@ MigrationBackup/
 /.workbuddy/*
 /.workbuddy/
 /.trae/*
+
+# Visual Studio template engine host artifacts
+TemplateEngineHost/

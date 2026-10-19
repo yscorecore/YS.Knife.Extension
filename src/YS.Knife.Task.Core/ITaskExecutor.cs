@@ -20,7 +20,6 @@ namespace YS.Knife.Task
             }, cancellationToken);
         }
         public static async Task<TaskExecuteResult> Execute<TBaseTask, TArg>(this ITaskExecutor service, TArg argument, CancellationToken cancellationToken = default)
-            where TArg : new()
             where TBaseTask : BaseTask<TArg>
         {
             var attr = TaskAttribute.GetFromType(typeof(TBaseTask));

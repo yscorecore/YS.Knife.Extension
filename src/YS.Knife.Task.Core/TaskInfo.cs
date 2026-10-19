@@ -20,7 +20,6 @@ namespace YS.Knife.Task
 
 
         public static TaskInfo<TArg> FromObject<TArg>(TArg arg, string name, string? version)
-            where TArg : new()
         {
             return new TaskInfo<TArg>
             {
@@ -40,7 +39,6 @@ namespace YS.Knife.Task
         }
         public static TaskInfo<TArg> FromTask<TTask, TArg>(TArg arg)
             where TTask : ITask<TArg>
-            where TArg : class, new()
         {
             var attr = TaskAttribute.GetFromType<TTask>();
             return new TaskInfo<TArg>

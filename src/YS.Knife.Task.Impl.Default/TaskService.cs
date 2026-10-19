@@ -55,7 +55,7 @@ namespace YS.Knife.Task
             return (null, false);
         }
 
-        private static (Type? ArgType, bool IsArray) GetItemType(Type type)
+        internal static (Type? ArgType, bool IsArray) GetItemType(Type type)
         {
             if (type.IsArray)
             {

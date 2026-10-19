@@ -37,7 +37,7 @@ namespace YS.Knife.Task.Impl.Default
                 if (baseType.IsGenericType && baseType.GetGenericTypeDefinition() == typeof(BaseTask<>))
                 {
                     var argType = baseType.GetGenericArguments().Single();
-                    yield return argType;
+                    yield return TaskService.GetItemType(argType).ArgType!;
                 }
             }
         }
