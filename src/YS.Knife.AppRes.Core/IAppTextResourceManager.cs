@@ -13,6 +13,7 @@ namespace YS.Knife.AppRes
         public record AppTextResourceInfo : BaseDto<Guid>
         {
             public string Content { get; set; } = null!;
+            public string? ContentType { get; set; }
             public string Group { get; set; } = null!;
             public string Name { get; set; } = null!;
             public string Code { get; set; } = null!;
@@ -25,7 +26,8 @@ namespace YS.Knife.AppRes
         {
             [Required]
             public string Content { get; set; } = null!;
-
+            [StringLength(64)]
+            public string? ContentType { get; set; }
             [StringLength(64)]
             [Required]
             public string Group { get; set; } = null!;
@@ -48,6 +50,9 @@ namespace YS.Knife.AppRes
             [Required]
             public string Content { get; set; } = null!;
 
+
+            [StringLength(64)]
+            public string? ContentType { get; set; }
             [StringLength(64)]
             [Required]
             public string Name { get; set; } = null!;
