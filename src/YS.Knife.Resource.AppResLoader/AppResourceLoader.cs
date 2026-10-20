@@ -45,17 +45,17 @@ namespace YS.Knife.Resource.AppFileResLoader
             }
         }
 
-        internal static string ReplaceUrl(string url, Dictionary<string, string>? urlMappings)
+        internal static string ReplaceUrl(string url, IEnumerable<UrlMapping>? urlMappings)
         {
-            if (urlMappings == null || urlMappings.Count == 0 || string.IsNullOrEmpty(url))
+            if (urlMappings == null || !urlMappings.Any() || string.IsNullOrEmpty(url))
             {
                 return url;
             }
             foreach (var mapping in urlMappings)
             {
-                if (url.StartsWith(mapping.Key, StringComparison.OrdinalIgnoreCase))
+                if (url.StartsWith(mapping.Pattern, StringComparison.OrdinalIgnoreCase))
                 {
-                    return mapping.Value + url.Substring(mapping.Key.Length);
+                    return mapping.Replacement + url.Substring(mapping.Pattern.Length);
                 }
             }
             return url;

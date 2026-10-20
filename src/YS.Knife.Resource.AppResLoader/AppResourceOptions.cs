@@ -17,12 +17,18 @@ namespace YS.Knife.Resource.AppFileResLoader
 
         /// <summary>
         /// URL prefix mappings for download address replacement.
-        /// Key is the prefix to match in the original URL, value is the replacement prefix.
-        /// For example: { "https://www.abc.com/": "http://10.0.12.12/" }
-        /// When a resource URL starts with a key, it will be replaced with the corresponding value before downloading.
+        /// For example: [{ "pattern": "https://www.abc.com/", "replacement": "http://10.0.12.12/" }]
+        /// When a resource URL starts with a pattern, it will be replaced with the corresponding replacement before downloading.
         /// </summary>
-        public Dictionary<string, string> UrlMappings { get; set; } = new();
+        public List<UrlMapping> UrlMappings { get; set; } = new();
 
+    }
+
+    public class UrlMapping
+    {
+        public string Pattern { get; set; } = string.Empty;
+
+        public string Replacement { get; set; } = string.Empty;
     }
     [OptionsPostHandler]
     public class ExportOptionsPostHandler : IPostConfigureOptions<AppResourceOptions>
