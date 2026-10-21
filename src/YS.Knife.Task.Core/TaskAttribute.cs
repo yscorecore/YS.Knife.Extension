@@ -14,7 +14,7 @@ namespace YS.Knife.Tasks
 
         public string Name { get; }
         public string? Version { get; }
-        public string? Group { get; }
+        public string? Group { get; set; }
         public static TaskAttribute GetFromType<T>()
         {
             return GetFromType(typeof(T));
