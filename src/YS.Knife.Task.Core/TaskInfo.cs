@@ -12,6 +12,7 @@ namespace YS.Knife.Tasks
         {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true
         };
 
         public string Name { get; set; } = null!;

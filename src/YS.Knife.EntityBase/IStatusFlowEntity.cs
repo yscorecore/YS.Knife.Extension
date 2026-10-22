@@ -51,6 +51,23 @@ namespace YS.Knife.Entity
             action?.Invoke(flow);
             obj.Flows.Add(flow);
         }
+        public static void AppendFlow<TStatus, TFlow>(this IStatusFlowEntity<TStatus, TFlow> obj, string operatorName, Action<TFlow> action = null)
+          where TStatus : struct, Enum
+          where TFlow : IStatusChangeFlowEntity<TStatus>, new()
+
+        {
+            obj.Flows = obj.Flows ?? new List<TFlow>();
+            var flow = new TFlow
+            {
+                From = obj.Status,
+                To = obj.Status,
+                OperationTime = DateTimeOffset.Now,
+                Operator = operatorName,
+                Order = obj.Flows.Count + 1
+            };
+            action?.Invoke(flow);
+            obj.Flows.Add(flow);
+        }
         public static void UpdateStatusAndAppendFlow<TStatus, TFlow>(this IStatusFlowEntity<TStatus, TFlow> obj, TStatus newValue, string operatorName, Action<TFlow> action = null)
             where TStatus : struct, Enum
             where TFlow : IStatusChangeFlowEntity<TStatus>, new()
