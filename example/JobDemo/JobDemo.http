@@ -1,0 +1,36 @@
+@JobDemo_HostAddress = http://localhost:5090
+
+### 立即排队执行（Default 优先级）
+POST {{JobDemo_HostAddress}}/api/DemoJob/Enqueue
+
+### 延迟 5 秒后执行（Default 优先级）
+POST {{JobDemo_HostAddress}}/api/DemoJob/Schedule
+
+### 添加周期任务（每分钟执行一次，Default 优先级）
+POST {{JobDemo_HostAddress}}/api/DemoJob/AddRecurring
+
+### 移除周期任务
+DELETE {{JobDemo_HostAddress}}/api/DemoJob/RemoveRecurring
+
+### 触发带自动重试的任务（失败 2 次后成功，重试间隔 2s/3s）
+POST {{JobDemo_HostAddress}}/api/DemoJob/EnqueueWithRetry
+
+### 按指定优先级入队（Critical / Default / Low）
+### 注意：当前 Demo 的 BackgroundJobServer 只消费 critical、default 队列，
+### 因此 Low 优先级的任务会停留在 low 队列中，不会被执行——可借此直观验证优先级。
+POST {{JobDemo_HostAddress}}/api/DemoJob/EnqueueWithPriority
+Content-Type: application/json
+
+"Critical"
+###
+POST {{JobDemo_HostAddress}}/api/DemoJob/EnqueueWithPriority
+Content-Type: application/json
+
+"Default"
+###
+POST {{JobDemo_HostAddress}}/api/DemoJob/EnqueueWithPriority
+Content-Type: application/json
+
+"Low"
+
+###
