@@ -5,7 +5,7 @@ namespace YS.Knife.LongJob
 {
     public interface ILongJobStatusManager
     {
-        Task Update(Guid id, JobStatus jobStatus, CancellationToken token);
+        Task Update(JobStatus jobStatus, CancellationToken token);
 
         Task<Guid> CreateNew(string type, string? description = null, CancellationToken token = default);
 
@@ -23,7 +23,7 @@ namespace YS.Knife.LongJob
     {
         public static Task Success(this ILongJobStatusManager jobStatusManager, Guid id, object? assets, CancellationToken token = default)
         {
-            return jobStatusManager.Update(id, new JobStatus
+            return jobStatusManager.Update(new JobStatus
             {
                 Id = id,
                 Completed = true,
@@ -34,7 +34,7 @@ namespace YS.Knife.LongJob
         }
         public static Task Fail(this ILongJobStatusManager jobStatusManager, Guid id, string message, CancellationToken token = default)
         {
-            return jobStatusManager.Update(id, new JobStatus
+            return jobStatusManager.Update(new JobStatus
             {
                 Id = id,
                 Completed = true,
@@ -47,7 +47,7 @@ namespace YS.Knife.LongJob
 
         public static Task ReportProgress(this ILongJobStatusManager jobStatusManager, Guid id, string message, double percentage, CancellationToken token = default)
         {
-            return jobStatusManager.Update(id, new JobStatus
+            return jobStatusManager.Update(new JobStatus
             {
                 Id = id,
                 Completed = false,

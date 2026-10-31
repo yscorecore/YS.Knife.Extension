@@ -23,9 +23,9 @@ namespace YS.Knife.LongJob.Impl.EFCore
             return entity.Id;
         }
 
-        public async Task Update(Guid id, JobStatus jobStatus, CancellationToken token)
+        public async Task Update(JobStatus jobStatus, CancellationToken token)
         {
-            var entity = await entityStore.Current.FindOrThrowAsync(id, token);
+            var entity = await entityStore.Current.FindOrThrowAsync(jobStatus.Id, token);
             entity.Message = jobStatus.Message;
             entity.Percentage = jobStatus.Percentage;
             entity.Completed = jobStatus.Completed;
