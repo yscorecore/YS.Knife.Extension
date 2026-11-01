@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Invalid username or password.</value>
+  </data>
+  <data name="AccountLockedOut" xml:space="preserve">
+    <value>Account is locked out. Please try again later.</value>
+  </data>
+  <data name="EmailAlreadyRegistered" xml:space="preserve">
+    <value>Email '{email}' is already registered.</value>
+  </data>
+  <data name="RegistrationFailed" xml:space="preserve">
+    <value>Registration failed: {errors}</value>
+  </data>
+  <data name="InvalidConfirmationCode" xml:space="preserve">
+    <value>Invalid or expired confirmation code.</value>
+  </data>
+  <data name="InvalidResetCode" xml:space="preserve">
+    <value>Invalid or expired reset code.</value>
+  </data>
+  <data name="EmailSenderNotConfigured" xml:space="preserve">
+    <value>No IIdentityEmailSender implementation is registered.</value>
+  </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>Invalid or expired refresh token.</value>
+  </data>
+  <data name="AccountNotAllowed" xml:space="preserve">
+    <value>Account is not allowed to sign in.</value>
+  </data>
+  <data name="InvalidSecretKey" xml:space="preserve">
+    <value>AuthIdentityOptions.SecretKey must be at least 32 characters long.</value>
+  </data>
+  <data name="ResetPasswordFailed" xml:space="preserve">
+    <value>Password reset failed: {errors}</value>
+  </data>
+</root>

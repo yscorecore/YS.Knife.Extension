@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>YS.Knife.Auth</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="YS.Knife" />
+    <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="[8.*,99.9.0)" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="[8.*,99.9.0)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.Auth.Core\YS.Knife.Auth.Core.csproj" />
+  </ItemGroup>
+
+</Project>
