@@ -45,4 +45,28 @@
   <data name="ResetPasswordFailed" xml:space="preserve">
     <value>密码重置失败：{errors}</value>
   </data>
+  <data name="InvalidPhoneCode" xml:space="preserve">
+    <value>手机验证码无效或已过期。</value>
+  </data>
+  <data name="PhoneNotConfirmed" xml:space="preserve">
+    <value>请先绑定并确认手机号。</value>
+  </data>
+  <data name="PhoneAlreadyBound" xml:space="preserve">
+    <value>手机号 '{phone}' 已被其他账号绑定。</value>
+  </data>
+  <data name="SmsServiceNotConfigured" xml:space="preserve">
+    <value>未注册任何 ISmsService 实现。</value>
+  </data>
+  <data name="NotAuthenticated" xml:space="preserve">
+    <value>当前用户未登录。</value>
+  </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>操作失败：{errors}</value>
+  </data>
+  <data name="SmsLoginDisabled" xml:space="preserve">
+    <value>该账号已启用双因子认证，请使用密码登录。</value>
+  </data>
+  <data name="SendCodeTooFrequent" xml:space="preserve">
+    <value>验证码发送过于频繁，请稍后再试。</value>
+  </data>
 </root>

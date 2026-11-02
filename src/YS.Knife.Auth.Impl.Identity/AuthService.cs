@@ -1,10 +1,16 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using YS.Knife.Sms;
 
 namespace YS.Knife.Auth
 {
@@ -24,21 +30,33 @@ namespace YS.Knife.Auth
     [Service(typeof(ISelfRegisterService), Lifetime = ServiceLifetime.Scoped)]
     [Service(typeof(IPasswordResetService), Lifetime = ServiceLifetime.Scoped)]
     [Service(typeof(ITokenLoginService), Lifetime = ServiceLifetime.Scoped)]
+    [Service(typeof(IBaseLoginService), Lifetime = ServiceLifetime.Scoped)]
+    [Service(typeof(ISmsLoginService), Lifetime = ServiceLifetime.Scoped)]
+    [Service(typeof(IPhoneBindingService), Lifetime = ServiceLifetime.Scoped)]
     [AutoConstructor]
     [CodeExceptions]
-    public partial class AuthService : ICookieLoginService, ICookieLogoutService, ISelfRegisterService, IPasswordResetService, ITokenLoginService
+    public partial class AuthService : ICookieLoginService, ICookieLogoutService, ISelfRegisterService,
+        IPasswordResetService, ITokenLoginService, ISmsLoginService, IPhoneBindingService
     {
         private const string AccessTokenType = "access";
         private const string RefreshTokenType = "refresh";
         private const string TokenTypeClaim = "token_type";
         private const string LoginProvider = "Knife";
         private const string RefreshTokenName = "RefreshToken";
+        private const string LoginTypePassword = "password";
+        private const string LoginTypeSms = "sms";
+        private const string LoginTypeThirdParty = "third-party";
+        private const string LoginCodeKeyPrefix = "auth:sms-login:code:";
+        private const string LoginCodeCooldownKeyPrefix = "auth:sms-login:cooldown:";
 
         private static readonly JwtSecurityTokenHandler TokenHandler = new() { MapInboundClaims = false };
 
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly IEnumerable<IIdentityEmailSender> emailSenders;
+        private readonly IEnumerable<ISmsService> smsServices;
+        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IDistributedCache cache;
         private readonly IOptions<AuthIdentityOptions> options;
 
         // ---------------- 错误定义（消息可被 resx 覆盖以支持多语言） ----------------
@@ -75,6 +93,145 @@ namespace YS.Knife.Auth
 
         [CodeException("AUTH011", "Password reset failed: {errors}")]
         private partial Exception ResetPasswordFailed(string errors);
+
+        [CodeException("AUTH012", "Invalid or expired phone verification code.")]
+        private partial Exception InvalidPhoneCode();
+
+        [CodeException("AUTH013", "Please bind and confirm a phone number first.")]
+        private partial Exception PhoneNotConfirmed();
+
+        [CodeException("AUTH014", "Phone number '{phone}' is already bound to another account.")]
+        private partial Exception PhoneAlreadyBound(string phone);
+
+        [CodeException("AUTH015", "No ISmsService implementation is registered.")]
+        private partial Exception SmsServiceNotConfigured();
+
+        [CodeException("AUTH016", "Current user is not authenticated.")]
+        private partial Exception NotAuthenticated();
+
+        [CodeException("AUTH017", "Operation failed: {errors}")]
+        private partial Exception OperationFailed(string errors);
+
+        [CodeException("AUTH018", "This account has two-factor authentication enabled. Please sign in with your password.")]
+        private partial Exception SmsLoginDisabled();
+
+        [CodeException("AUTH019", "Verification code was sent too frequently. Please try again later.")]
+        private partial Exception SendCodeTooFrequent();
+
+        // ---------------- 登录信息 ----------------
+
+        public async Task<LoginInfo> QueryLogin(string? userName = null, CancellationToken cancellationToken = default)
+        {
+            var opt = options.Value;
+            var loginTypes = new List<string> { LoginTypePassword };
+            if (smsServices.Any()) loginTypes.Add(LoginTypeSms);
+            if (opt.ThirdPartyLogins.Length > 0) loginTypes.Add(LoginTypeThirdParty);
+
+            // 只有指定账号时才需要判断该账号是否开启双因子
+            var requiresTwoFactor = false;
+            if (!string.IsNullOrWhiteSpace(userName))
+            {
+                var user = (await userManager.FindByNameAsync(userName))
+                    ?? (await userManager.FindByEmailAsync(userName));
+                requiresTwoFactor = user?.TwoFactorEnabled == true;
+            }
+
+            return new LoginInfo
+            {
+                RequiresTwoFactor = requiresTwoFactor,
+                LoginTypes = loginTypes.ToArray(),
+                ThirdPartyLogins = opt.ThirdPartyLogins,
+                CaptchaUrl = opt.CaptchaUrl,
+            };
+        }
+
+        // ---------------- 手机号绑定 ----------------
+
+        public async Task SendBindCode(string phoneNumber, CancellationToken cancellationToken = default)
+        {
+            var user = await GetCurrentUserAsync();
+            await EnsurePhoneAvailableAsync(phoneNumber, user.Id);
+
+            var code = await userManager.GenerateChangePhoneNumberTokenAsync(user, phoneNumber);
+            await GetSmsService().SendSms(phoneNumber, options.Value.BindPhoneSmsTemplate,
+                new Dictionary<string, object> { ["code"] = code });
+        }
+
+        public async Task BindPhone(BindPhoneInfo info, CancellationToken cancellationToken = default)
+        {
+            var user = await GetCurrentUserAsync();
+            await EnsurePhoneAvailableAsync(info.PhoneNumber, user.Id);
+
+            // 验证通过后 Identity 会同步设置 PhoneNumberConfirmed = true
+            var result = await userManager.ChangePhoneNumberAsync(user, info.PhoneNumber, info.Code);
+            if (!result.Succeeded)
+            {
+                if (result.Errors.Any(e => e.Code == "InvalidToken")) throw InvalidPhoneCode();
+                throw OperationFailed(JoinErrors(result));
+            }
+        }
+
+        // ---------------- 短信验证码登录 ----------------
+
+        public async Task SendLoginCode(string phoneNumber, CancellationToken cancellationToken = default)
+        {
+            var user = await FindConfirmedPhoneUserAsync(phoneNumber);
+            // 防止账号枚举：手机号未绑定任何账号时静默返回
+            if (user is null) return;
+
+            // 已开启双因子的账号禁止短信免密登录，必须走密码 + 双因子流程
+            if (user.TwoFactorEnabled) throw SmsLoginDisabled();
+
+            await EnsureNotTooFrequentAsync(phoneNumber);
+
+            var opt = options.Value;
+            var code = RandomNumberGenerator.GetInt32(0, 1_000_000).ToString("D6");
+            var record = new SmsLoginCode
+            {
+                Code = code,
+                ExpiresAtUtc = DateTime.UtcNow.AddSeconds(opt.LoginCodeExpiresInSeconds),
+                Attempts = 0,
+            };
+            await SaveLoginCodeAsync(phoneNumber, record, opt.LoginCodeExpiresInSeconds);
+
+            await GetSmsService().SendSms(phoneNumber, opt.LoginCodeSmsTemplate,
+                new Dictionary<string, object> { ["code"] = code });
+        }
+
+        public async Task<TokenInfo> PhoneLogin(PhoneLoginInfo info, CancellationToken cancellationToken = default)
+        {
+            var user = await VerifyLoginCodeAsync(info);
+            return await IssueTokenPairAsync(user);
+        }
+
+        public async Task CookiePhoneLogin(PhoneLoginInfo info, CancellationToken cancellationToken = default)
+        {
+            var user = await VerifyLoginCodeAsync(info);
+            await signInManager.SignInAsync(user, isPersistent: true);
+        }
+
+        private async Task<IdentityUser> VerifyLoginCodeAsync(PhoneLoginInfo info)
+        {
+            var user = await FindConfirmedPhoneUserAsync(info.PhoneNumber) ?? throw InvalidPhoneCode();
+            if (user.TwoFactorEnabled) throw SmsLoginDisabled();
+
+            var record = await LoadLoginCodeAsync(info.PhoneNumber);
+            if (record is null || DateTime.UtcNow > record.ExpiresAtUtc) throw InvalidPhoneCode();
+
+            if (!CodeEquals(record.Code, info.Code))
+            {
+                record.Attempts++;
+                if (record.Attempts >= options.Value.LoginCodeMaxAttempts)
+                    await cache.RemoveAsync(LoginCodeKeyPrefix + info.PhoneNumber);
+                else
+                    await SaveLoginCodeAsync(info.PhoneNumber, record, RemainingSeconds(record));
+                throw InvalidPhoneCode();
+            }
+
+            // 验证码单次有效
+            await cache.RemoveAsync(LoginCodeKeyPrefix + info.PhoneNumber);
+            return user;
+        }
 
         // ---------------- Cookie 登录 / 登出 ----------------
 
@@ -173,9 +330,10 @@ namespace YS.Knife.Auth
 
         private async Task<IdentityUser> ValidateCredentialsAsync(LoginRequest request)
         {
-            // 用户名未命中时按邮箱查找
+            // 用户名未命中时依次按邮箱、已确认手机号查找
             var user = (await userManager.FindByNameAsync(request.UserName))
                 ?? (await userManager.FindByEmailAsync(request.UserName))
+                ?? await FindConfirmedPhoneUserAsync(request.UserName)
                 ?? throw InvalidCredentials();
 
             var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
@@ -188,6 +346,58 @@ namespace YS.Knife.Auth
 
         private IIdentityEmailSender GetEmailSender()
             => emailSenders.FirstOrDefault() ?? throw EmailSenderNotConfigured();
+
+        private ISmsService GetSmsService()
+            => smsServices.FirstOrDefault() ?? throw SmsServiceNotConfigured();
+
+        private Task<IdentityUser?> FindConfirmedPhoneUserAsync(string phoneNumber)
+            => userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber && u.PhoneNumberConfirmed);
+
+        // 手机号全局唯一：拒绝绑定已被其他账号占用的号码
+        private async Task EnsurePhoneAvailableAsync(string phoneNumber, string currentUserId)
+        {
+            var used = await userManager.Users.AnyAsync(u => u.PhoneNumber == phoneNumber && u.Id != currentUserId);
+            if (used) throw PhoneAlreadyBound(phoneNumber);
+        }
+
+        private async Task<IdentityUser> GetCurrentUserAsync()
+        {
+            var principal = httpContextAccessor.HttpContext?.User ?? throw NotAuthenticated();
+            var userId = userManager.GetUserId(principal) ?? throw NotAuthenticated();
+            return await userManager.FindByIdAsync(userId) ?? throw NotAuthenticated();
+        }
+
+        // 同一手机号在冷却时间内不允许重复发送
+        private async Task EnsureNotTooFrequentAsync(string phoneNumber)
+        {
+            var key = LoginCodeCooldownKeyPrefix + phoneNumber;
+            if (await cache.GetStringAsync(key) is not null) throw SendCodeTooFrequent();
+            await cache.SetStringAsync(key, "1",
+                new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(options.Value.LoginCodeResendIntervalSeconds),
+                });
+        }
+
+        private Task SaveLoginCodeAsync(string phoneNumber, SmsLoginCode record, int lifetimeSeconds)
+            => cache.SetStringAsync(LoginCodeKeyPrefix + phoneNumber, JsonSerializer.Serialize(record),
+                new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(Math.Max(1, lifetimeSeconds)),
+                });
+
+        private async Task<SmsLoginCode?> LoadLoginCodeAsync(string phoneNumber)
+        {
+            var content = await cache.GetStringAsync(LoginCodeKeyPrefix + phoneNumber);
+            return string.IsNullOrEmpty(content) ? null : JsonSerializer.Deserialize<SmsLoginCode>(content);
+        }
+
+        private static int RemainingSeconds(SmsLoginCode record)
+            => (int)(record.ExpiresAtUtc - DateTime.UtcNow).TotalSeconds;
+
+        private static bool CodeEquals(string expected, string actual)
+            => CryptographicOperations.FixedTimeEquals(
+                Encoding.UTF8.GetBytes(expected), Encoding.UTF8.GetBytes(actual));
 
         private static string JoinErrors(IdentityResult result)
             => string.Join(" ", result.Errors.Select(e => e.Description));
@@ -271,6 +481,16 @@ namespace YS.Knife.Auth
             if (string.IsNullOrEmpty(secretKey) || Encoding.UTF8.GetByteCount(secretKey) < 32)
                 throw InvalidSecretKey();
             return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+        }
+
+        // 短信登录验证码记录（存于分布式缓存，随缓存过期自动清理）
+        private sealed class SmsLoginCode
+        {
+            public string Code { get; set; } = null!;
+
+            public DateTime ExpiresAtUtc { get; set; }
+
+            public int Attempts { get; set; }
         }
     }
 }

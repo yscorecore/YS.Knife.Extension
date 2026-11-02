@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\YS.Knife.Auth.Core\YS.Knife.Auth.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.Sms.Core\YS.Knife.Sms.Core.csproj" />
   </ItemGroup>
 
 </Project>

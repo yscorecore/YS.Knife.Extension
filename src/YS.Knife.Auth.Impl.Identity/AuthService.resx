@@ -45,4 +45,28 @@
   <data name="ResetPasswordFailed" xml:space="preserve">
     <value>Password reset failed: {errors}</value>
   </data>
+  <data name="InvalidPhoneCode" xml:space="preserve">
+    <value>Invalid or expired phone verification code.</value>
+  </data>
+  <data name="PhoneNotConfirmed" xml:space="preserve">
+    <value>Please bind and confirm a phone number first.</value>
+  </data>
+  <data name="PhoneAlreadyBound" xml:space="preserve">
+    <value>Phone number '{phone}' is already bound to another account.</value>
+  </data>
+  <data name="SmsServiceNotConfigured" xml:space="preserve">
+    <value>No ISmsService implementation is registered.</value>
+  </data>
+  <data name="NotAuthenticated" xml:space="preserve">
+    <value>Current user is not authenticated.</value>
+  </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>Operation failed: {errors}</value>
+  </data>
+  <data name="SmsLoginDisabled" xml:space="preserve">
+    <value>This account has two-factor authentication enabled. Please sign in with your password.</value>
+  </data>
+  <data name="SendCodeTooFrequent" xml:space="preserve">
+    <value>Verification code was sent too frequently. Please try again later.</value>
+  </data>
 </root>

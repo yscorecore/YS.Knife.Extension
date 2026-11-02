@@ -3,8 +3,13 @@
     /// <summary>
     /// 基于 Cookie 的登录服务（匿名可访问）。
     /// </summary>
-    public interface ICookieLoginService
+    public interface ICookieLoginService : IBaseLoginService
     {
         Task CookieLogin(LoginRequest request, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 使用手机号 + 短信验证码登录。
+        /// </summary>
+        Task CookiePhoneLogin(PhoneLoginInfo info, CancellationToken cancellationToken = default);
     }
 }
