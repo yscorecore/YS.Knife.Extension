@@ -34,6 +34,27 @@ namespace YS.Knife.EFCore.UnitTest
         }
         #endregion
 
+        [Fact]
+        public void Should_ApplyModelScopeDefaultValueSql_When_BuildingModel()
+        {
+            var modelBuilder = new ModelBuilder();
+            modelBuilder.Entity<ModelScopeDefaultValueSqlEntity>().Property(p => p.Value);
+
+            var attribute = new ModelScopeDefaultValueSqlAttribute(
+                nameof(ModelScopeDefaultValueSqlEntity.Value), typeof(int), "42");
+            attribute.Apply(modelBuilder);
+
+            var property = modelBuilder.Model.GetEntityTypes()
+                .SelectMany(entityType => entityType.GetProperties())
+                .Single(property => property.Name == nameof(ModelScopeDefaultValueSqlEntity.Value));
+            property.GetDefaultValueSql().Should().Be("42");
+        }
+
+        private class ModelScopeDefaultValueSqlEntity
+        {
+            public int Value { get; set; }
+        }
+
         #region GetDefaultValueSql_When_Define_DefaultValueAttribute_And_DefaultValueAttributeWithProvider
         [Fact]
         public void Should_GetDefaultValueSql_When_Define_DefaultValueAttribute_And_DefaultValueAttributeWithProvider()
