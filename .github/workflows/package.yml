@@ -1,50 +1,94 @@
 name: package
 on:
   push:
-    tags:        
+    tags:
       - "*"
+
 jobs:
+  test:
+    name: test (${{ matrix.os }} / ${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        target: [net6.0, net8.0, net9.0, net10.0]
+
+    steps:
+    - name: 01 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 02 Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          10.0.x
+
+    - name: 03 Restore Dotnet Tool
+      run: dotnet tool restore
+
+    - name: 04 Check Code Format
+      run: dotnet format --verify-no-changes
+
+    - name: 05 Build all TF outputs
+      run: dotnet build --configuration Release
+
+    - name: 06 Setup docker compose
+      uses: KengoTODA/actions-setup-docker-compose@v1
+      with:
+        version: '2.14.2'
+
+    - name: 07 Run tests for ${{ matrix.target }}
+      run: dotnet test --no-build --no-restore -f ${{ matrix.target }}
+        --configuration Release
+        /p:CollectCoverage=true
+        /p:CoverletOutputFormat=cobertura
+        /p:CoverletOutput=coverage_${{ matrix.target }}_${{ matrix.os }}
+
   package:
+    name: pack all TF & push NuGet
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
+
     steps:
     - name: 01 Checkout Code
       uses: actions/checkout@v4
-    - name: 02 Setup .NET Core
+
+    - name: 02 Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: | 
-          6.0.x
-          9.0.x
+        dotnet-version: |
+          10.0.x
+
     - name: 03 Restore Dotnet Tool
       run: dotnet tool restore
-    - name: 04 Check Code Format
-      run: dotnet format --verify-no-changes 
-    - name: 05 Build with dotnet
-      run: dotnet build
-    - name: 06 Setup docker compose
-      uses: KengoTODA/actions-setup-docker-compose@v1
-      with:
-        version: '2.14.2' # the full version of `docker-compose` command
-    - name: 07 Count Test Projects
-      run: echo TEST_PROJ_COUNT=$(ls -l test |grep "^d"|wc -l) >> $GITHUB_ENV
-    - name: 08 Run Unit test
-      if: env.TEST_PROJ_COUNT>0
-      run: dotnet test --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude="[*Test]*"
-    - name: 09 Set Git Tag Name
+
+    - name: 04 Set Git Tag Name
       run: echo GIT_TAG=${GITHUB_REF:10} >> $GITHUB_ENV
-    - name: 10 Set Pack Version
+
+    - name: 05 Set Pack Version
       run: echo PACK_VERSION=${GIT_TAG#v} >> $GITHUB_ENV
-    - name: 11 Create Package
-      run: dotnet pack -p:PackageVersion=${PACK_VERSION} -p:RepositoryUrl=${{github.event.repository.url}} -p:PackageProjectUrl=${{github.event.repository.url}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o .publish --configuration Release
-    - name: 12 NuGet Login (OIDC -> temp API key)
+
+    - name: 06 Create multi-TF Packages
+      run: dotnet pack
+        -p:PackageVersion=${PACK_VERSION}
+        -p:RepositoryUrl=${{ github.event.repository.url }}
+        -p:PackageProjectUrl=${{ github.event.repository.url }}
+        -p:IncludeSymbols=true
+        -p:SymbolPackageFormat=snupkg
+        --configuration Release
+        -o .publish
+
+    - name: 07 NuGet Login (OIDC -> temp API key)
       uses: NuGet/login@v1
       id: nugetlogin
       with:
         user: ypb
-    - name: 13 Push Package
+
+    - name: 08 Push Package
       env:
         NUGET_APIKEY: ${{ steps.nugetlogin.outputs.NUGET_API_KEY }}
       run: bash ./.github/scripts/pushpack.sh .publish "$NUGET_APIKEY"
