@@ -17,19 +17,8 @@ jobs:
       with:
         dotnet-version: 10.0.x
 
-    - name: 03 Tool cache
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/dotnet-format
-        key: ${{ runner.os }}-dotnet-format-${{ hashFiles('.config/dotnet-tools.json') }}
-        restore-keys: |
-          ${{ runner.os }}-dotnet-format-
-
-    - name: 04 Restore Dotnet Tool
-      run: dotnet tool restore
-
-    - name: 05 Check Code Format
-      run: dotnet format --verify-no-changes -v q
+    - name: 03 Check Code Format
+      run: dotnet format --verify-no-changes -f net10.0 --no-restore -v quiet
 
   test:
     name: test (${{ matrix.os }} / ${{ matrix.target }})
