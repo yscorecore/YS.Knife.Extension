@@ -50,14 +50,6 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
-
-        <!-- 约束传递依赖版本，兼容多 TF -->
-        <!-- LibreOfficeKit 1.1.7 所有 TF 都硬编码 System.Text.Json (>=10.0.12)，导致 net8/9 runtime 缺失 Bcl.AsyncInterfaces 10.x -->
-        <!-- 全局锁到 8.0.5（API 兼容，仅版本号比依赖低，需要抑制 NU1605） -->
-        <PackageReference Include="System.Text.Json" Version="8.0.5">
-            <NoWarn>NU1605</NoWarn>
-        </PackageReference>
-        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
        
         <None Include="..\..\res\icon.png">
             <Pack>True</Pack>

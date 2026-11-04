@@ -11,6 +11,11 @@
     <Using Include="YS.Knife" />
     <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
     <PackageReference Include="LibreOfficeKit" Version="1.1.7" />
+    <!-- 覆盖 LibreOfficeKit 传递的 net10-only 依赖，兼容 net6/net8/net9 runtime -->
+    <PackageReference Include="System.Text.Json" Version="8.0.5">
+      <NoWarn>NU1605</NoWarn>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\YS.Knife.Document.Core\YS.Knife.Document.Core.csproj" />
