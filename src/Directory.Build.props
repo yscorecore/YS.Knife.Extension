@@ -50,7 +50,10 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
-       
+
+        <!-- 统一 Newtonsoft.Json 到 patched 版本 (>= 13.0.1)，覆盖旧包传递的漏洞版本（如 Mvc.Core 2.2.0 → DependencyModel 2.1.0 → Newtonsoft 9.0.1 → GHSA-5crp-9r3c-p9vr High severity） -->
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+
         <None Include="..\..\res\icon.png">
             <Pack>True</Pack>
             <PackagePath></PackagePath>

@@ -9,12 +9,8 @@ on:
 
 jobs:
   build:
-    name: basic build (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
+    name: basic build
+    runs-on: ubuntu-latest
 
     steps:
     - name: 01 Checkout Code
@@ -23,7 +19,11 @@ jobs:
     - name: 02 Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 10.0.x
+        dotnet-version: |
+          6.0.x
+          8.0.x
+          9.0.x
+          10.0.x
 
     - name: 03 Build all TF outputs
       run: dotnet build --configuration Release
