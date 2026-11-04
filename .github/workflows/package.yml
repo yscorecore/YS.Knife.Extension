@@ -5,8 +5,35 @@ on:
       - "*"
 
 jobs:
+  format:
+    name: dotnet format check
+    runs-on: ubuntu-latest
+    steps:
+    - name: 01 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 02 Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: 03 Tool cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/dotnet-format
+        key: ${{ runner.os }}-dotnet-format-${{ hashFiles('.config/dotnet-tools.json') }}
+        restore-keys: |
+          ${{ runner.os }}-dotnet-format-
+
+    - name: 04 Restore Dotnet Tool
+      run: dotnet tool restore
+
+    - name: 05 Check Code Format
+      run: dotnet format --verify-no-changes -v q
+
   test:
     name: test (${{ matrix.os }} / ${{ matrix.target }})
+    needs: format
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -24,21 +51,15 @@ jobs:
         dotnet-version: |
           10.0.x
 
-    - name: 03 Restore Dotnet Tool
-      run: dotnet tool restore
-
-    - name: 04 Check Code Format
-      run: dotnet format --verify-no-changes
-
-    - name: 05 Build all TF outputs
+    - name: 03 Build all TF outputs
       run: dotnet build --configuration Release
 
-    - name: 06 Setup docker compose
+    - name: 04 Setup docker compose
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
         version: '2.14.2'
 
-    - name: 07 Run tests for ${{ matrix.target }}
+    - name: 05 Run tests for ${{ matrix.target }}
       run: dotnet test --no-build --no-restore -f ${{ matrix.target }}
         --configuration Release
         /p:CollectCoverage=true
@@ -47,7 +68,7 @@ jobs:
 
   package:
     name: pack all TF & push NuGet
-    needs: test
+    needs: [format, test]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -60,19 +81,15 @@ jobs:
     - name: 02 Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: |
-          10.0.x
+        dotnet-version: 10.0.x
 
-    - name: 03 Restore Dotnet Tool
-      run: dotnet tool restore
-
-    - name: 04 Set Git Tag Name
+    - name: 03 Set Git Tag Name
       run: echo GIT_TAG=${GITHUB_REF:10} >> $GITHUB_ENV
 
-    - name: 05 Set Pack Version
+    - name: 04 Set Pack Version
       run: echo PACK_VERSION=${GIT_TAG#v} >> $GITHUB_ENV
 
-    - name: 06 Create multi-TF Packages
+    - name: 05 Create multi-TF Packages
       run: dotnet pack
         -p:PackageVersion=${PACK_VERSION}
         -p:RepositoryUrl=${{ github.event.repository.url }}
@@ -82,13 +99,13 @@ jobs:
         --configuration Release
         -o .publish
 
-    - name: 07 NuGet Login (OIDC -> temp API key)
+    - name: 06 NuGet Login (OIDC -> temp API key)
       uses: NuGet/login@v1
       id: nugetlogin
       with:
         user: ypb
 
-    - name: 08 Push Package
+    - name: 07 Push Package
       env:
         NUGET_APIKEY: ${{ steps.nugetlogin.outputs.NUGET_API_KEY }}
       run: bash ./.github/scripts/pushpack.sh .publish "$NUGET_APIKEY"

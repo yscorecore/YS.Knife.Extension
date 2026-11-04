@@ -23,8 +23,7 @@ jobs:
     - name: 02 Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: |
-          10.0.x
+        dotnet-version: 10.0.x
 
     - name: 03 Build all TF outputs
       run: dotnet build --configuration Release

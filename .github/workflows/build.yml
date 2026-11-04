@@ -8,8 +8,35 @@ on:
       - master
 
 jobs:
+  format:
+    name: dotnet format check
+    runs-on: ubuntu-latest
+    steps:
+    - name: 01 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 02 Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: 03 Tool cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/dotnet-format
+        key: ${{ runner.os }}-dotnet-format-${{ hashFiles('.config/dotnet-tools.json') }}
+        restore-keys: |
+          ${{ runner.os }}-dotnet-format-
+
+    - name: 04 Restore Dotnet Tool
+      run: dotnet tool restore
+
+    - name: 05 Check Code Format
+      run: dotnet format --verify-no-changes -v q
+
   build:
     name: build & test (${{ matrix.os }} / ${{ matrix.target }})
+    needs: format
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -27,21 +54,15 @@ jobs:
         dotnet-version: |
           10.0.x
 
-    - name: 03 Restore Dotnet Tool
-      run: dotnet tool restore
-
-    - name: 04 Check Code Format
-      run: dotnet format --verify-no-changes
-
-    - name: 05 Build all TF outputs
+    - name: 03 Build all TF outputs
       run: dotnet build --configuration Release
 
-    - name: 06 Setup docker compose
+    - name: 04 Setup docker compose
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
         version: '2.14.2'
 
-    - name: 07 Run tests for ${{ matrix.target }}
+    - name: 05 Run tests for ${{ matrix.target }}
       run: dotnet test --no-build --no-restore -f ${{ matrix.target }}
         --configuration Release
         /p:CollectCoverage=true
