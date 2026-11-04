@@ -460,7 +460,31 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
         {
             public IReadOnlyDictionary<string, string> Name { get; set; }
         }
+        [Fact]
+        public async Task Should_GetDictionaryWithEnumValue_Meta()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetDictionaryWithEnumValue_Meta");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.IsArray.Should().BeFalse();
+            firstColumn.DataTypeName.Should().Be("object");
+        }
+        [Metadata("GetDictionaryWithEnumValue_Meta")]
+        internal class GetDictionaryWithEnumValue_Meta
+        {
+            public Dictionary<string, AuditLevel> SupportAuditflows { get; set; }
+        }
         #endregion
 
+    }
+    public enum AuditLevel
+    {
+        [Display(Name = "区县审核", Order = 0)]
+        Manual = 0,
+        [Display(Name = "学校审核", Order = 1)]
+        Self = 1,
+        [Display(Name = "自动通过", Order = 2)]
+        AutoPass = 9,
     }
 }

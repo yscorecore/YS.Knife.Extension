@@ -46,6 +46,10 @@ namespace YS.Knife.LayerSetting
             {
                 return (false, GetTypeCode(type));
             }
+            if (IsDictionaryType(type))
+            {
+                return (false, GetTypeCode(type));
+            }
             if (typeof(IEnumerable).IsAssignableFrom(type))
             {
                 var itemType = type.GetInterfaces()
@@ -57,6 +61,17 @@ namespace YS.Knife.LayerSetting
             static string GetTypeCode(Type type)
             {
                 return Type.GetTypeCode(type).ToString().ToLowerInvariant();
+            }
+            static bool IsDictionaryType(Type type)
+            {
+                return typeof(IDictionary).IsAssignableFrom(type)
+                    || IsDictionaryInterface(type)
+                    || type.GetInterfaces().Any(IsDictionaryInterface);
+                static bool IsDictionaryInterface(Type t)
+                {
+                    return t.IsGenericType && (t.GetGenericTypeDefinition() == typeof(IDictionary<,>)
+                        || t.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>));
+                }
             }
 
         }
