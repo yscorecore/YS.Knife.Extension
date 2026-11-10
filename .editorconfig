@@ -10,6 +10,10 @@ indent_style = space
 indent_size = 4
 insert_final_newline = true
 charset = utf-8-bom
+# 项目文件，统一 BOM 策略，避免出现重复 BOM
+# 说明：不含 *.json —— JSON 规范不允许 BOM，部分工具（Node/JSON.parse/eslint）会解析失败
+[*.{csproj,props,targets,sln,config,html}]
+charset = utf-8-bom
 ###############################
 # .NET Coding Conventions     #
 ###############################

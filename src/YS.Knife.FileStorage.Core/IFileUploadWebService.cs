@@ -16,7 +16,7 @@ namespace YS.Knife.FileStorage
             public string FileFormName { get; set; } = "file";
             public long MaxLength { get; set; } = 4 * 1024 * 1024;
             public string[] AllowExtensions { get; set; }
-           public UploadMode Mode { get; set; }
+            public UploadMode Mode { get; set; }
         }
     }
 }
