@@ -10,7 +10,7 @@ namespace YS.Knife.FileStorage.Default
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IFileCategoryProvider fileCategoryProvider;
 
-        public async Task<ClientUploadInfo> GetClientUploadInfo(string name, CancellationToken cancellationToken = default)
+        public async Task<ClientUploadInfo> GetClientUploadInfo(string name, string fileName, long size, CancellationToken cancellationToken = default)
         {
             var category = await fileCategoryProvider.CreateCategory(name);
             if (category.Mode != UploadMode.Client)
@@ -24,7 +24,7 @@ namespace YS.Knife.FileStorage.Default
                 var userFormArgs = request.Form.ToDictionary(p => p.Key, v => v.Value.ToString());
                 userArgs.Merge(userFormArgs);
             }
-            return await fileUploadService.GetClientUploadInfo(name, userArgs, cancellationToken);
+            return await fileUploadService.GetClientUploadInfo(name, fileName, size, userArgs, cancellationToken);
         }
 
         public async Task<IFileUploadWebService.FileUploadRequestInfo> GetUploadInfo(string name, CancellationToken cancellationToken)

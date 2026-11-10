@@ -1,4 +1,6 @@
-﻿using Aliyun.OSS;
+﻿using System.Security.Cryptography;
+using System.Text;
+using Aliyun.OSS;
 
 namespace YS.Knife.FileStorage.AliyunOss
 {
@@ -16,17 +18,28 @@ namespace YS.Knife.FileStorage.AliyunOss
             return Task.FromResult(res);
         }
 
-        public Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
+        public Task<ClientUploadInfo> GetClientUploadInfo(string key, long fileSize, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
         {
             var client = CreateClient();
             var expiration = DateTime.Now.AddMinutes(15);
 
-            var request = new GeneratePresignedUriRequest(ossConfiguration.BucketName, key, SignHttpMethod.Put)
-            {
-                Expiration = expiration,
-            };
+            // === Aliyun OSS POST 表单签名规则 ===
+            // policy 是 JSON，包含 expiration + conditions（必须包含 ["eq","$key",key]）
+            // 签名 = base64(HMAC-SHA1(AccessKeySecret, base64(UTF8(policyJSON))))
+            // 上传 URL = https://{bucket}.{endpoint}/ (bucket 域名，不带 object path)
+            // 表单必须按顺序提交：key → policy → OSSAccessKeyId → signature → 其他 x-oss-meta-* → file(最后!)
 
-            var headers = new Dictionary<string, string>();
+            // 1. 构建 policy JSON
+            // conditions 里固定 key，同时把所有 x-oss-meta-* 字段加入 starts-with 条件
+            var condList = new List<object> { new object[] { "eq", "$key", key } };
+
+            // 文件大小限制：content-length-range 条件，客户端上传的 Content-Length 必须在 [min, max] 内
+            if (fileSize > 0)
+            {
+                condList.Add(new object[] { "content-length-range", 0, fileSize });
+            }
+
+            var metaFields = new Dictionary<string, string>();
             if (metadata != null)
             {
                 foreach (var item in metadata)
@@ -34,20 +47,55 @@ namespace YS.Knife.FileStorage.AliyunOss
                     if (item.Value != null)
                     {
                         var val = item.Value.ToString();
-                        request.UserMetadata[item.Key] = val;
-                        headers[$"x-oss-meta-{item.Key}"] = val;
+                        condList.Add(new object[] { "starts-with", $"$x-oss-meta-{item.Key}", "" });
+                        metaFields[$"x-oss-meta-{item.Key}"] = val;
                     }
                 }
             }
 
-            var signedUri = client.GeneratePresignedUri(request);
+            // policy JSON
+            var policyJson = new
+            {
+                expiration = expiration.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                conditions = condList
+            };
+            var policyJsonStr = System.Text.Json.JsonSerializer.Serialize(policyJson);
+
+            // 2. base64(UTF8(policyJSON))
+            var policyBytes = Encoding.UTF8.GetBytes(policyJsonStr);
+            var policyBase64 = Convert.ToBase64String(policyBytes);
+
+            // 3. HMAC-SHA1 签名 AccessKeySecret 对 policyBase64
+            string signature;
+            using (var hmac = new HMACSHA1(Encoding.UTF8.GetBytes(ossConfiguration.AccessKeySecret)))
+            {
+                var signatureBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(policyBase64));
+                signature = Convert.ToBase64String(signatureBytes);
+            }
+
+            // 4. 上传 URL = bucket endpoint
+            var uploadUrl = $"https://{ossConfiguration.BucketName}.{ossConfiguration.Endpoint}/";
+
+            // 5. 组装 form 字段（顺序很重要：OSS 按顺序校验）
+            var formFields = new Dictionary<string, string>
+            {
+                { "key", key },
+                { "policy", policyBase64 },
+                { "OSSAccessKeyId", ossConfiguration.AccessKeyId },
+                { "signature", signature },
+            };
+            foreach (var field in metaFields)
+            {
+                formFields[field.Key] = field.Value;
+            }
 
             var result = new ClientUploadInfo
             {
-                UploadUrl = signedUri.ToString(),
-                Method = "PUT",
+                UploadUrl = uploadUrl,
+                Method = "POST",
                 FileFormName = "file",
-                Headers = headers
+                Headers = null,
+                FormFields = formFields
             };
 
             return Task.FromResult(result);

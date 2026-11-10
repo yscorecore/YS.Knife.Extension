@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Logging;
 using Minio;
+using Minio.DataModel;
 using Minio.DataModel.Args;
 
 namespace YS.Knife.FileStorage.Minio
@@ -27,16 +28,22 @@ namespace YS.Knife.FileStorage.Minio
                 return (options.Endpoint, true);
             }
         }
+
+        private IMinioClient CreateClient()
+        {
+            var (endPoint, ssl) = GetEndPoint();
+            return new MinioClient()
+                    .WithEndpoint(endPoint)
+                    .WithCredentials(options.AccessKeyId, options.AccessKeySecret)
+                    .WithSSL(ssl)
+                    .Build();
+        }
+
         public async Task<FileObject> PutObject(string key, Stream content, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
         {
             try
             {
-                var (endPoint, ssl) = GetEndPoint();
-                var minio = new MinioClient()
-                        .WithEndpoint(endPoint)
-                        .WithCredentials(options.AccessKeyId, options.AccessKeySecret)
-                        .WithSSL(ssl)
-                        .Build();
+                var minio = CreateClient();
 
                 var arg = new PutObjectArgs().WithBucket(options.BucketName)
                         .WithObject(key)
@@ -79,12 +86,7 @@ namespace YS.Knife.FileStorage.Minio
         {
             try
             {
-                var (endPoint, ssl) = GetEndPoint();
-                var minio = new MinioClient()
-                        .WithEndpoint(endPoint)
-                        .WithCredentials(options.AccessKeyId, options.AccessKeySecret)
-                        .WithSSL(ssl)
-                        .Build();
+                var minio = CreateClient();
 
                 var arg = new CopyObjectArgs()
                         .WithBucket(options.BucketName)
@@ -120,59 +122,54 @@ namespace YS.Knife.FileStorage.Minio
             });
         }
 
-        public Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
+        public async Task<ClientUploadInfo> GetClientUploadInfo(string key, long fileSize, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
         {
-            var (endPoint, ssl) = GetEndPoint();
-            var minio = new MinioClient()
-                    .WithEndpoint(endPoint)
-                    .WithCredentials(options.AccessKeyId, options.AccessKeySecret)
-                    .WithSSL(ssl)
-                    .Build();
+            var minio = CreateClient();
 
-            var args = new PresignedPutObjectArgs()
-                    .WithBucket(options.BucketName)
-                    .WithObject(key)
-                    .WithExpiry(900); // 15 minutes
+            // MinIO v6 POST 表单签名：PostPolicy + PresignedPostPolicyAsync
+            // PostPolicy 来自 Minio.DataModel 命名空间，已通过 using Minio.DataModel 引入
+            var policy = new PostPolicy();
+            policy.SetBucket(options.BucketName);
+            policy.SetKey(key); // 固定 key，客户端不能改
+            policy.SetExpires(DateTime.Now.AddMinutes(15));
+
+            // 文件大小限制：content-length-range 条件，客户端上传的 Content-Length 必须在 [min, max] 内
+            if (fileSize > 0)
+            {
+                policy.SetContentRange(0, fileSize);
+            }
 
             if (metadata != null && metadata.Count > 0)
             {
-                var headers = new Dictionary<string, string>();
                 foreach (var item in metadata)
                 {
                     if (item.Value != null)
                     {
-                        headers[item.Key] = item.Value.ToString();
+                        policy.SetUserMetadata(item.Key, item.Value.ToString());
                     }
-                }
-                if (headers.Count > 0)
-                {
-                    args = args.WithHeaders(headers);
                 }
             }
 
-            var presignedUrl = minio.PresignedPutObjectAsync(args).GetAwaiter().GetResult();
+            // PresignedPostPolicyAsync 在 v6 里只有一个参数的重载，无 CancellationToken
+            var (uri, formData) = await minio.PresignedPostPolicyAsync(policy);
 
             var result = new ClientUploadInfo
             {
-                UploadUrl = presignedUrl,
-                Method = "PUT",
+                UploadUrl = uri.ToString(),
+                Method = "POST",
                 FileFormName = "file",
-                Headers = new Dictionary<string, string>()
+                Headers = null,
+                FormFields = new Dictionary<string, string>(formData)
             };
 
-            return Task.FromResult(result);
+            return result;
         }
 
         public async Task<bool> Exists(string key, CancellationToken cancellationToken = default)
         {
             try
             {
-                var (endPoint, ssl) = GetEndPoint();
-                var minio = new MinioClient()
-                        .WithEndpoint(endPoint)
-                        .WithCredentials(options.AccessKeyId, options.AccessKeySecret)
-                        .WithSSL(ssl)
-                        .Build();
+                var minio = CreateClient();
 
                 var args = new StatObjectArgs()
                    .WithBucket(options.BucketName)

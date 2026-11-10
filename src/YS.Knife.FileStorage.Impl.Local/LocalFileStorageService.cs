@@ -79,7 +79,7 @@ namespace YS.Knife.FileStorage.Impl.Local
 
         }
 
-        public Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
+        public Task<ClientUploadInfo> GetClientUploadInfo(string key, long fileSize, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
         {
             var res = new ClientUploadInfo()
             {

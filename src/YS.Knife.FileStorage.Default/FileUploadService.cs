@@ -40,6 +40,7 @@ namespace YS.Knife.FileStorage.Default
             userArgs["ext"] = extName;
             userArgs["name"] = Path.GetFileNameWithoutExtension(streamFileName);
             userArgs["fullname"] = streamFileName;
+            userArgs["filename"] = streamFileName;
             userArgs["size"] = streamLength.ToString();
             userArgs["contenttype"] = streamContentType;
             userArgs["category"] = category;
@@ -163,15 +164,33 @@ namespace YS.Knife.FileStorage.Default
             }
         }
 
-        public async Task<ClientUploadInfo> GetClientUploadInfo(string category, IDictionary<string, string> userArgs, CancellationToken cancellationToken = default)
+        public async Task<ClientUploadInfo> GetClientUploadInfo(string category, string fileName, long size, IDictionary<string, string> userArgs, CancellationToken cancellationToken = default)
         {
             var categoryObj = await fileCategoryProvider.CreateCategory(category) ?? throw new Exception($"The file category '{category}' is not defined");
             userArgs ??= new Dictionary<string, string>();
-
+            var extName = Path.GetExtension(fileName);
+            if (categoryObj.MaxLength > 0 && size > categoryObj.MaxLength)
+            {
+                throw new Exception($"The uploaded file size ({size} bytes) exceeds the limit of {categoryObj.MaxLength} bytes.");
+            }
+            if (!IsValidFileName(fileName))
+            {
+                throw new Exception($"The uploaded file name '{fileName}' is invalid.");
+            }
+            if (categoryObj.AllowExtensions != null && categoryObj.AllowExtensions.Length > 0 && !categoryObj.AllowExtensions.Contains(extName, StringComparer.InvariantCultureIgnoreCase))
+            {
+                throw new Exception($"The uploaded file extension '{extName}' is not allowed. Allowed extensions: {string.Join(", ", categoryObj.AllowExtensions)}");
+            }
             var fileStorageService = serviceProvider.GetServiceByNameOrConfiguationSwitch<IFileStorageService>(categoryObj.ServiceName);
 
             //元数据
             CheckUserArgs(userArgs);
+            //增加系统参数
+            userArgs["ext"] = extName;
+            userArgs["name"] = Path.GetFileNameWithoutExtension(fileName);
+            userArgs["fullname"] = fileName;
+            userArgs["filename"] = fileName;
+            userArgs["size"] = size.ToString();
             userArgs["category"] = category;
             var meta = new Dictionary<string, object>();
             foreach (var item in categoryObj.Metadata ?? new Dictionary<string, object>())
@@ -187,7 +206,7 @@ namespace YS.Knife.FileStorage.Default
             }
             //文件名
             var key = FillTemplate(categoryObj.PathTemplate, userArgs, systemArgs);
-            var info = await fileStorageService.GetClientUploadInfo(key, meta, cancellationToken);
+            var info = await fileStorageService.GetClientUploadInfo(key, size, meta, cancellationToken);
             info.FileFormName = categoryObj.FileFormName;
             return info;
         }

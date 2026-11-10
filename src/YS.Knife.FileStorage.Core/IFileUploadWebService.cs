@@ -9,7 +9,7 @@ namespace YS.Knife.FileStorage
 
         Task<FileUploadRequestInfo> GetUploadInfo(string name, CancellationToken cancellationToken);
 
-        Task<ClientUploadInfo> GetClientUploadInfo(string name, CancellationToken cancellationToken = default);
+        Task<ClientUploadInfo> GetClientUploadInfo(string name, string fileName, long size, CancellationToken cancellationToken = default);
         public record FileUploadRequestInfo
         {
             public string ServiceName { get; set; }
