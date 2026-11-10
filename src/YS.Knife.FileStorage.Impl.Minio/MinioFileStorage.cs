@@ -120,6 +120,49 @@ namespace YS.Knife.FileStorage.Minio
             });
         }
 
+        public Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
+        {
+            var (endPoint, ssl) = GetEndPoint();
+            var minio = new MinioClient()
+                    .WithEndpoint(endPoint)
+                    .WithCredentials(options.AccessKeyId, options.AccessKeySecret)
+                    .WithSSL(ssl)
+                    .Build();
+
+            var args = new PresignedPutObjectArgs()
+                    .WithBucket(options.BucketName)
+                    .WithObject(key)
+                    .WithExpiry(900); // 15 minutes
+
+            if (metadata != null && metadata.Count > 0)
+            {
+                var headers = new Dictionary<string, string>();
+                foreach (var item in metadata)
+                {
+                    if (item.Value != null)
+                    {
+                        headers[item.Key] = item.Value.ToString();
+                    }
+                }
+                if (headers.Count > 0)
+                {
+                    args = args.WithHeaders(headers);
+                }
+            }
+
+            var presignedUrl = minio.PresignedPutObjectAsync(args).GetAwaiter().GetResult();
+
+            var result = new ClientUploadInfo
+            {
+                UploadUrl = presignedUrl,
+                Method = "PUT",
+                FileFormName = "file",
+                Headers = new Dictionary<string, string>()
+            };
+
+            return Task.FromResult(result);
+        }
+
         public async Task<bool> Exists(string key, CancellationToken cancellationToken = default)
         {
             try

@@ -162,5 +162,34 @@ namespace YS.Knife.FileStorage.Default
                 return false;
             }
         }
+
+        public async Task<ClientUploadInfo> GetClientUploadInfo(string category, IDictionary<string, string> userArgs, CancellationToken cancellationToken = default)
+        {
+            var categoryObj = await fileCategoryProvider.CreateCategory(category) ?? throw new Exception($"The file category '{category}' is not defined");
+            userArgs ??= new Dictionary<string, string>();
+
+            var fileStorageService = serviceProvider.GetServiceByNameOrConfiguationSwitch<IFileStorageService>(categoryObj.ServiceName);
+
+            //元数据
+            CheckUserArgs(userArgs);
+            userArgs["category"] = category;
+            var meta = new Dictionary<string, object>();
+            foreach (var item in categoryObj.Metadata ?? new Dictionary<string, object>())
+            {
+                if (item.Value is string strValue)
+                {
+                    meta[item.Key] = FillTemplate(strValue, userArgs, systemArgs);
+                }
+                else
+                {
+                    meta[item.Key] = item.Value;
+                }
+            }
+            //文件名
+            var key = FillTemplate(categoryObj.PathTemplate, userArgs, systemArgs);
+            var info = await fileStorageService.GetClientUploadInfo(key, meta, cancellationToken);
+            info.FileFormName = categoryObj.FileFormName;
+            return info;
+        }
     }
 }

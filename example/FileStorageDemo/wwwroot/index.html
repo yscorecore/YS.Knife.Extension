@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件上传 Demo - 客户端直传</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 24px;
+        }
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        .upload-section {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .upload-section:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        .upload-section.dragover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+        .upload-section input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .upload-text {
+            color: #666;
+            font-size: 15px;
+        }
+        .upload-hint {
+            color: #999;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        .controls {
+            margin-top: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #fff;
+        }
+        button {
+            padding: 10px 24px;
+            background: #667eea;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background: #5a6fd6; }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .progress-wrap {
+            margin-top: 24px;
+            display: none;
+        }
+        .progress-wrap.show { display: block; }
+        .progress-bar {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .progress-text {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+        .result {
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 8px;
+            display: none;
+        }
+        .result.show { display: block; }
+        .result.success {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            color: #2e7d32;
+        }
+        .result.error {
+            background: #ffebee;
+            border: 1px solid #ef9a9a;
+            color: #c62828;
+        }
+        .result h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .result pre {
+            background: rgba(0,0,0,0.05);
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 6px 12px;
+            font-size: 13px;
+        }
+        .info-grid dt { color: #888; }
+        .info-grid dd { color: #333; word-break: break-all; }
+        .file-info {
+            display: none;
+            margin-top: 16px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .file-info.show { display: block; }
+        .file-name {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        .file-size { color: #888; }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .mode-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .mode-client { background: #e3f2fd; color: #1565c0; }
+        .mode-server { background: #fff3e0; color: #e65100; }
+        .code-block {
+            background: #263238;
+            color: #eee;
+            padding: 16px;
+            border-radius: 6px;
+            font-family: "Consolas", monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+        .code-block .comment { color: #78909c; }
+        .code-block .string { color: #aed581; }
+        .code-block .keyword { color: #ffab91; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1>🚀 文件直传 Demo</h1>
+        <p class="subtitle">客户端直接上传到存储服务，不经过后台服务器，节省带宽资源</p>
+
+        <div class="section-title">选择文件上传</div>
+
+        <div class="upload-section" id="uploadArea">
+            <input type="file" id="fileInput" />
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">点击选择文件，或拖拽文件到此处</div>
+            <div class="upload-hint">支持图片、文档等所有格式</div>
+        </div>
+
+        <div class="file-info" id="fileInfo">
+            <div class="file-name" id="fileName"></div>
+            <div class="file-size" id="fileSize"></div>
+        </div>
+
+        <div class="controls">
+            <label>
+                上传分类：
+                <select id="categorySelect">
+                    <option value="server-upload">server-upload (服务端中转)</option>
+                    <option value="client-upload">client-upload (客户端直传，需配 OSS/MinIO)</option>
+                </select>
+            </label>
+            <button id="uploadBtn" disabled>开始上传</button>
+        </div>
+
+        <div class="progress-wrap" id="progressWrap">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="progress-text" id="progressText">0%</div>
+        </div>
+
+        <div class="result" id="result">
+            <h3 id="resultTitle"></h3>
+            <div id="resultBody"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">🔄 客户端直传流程</div>
+        <pre class="code-block"><span class="comment">// 第一步：向后台请求签名 URL</span>
+<span class="keyword">GET</span> <span class="string">/api/FileUploadWeb/GetClientUploadInfo?name=client-upload</span>
+
+<span class="comment">// 后台返回签名上传信息</span>
+{
+  <span class="string">"uploadUrl"</span>: <span class="string">"https://your-bucket.oss-cn-hangzhou.aliyuncs.com/client/xxx.png?OSSAccessKeyId=...&Expires=...&Signature=..."</span>,
+  <span class="string">"method"</span>: <span class="string">"PUT"</span>,
+  <span class="string">"fileFormName"</span>: <span class="string">"file"</span>,
+  <span class="string">"headers"</span>: {}
+}
+
+<span class="comment">// 第二步：客户端直接上传到存储服务</span>
+<span class="keyword">PUT</span> <span class="string">{uploadUrl}</span>
+Content-Type: image/png
+
+[文件二进制数据]
+
+<span class="comment">// 上传完成后文件直接在 OSS/MinIO 上，不经过后台！</span></pre>
+    </div>
+</div>
+
+<script>
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+const fileInfo = document.getElementById('fileInfo');
+const fileNameEl = document.getElementById('fileName');
+const fileSizeEl = document.getElementById('fileSize');
+const uploadBtn = document.getElementById('uploadBtn');
+const categorySelect = document.getElementById('categorySelect');
+const progressWrap = document.getElementById('progressWrap');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const result = document.getElementById('result');
+const resultTitle = document.getElementById('resultTitle');
+const resultBody = document.getElementById('resultBody');
+
+let selectedFile = null;
+
+// 文件选择
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+// 拖拽
+uploadArea.addEventListener('dragover', e => {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+});
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    handleFile(e.dataTransfer.files[0]);
+});
+
+function handleFile(file) {
+    if (!file) return;
+    selectedFile = file;
+    fileNameEl.textContent = file.name;
+    fileSizeEl.textContent = formatSize(file.size);
+    fileInfo.classList.add('show');
+    uploadBtn.disabled = false;
+    result.classList.remove('show', 'success', 'error');
+    progressWrap.classList.remove('show');
+}
+
+function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+    return (bytes / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+}
+
+// 上传按钮
+uploadBtn.addEventListener('click', async () => {
+    if (!selectedFile) return;
+    const category = categorySelect.value;
+    
+    uploadBtn.disabled = true;
+    progressWrap.classList.add('show');
+    result.classList.remove('show', 'success', 'error');
+    progressFill.style.width = '0%';
+    progressText.textContent = '准备上传...';
+
+    try {
+        if (category === 'client-upload') {
+            await clientDirectUpload(category, selectedFile);
+        } else {
+            await serverUpload(category, selectedFile);
+        }
+    } catch (err) {
+        showError(err.message || err);
+    } finally {
+        uploadBtn.disabled = false;
+    }
+});
+
+// ===== 客户端直传 =====
+async function clientDirectUpload(category, file) {
+    progressText.textContent = '获取上传凭证...';
+    
+    // 第一步：获取签名上传 URL
+    const infoRes = await fetch(`/api/FileUploadWeb/GetClientUploadInfo/${encodeURIComponent(category)}`, {
+        method: 'GET'
+    });
+    if (!infoRes.ok) throw new Error(`获取上传凭证失败: ${infoRes.status}`);
+    const info = await infoRes.json();
+    
+    progressText.textContent = `正在直传到存储服务 (${info.method})...`;
+
+    // 第二步：用 XMLHttpRequest 上传到签名 URL（支持进度）
+    await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        
+        xhr.upload.addEventListener('progress', e => {
+            if (e.lengthComputable) {
+                const pct = Math.round(e.loaded / e.total * 100);
+                progressFill.style.width = pct + '%';
+                progressText.textContent = `上传中... ${pct}%`;
+            }
+        });
+        
+        xhr.addEventListener('load', () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                progressFill.style.width = '100%';
+                progressText.textContent = '上传完成!';
+                resolve();
+            } else {
+                reject(new Error(`上传失败: HTTP ${xhr.status}`));
+            }
+        });
+        
+        xhr.addEventListener('error', () => reject(new Error('网络错误')));
+        xhr.addEventListener('abort', () => reject(new Error('上传已取消')));
+        
+        xhr.open(info.method, info.uploadUrl);
+        
+        // 设置 headers
+        if (info.headers) {
+            for (const [key, value] of Object.entries(info.headers)) {
+                xhr.setRequestHeader(key, value);
+            }
+        }
+        
+        xhr.send(file);
+    });
+
+    showSuccess('客户端直传成功 ✅', {
+        文件: file.name,
+        大小: formatSize(file.size),
+        方式: `${info.method} (客户端直传)`,
+        上传地址: info.uploadUrl.substring(0, 80) + '...'
+    });
+}
+
+// ===== 服务端中转上传 =====
+async function serverUpload(category, file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    progressText.textContent = '通过服务端上传...';
+    
+    await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        
+        xhr.upload.addEventListener('progress', e => {
+            if (e.lengthComputable) {
+                const pct = Math.round(e.loaded / e.total * 100);
+                progressFill.style.width = pct + '%';
+                progressText.textContent = `上传中... ${pct}%`;
+            }
+        });
+        
+        xhr.addEventListener('load', () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                progressFill.style.width = '100%';
+                progressText.textContent = '上传完成!';
+                const data = JSON.parse(xhr.responseText);
+                resolve(data);
+            } else {
+                reject(new Error(`上传失败: HTTP ${xhr.status}`));
+            }
+        });
+        
+        xhr.addEventListener('error', () => reject(new Error('网络错误')));
+        
+        xhr.open('POST', `/api/FileUploadWeb/Upload/${encodeURIComponent(category)}`);
+        xhr.send(formData);
+    });
+
+    showSuccess('服务端上传成功 ✅', {
+        文件: file.name,
+        大小: formatSize(file.size),
+        方式: 'POST (服务端中转)',
+        备注: '文件先传到后台服务器，再由后台转发到存储服务'
+    });
+}
+
+function showSuccess(title, info) {
+    result.classList.add('show', 'success');
+    resultTitle.textContent = title;
+    let html = '<dl class="info-grid">';
+    for (const [k, v] of Object.entries(info)) {
+        html += `<dt>${k}</dt><dd>${v}</dd>`;
+    }
+    html += '</dl>';
+    resultBody.innerHTML = html;
+}
+
+function showError(msg) {
+    result.classList.add('show', 'error');
+    resultTitle.textContent = '上传失败 ❌';
+    resultBody.innerHTML = `<pre>${msg}</pre>`;
+}
+</script>
+</body>
+</html>

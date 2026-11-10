@@ -79,14 +79,14 @@ namespace YS.Knife.FileStorage.Impl.Local
 
         }
 
-        public Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, FileCategory category, CancellationToken cancellationToken = default)
+        public Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
         {
             var res = new ClientUploadInfo()
             {
-                Headers = new Dictionary<string, object>(),
-                FileFormName = category.FileFormName,
+                Headers = new Dictionary<string, string>(),
+                FileFormName = "file",
                 Method = "POST",
-                Url = GetAccessUrl(key)
+                UploadUrl = GetAccessUrl(key)
             };
             return Task.FromResult(res);
         }

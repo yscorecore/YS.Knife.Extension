@@ -1,5 +1,6 @@
 ﻿namespace FileStorageDemo
 {
+    [YS.Knife.ExposeApi(typeof(YS.Knife.FileStorage.IFileUploadWebService))]
     public class Program : YS.Knife.Hosting.KnifeWebHost
     {
         public Program(string[] args) : base(args)
@@ -17,6 +18,7 @@
         }
         protected override void ConfigureWebApp(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseDefaultFiles();
             app.UseStaticFiles(new StaticFileOptions());
             base.ConfigureWebApp(app, env);
         }

@@ -3,6 +3,7 @@
     public interface IFileUploadService
     {
         Task<FileUploadObject> Upload(string category, Stream stream, string streamFileName, long streamLength, string streamContentType, IDictionary<string, string> userArgs, CancellationToken cancellationToken = default);
+        Task<ClientUploadInfo> GetClientUploadInfo(string category, IDictionary<string, string> userArgs, CancellationToken cancellationToken = default);
     }
 
     public static class FileUploadServiceExtensions

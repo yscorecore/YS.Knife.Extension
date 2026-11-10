@@ -18,10 +18,39 @@ namespace YS.Knife.FileStorage.AliyunOss
 
         public Task<ClientUploadInfo> GetClientUploadInfo(string key, IDictionary<string, object> metadata, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(new ClientUploadInfo
-            {
+            var client = CreateClient();
+            var expiration = DateTime.Now.AddMinutes(15);
 
-            });
+            var request = new GeneratePresignedUriRequest(ossConfiguration.BucketName, key, SignHttpMethod.Put)
+            {
+                Expiration = expiration,
+            };
+
+            var headers = new Dictionary<string, string>();
+            if (metadata != null)
+            {
+                foreach (var item in metadata)
+                {
+                    if (item.Value != null)
+                    {
+                        var val = item.Value.ToString();
+                        request.UserMetadata[item.Key] = val;
+                        headers[$"x-oss-meta-{item.Key}"] = val;
+                    }
+                }
+            }
+
+            var signedUri = client.GeneratePresignedUri(request);
+
+            var result = new ClientUploadInfo
+            {
+                UploadUrl = signedUri.ToString(),
+                Method = "PUT",
+                FileFormName = "file",
+                Headers = headers
+            };
+
+            return Task.FromResult(result);
         }
 
         public Task<FileObject> GetObject(string key)

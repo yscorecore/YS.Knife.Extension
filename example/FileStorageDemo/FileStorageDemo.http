@@ -1,6 +1,24 @@
-@FileStorageDemo_HostAddress = http://localhost:5282
+@FileStorageDemo_HostAddress = http://localhost:5000
 
-GET {{FileStorageDemo_HostAddress}}/weatherforecast/
+### 获取文件分类信息（服务端上传）
+GET {{FileStorageDemo_HostAddress}}/api/FileUploadWeb/GetUploadInfo/server-upload
 Accept: application/json
 
+### 获取文件分类信息（客户端直传）
+GET {{FileStorageDemo_HostAddress}}/api/FileUploadWeb/GetUploadInfo/client-upload
+Accept: application/json
+
+### ★ 获取客户端直传签名 URL（需存储实现为 OSS/MinIO，Local 仅返回访问地址）
+GET {{FileStorageDemo_HostAddress}}/api/FileUploadWeb/GetClientUploadInfo/client-upload
+Accept: application/json
+
+### 服务端中转上传（Postman 可用，VSCode REST Client 不支持 multipart）
+### POST {{FileStorageDemo_HostAddress}}/api/FileUploadWeb/Upload/server-upload
+### Content-Type: multipart/form-data; boundary=boundary
 ###
+### --boundary
+### Content-Disposition: form-data; name="file"; filename="test.txt"
+### Content-Type: text/plain
+###
+### Hello World!
+### --boundary--

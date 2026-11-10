@@ -13,6 +13,12 @@ namespace YS.Knife.FileStorage
         public long MaxLength { get; set; } = 4 * 1024 * 1024;
         public string[] AllowExtensions { get; set; }
         public string[] Callbacks { get; set; }
+        public UploadMode Mode { get; set; } = UploadMode.Server;
+    }
+    public enum UploadMode
+    {
+        Server = 0,//通过服务端上传到存储服务
+        Client = 1,//通过客户端直接上传到存储服务(不支持拦截器和回调)
     }
 
 }
