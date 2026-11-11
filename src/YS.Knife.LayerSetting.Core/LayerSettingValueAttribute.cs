@@ -110,6 +110,62 @@ namespace YS.Knife
                 }
                 throw new ArgumentException("Not a Member Expression.");
             }
+
+            public async Task<TProp> GetValue<TProp>(Expression<Func<T, TProp>> propertyFunc)
+            {
+                var keys = new string[] { GetPropertyName(propertyFunc).WithStyle(NameStyle.CamelCase) };
+                var values = await GetGroupValueDict(keys);
+                return DeserializeOrDefault<TProp>(values, keys[0]);
+            }
+
+            public async Task<Tuple<TP1, TP2>> GetValue<TP1, TP2>(Expression<Func<T, TP1>> property1, Expression<Func<T, TP2>> property2)
+            {
+                var keys = new string[] {
+                    GetPropertyName(property1).WithStyle(NameStyle.CamelCase),
+                    GetPropertyName(property2).WithStyle(NameStyle.CamelCase),
+                };
+                var values = await GetGroupValueDict(keys);
+                return Tuple.Create(DeserializeOrDefault<TP1>(values, keys[0]), DeserializeOrDefault<TP2>(values, keys[1]));
+            }
+
+            public async Task<Tuple<TP1, TP2, TP3>> GetValue<TP1, TP2, TP3>(Expression<Func<T, TP1>> property1, Expression<Func<T, TP2>> property2, Expression<Func<T, TP3>> property3)
+            {
+                var keys = new string[] {
+                    GetPropertyName(property1).WithStyle(NameStyle.CamelCase),
+                    GetPropertyName(property2).WithStyle(NameStyle.CamelCase),
+                    GetPropertyName(property3).WithStyle(NameStyle.CamelCase),
+                };
+                var values = await GetGroupValueDict(keys);
+                return Tuple.Create(DeserializeOrDefault<TP1>(values, keys[0]), DeserializeOrDefault<TP2>(values, keys[1]), DeserializeOrDefault<TP3>(values, keys[2]));
+            }
+
+            public async Task<Tuple<TP1, TP2, TP3, TP4>> GetValue<TP1, TP2, TP3, TP4>(Expression<Func<T, TP1>> property1, Expression<Func<T, TP2>> property2, Expression<Func<T, TP3>> property3, Expression<Func<T, TP4>> property4)
+            {
+                var keys = new string[] {
+                    GetPropertyName(property1).WithStyle(NameStyle.CamelCase),
+                    GetPropertyName(property2).WithStyle(NameStyle.CamelCase),
+                    GetPropertyName(property3).WithStyle(NameStyle.CamelCase),
+                    GetPropertyName(property4).WithStyle(NameStyle.CamelCase),
+                };
+                var values = await GetGroupValueDict(keys);
+                return Tuple.Create(DeserializeOrDefault<TP1>(values, keys[0]), DeserializeOrDefault<TP2>(values, keys[1]), DeserializeOrDefault<TP3>(values, keys[2]), DeserializeOrDefault<TP4>(values, keys[3]));
+            }
+
+            private async Task<Dictionary<string, string>> GetGroupValueDict(string[] keys)
+            {
+                var attribute = typeof(T).GetCustomAttribute<LayerSettingValueAttribute>();
+                var groupName = attribute?.Group ?? typeof(T).FullName;
+                var logicRoles = await logicRoleService.GetAllRoleCodes();
+                var allGroupValue = await layerService.GetGroupValues(groupName, logicRoles.FilterByProviders(attribute?.RoleProviders), keys);
+                return allGroupValue.ToDictionary(p => p.Key, p => p.Value, StringComparer.OrdinalIgnoreCase);
+            }
+
+            private static TProp DeserializeOrDefault<TProp>(Dictionary<string, string> values, string key)
+            {
+                return values.TryGetValue(key, out var value) && !string.IsNullOrEmpty(value)
+                    ? JsonSerializer.Deserialize<TProp>(value, ILayerService.JsonOptions)
+                    : default;
+            }
         }
 
     }
