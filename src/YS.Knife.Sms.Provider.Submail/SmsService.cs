@@ -1,13 +1,14 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace YS.Knife.Sms.Impl.Submail
+﻿namespace YS.Knife.Sms.Provider.Submail
 {
     [AutoConstructor]
-    [Service(Lifetime = ServiceLifetime.Singleton)]
-    public partial class SmsService : ISmsService
+    [Service]
+    public partial class SmsService : ISmsProvider
     {
         private readonly HttpClient httpClient;
         private readonly SubmailOptions submailOptions;
+
+        public string Name => "submail";
+
         public async Task SendSms(SmsInfo smsInfo)
         {
             var res = await httpClient.PostAsObject<SubMailSendSmsResponse>("https://api-v4.mysubmail.com", "sms/xsend", header: null,

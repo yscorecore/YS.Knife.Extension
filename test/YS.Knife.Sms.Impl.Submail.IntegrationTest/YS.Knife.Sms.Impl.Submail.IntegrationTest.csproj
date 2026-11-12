@@ -7,7 +7,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\YS.Knife.Lock.Core\YS.Knife.Lock.Core.csproj" />
-        <ProjectReference Include="..\..\src\YS.Knife.Sms.Impl.Submail\YS.Knife.Sms.Impl.Submail.csproj" />
+        <ProjectReference Include="..\..\src\YS.Knife.Sms.Impl.Default\YS.Knife.Sms.Impl.Default.csproj" />
+        <ProjectReference Include="..\..\src\YS.Knife.Sms.Provider.Submail\YS.Knife.Sms.Provider.Submail.csproj" />
     </ItemGroup>
 
 </Project>

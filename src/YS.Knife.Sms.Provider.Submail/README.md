@@ -1,13 +1,13 @@
-# YS.Knife.Sms.Impl.Submail
+# YS.Knife.Sms.Provider.Submail
 
-`YS.Knife.Sms` 短信抽象的赛邮（Submail）云通信实现，通过 Submail 短信模板接口（`sms/xsend`）发送短信。
+`YS.Knife.Sms` 的赛邮（Submail）云通信渠道实现，实现 `ISmsProvider`，通过 Submail 短信模板接口（`sms/xsend`）发送短信。
 
 ## 主要功能
 
-- 提供 `SmsService`，实现 `ISmsService` 接口，调用 Submail API v4 发送模板短信
+- `SmsService`：实现 `ISmsProvider`，渠道名 `Name` 为 `submail`，调用 Submail API v4 发送模板短信
 - `SubmailOptions`：配置 AppId / AppKey（`[Options]` 特性，支持从配置文件绑定）
 - 响应状态校验：非 `success` 时抛出 `SubmailException`，包含错误码与错误信息
-- 通过 `[Service(Lifetime = Singleton)]` 特性自动注册到 DI 容器
+- 通过 `[Service]` 特性自动注册到 DI 容器
 
 ## 配置
 
@@ -24,6 +24,8 @@
 
 ## 使用示例
 
+推荐通过 `ISmsService` 使用，模板格式为 `模板名@submail`：
+
 ```csharp
 public class MyService
 {
@@ -34,13 +36,13 @@ public class MyService
         this.smsService = smsService;
     }
 
-    public async Task SendAsync()
+    public async Task SendAsync(CancellationToken cancellationToken)
     {
         try
         {
-            // Template 对应 Submail 后台的短信模板项目标识（project）
-            await smsService.SendSms("13800000000", "your-project-id",
-                new Dictionary<string, object> { ["code"] = "123456" });
+            // 模板名对应 Submail 后台的短信模板项目标识（project）
+            await smsService.SendTemplate("13800000000", "your-project-id@submail",
+                new Dictionary<string, object> { ["code"] = "123456" }, cancellationToken);
         }
         catch (SubmailException ex)
         {
@@ -48,6 +50,13 @@ public class MyService
         }
     }
 }
+```
+
+也可以直接注入 `IEnumerable<ISmsProvider>` 或单独使用该渠道实现：
+
+```csharp
+await provider.SendSms("13800000000", "your-project-id",
+    new Dictionary<string, object> { ["code"] = "123456" });
 ```
 
 ## 类型说明
@@ -59,7 +68,7 @@ public class MyService
 
 ## 依赖说明
 
-- `YS.Knife.Sms.Core`：短信抽象接口
+- `YS.Knife.Sms.Core`：短信抽象接口（`ISmsProvider`、`SmsInfo`）
 - `YS.Knife.Extensions.HttpClient`：提供 `HttpClient.PostAsObject` 扩展
 - `YS.Knife.Extensions`：提供 `ToJsonText` 等扩展
 - `YS.Knife.Core`：提供 `[Service]`、`[AutoConstructor]`、`[Options]` 源生成特性

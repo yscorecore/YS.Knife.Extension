@@ -18,12 +18,12 @@ namespace YS.Knife.Sms.Impl.Submail.IntegrationTest
         public async Task ShouldSendSmsMessage()
         {
             var service = this.GetService<ISmsService>();
-            await service.SendSms("136xxxxxxxx", "9vvZv", new Dictionary<string, object>
+            await service.SendTemplate("136xxxxxxxx", "9vvZv@submail", new Dictionary<string, object>
             {
                 ["date"] = "2023年5月15日",
                 ["url_link"] = "https://wxaurl.cn/4rCPJBYqsCl",
                 ["exception_count"] = 100
-            });
+            }, CancellationToken.None);
 
         }
     }

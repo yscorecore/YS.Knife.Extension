@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace YS.Knife.Sms.Impl.Submail
+namespace YS.Knife.Sms.Provider.Submail
 {
     public record SubMailSendSmsResponse : SubmailBaseResponse
     {

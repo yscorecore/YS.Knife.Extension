@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Sms.Impl.Submail
+﻿namespace YS.Knife.Sms.Provider.Submail
 {
     [Serializable]
     public class SubmailException : Exception

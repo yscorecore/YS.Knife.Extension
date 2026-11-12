@@ -153,8 +153,8 @@ namespace YS.Knife.Auth
             await EnsurePhoneAvailableAsync(phoneNumber, user.Id);
 
             var code = await userManager.GenerateChangePhoneNumberTokenAsync(user, phoneNumber);
-            await GetSmsService().SendSms(phoneNumber, options.Value.BindPhoneSmsTemplate,
-                new Dictionary<string, object> { ["code"] = code });
+            await GetSmsService().SendTemplate(phoneNumber, options.Value.BindPhoneSmsTemplate,
+                new Dictionary<string, object> { ["code"] = code }, cancellationToken);
         }
 
         public async Task BindPhone(BindPhoneInfo info, CancellationToken cancellationToken = default)
@@ -194,8 +194,8 @@ namespace YS.Knife.Auth
             };
             await SaveLoginCodeAsync(phoneNumber, record, opt.LoginCodeExpiresInSeconds);
 
-            await GetSmsService().SendSms(phoneNumber, opt.LoginCodeSmsTemplate,
-                new Dictionary<string, object> { ["code"] = code });
+            await GetSmsService().SendTemplate(phoneNumber, opt.LoginCodeSmsTemplate,
+                new Dictionary<string, object> { ["code"] = code }, cancellationToken);
         }
 
         public async Task<TokenInfo> PhoneLogin(PhoneLoginInfo info, CancellationToken cancellationToken = default)
