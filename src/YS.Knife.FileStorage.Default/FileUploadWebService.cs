@@ -12,7 +12,7 @@ namespace YS.Knife.FileStorage.Default
 
         public async Task<ClientUploadInfo> GetClientUploadInfo(string name, string fileName, long size, CancellationToken cancellationToken = default)
         {
-            var category = await fileCategoryProvider.CreateCategory(name);
+            var category = await fileCategoryProvider.CreateCategory(name) ?? throw new Exception($"The file category '{name}' is not defined");
             if (category.Mode != UploadMode.Client)
             {
                 throw new Exception($"The file category '{name}' does not support client upload");
@@ -29,7 +29,7 @@ namespace YS.Knife.FileStorage.Default
 
         public async Task<IFileUploadWebService.FileUploadRequestInfo> GetUploadInfo(string name, CancellationToken cancellationToken)
         {
-            var category = await fileCategoryProvider.CreateCategory(name);
+            var category = await fileCategoryProvider.CreateCategory(name) ?? throw new Exception($"The file category '{name}' is not defined");
             return new IFileUploadWebService.FileUploadRequestInfo()
             {
                 AllowExtensions = category.AllowExtensions,

@@ -118,7 +118,7 @@ namespace YS.Knife.FileStorage.Default
         {
             foreach (var (k, v) in userArgs)
             {
-                if (!string.IsNullOrEmpty(v) && !Regex.IsMatch(v, @"^\w+$"))
+                if (!string.IsNullOrEmpty(v) && !IsValidFileName(v))
                 {
                     throw new Exception($"The user argument '{k}' is invalid.");
                 }
