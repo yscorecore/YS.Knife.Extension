@@ -73,8 +73,9 @@ namespace YS.Knife.FileStorage.AliyunOss
                 signature = Convert.ToBase64String(signatureBytes);
             }
 
-            // 4. 上传 URL = bucket endpoint
-            var uploadUrl = $"https://{ossConfiguration.BucketName}.{ossConfiguration.Endpoint}/";
+            // 4. 上传 URL = protocol + bucket + host（注意 Endpoint 可能自带协议前缀，需先剥离）
+            var (protocol, host) = GetEndpointInfo();
+            var uploadUrl = $"{protocol}{ossConfiguration.BucketName}.{host}/";
 
             // 5. 组装 form 字段（顺序很重要：OSS 按顺序校验）
             var formFields = new Dictionary<string, string>
@@ -158,9 +159,28 @@ namespace YS.Knife.FileStorage.AliyunOss
             }
         }
 
+        /// <summary>
+        /// 从 Endpoint 配置中提取协议和纯 host。
+        /// 配置允许带 https:// 或 http:// 前缀（如 https://oss-cn-hangzhou.aliyuncs.com），
+        /// 返回 (protocol, host) 用于后续 bucket 子域名拼接。
+        /// </summary>
+        private (string protocol, string host) GetEndpointInfo()
+        {
+            var ep = ossConfiguration.Endpoint;
+            if (ep.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                return ("https://", ep["https://".Length..]);
+            }
+            else if (ep.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+            {
+                return ("http://", ep["http://".Length..]);
+            }
+            return ("https://", ep);
+        }
+
         private OssClient CreateClient()
         {
-            return new OssClient($"{ossConfiguration.Endpoint}", ossConfiguration.AccessKeyId, ossConfiguration.AccessKeySecret);
+            return new OssClient(ossConfiguration.Endpoint, ossConfiguration.AccessKeyId, ossConfiguration.AccessKeySecret);
         }
 
         private ObjectMetadata CreateObjectMeta(IDictionary<string, object> mata)

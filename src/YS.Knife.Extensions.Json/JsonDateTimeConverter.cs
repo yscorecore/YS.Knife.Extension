@@ -4,11 +4,15 @@ namespace System.Text.Json.Serialization
 {
     public class JsonDateTimeConverter : JsonConverter<DateTime>
     {
-        private readonly string _format;
+        private readonly string[] _formats;
 
-        public JsonDateTimeConverter(string format)
+        public JsonDateTimeConverter(params string[] formats)
         {
-            _format = format;
+            if (formats == null || formats.Length == 0)
+            {
+                throw new ArgumentException("At least one format must be provided.", nameof(formats));
+            }
+            _formats = formats;
         }
 
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -16,27 +20,35 @@ namespace System.Text.Json.Serialization
             if (reader.TokenType == JsonTokenType.String)
             {
                 var dateString = reader.GetString();
-                if (DateTime.TryParseExact(dateString, _format, CultureInfo.InvariantCulture,
-                    DateTimeStyles.None, out DateTime result))
+                foreach (var format in _formats)
                 {
-                    return result;
+                    if (DateTime.TryParseExact(dateString, format, CultureInfo.InvariantCulture,
+                        DateTimeStyles.None, out DateTime result))
+                    {
+                        return result;
+                    }
                 }
             }
-            throw new JsonException($"Invalid date format. Expected: {_format}");
+            throw new JsonException($"Invalid date format. Expected one of: {string.Join(", ", _formats)}");
         }
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.ToString(_format));
+            writer.WriteStringValue(value.ToString(_formats[0]));
         }
     }
+
     public class JsonDateTimeOffsetConverter : JsonConverter<DateTimeOffset>
     {
-        private readonly string _format;
+        private readonly string[] _formats;
 
-        public JsonDateTimeOffsetConverter(string format)
+        public JsonDateTimeOffsetConverter(params string[] formats)
         {
-            _format = format;
+            if (formats == null || formats.Length == 0)
+            {
+                throw new ArgumentException("At least one format must be provided.", nameof(formats));
+            }
+            _formats = formats;
         }
 
         public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -44,41 +56,53 @@ namespace System.Text.Json.Serialization
             if (reader.TokenType == JsonTokenType.String)
             {
                 var dateString = reader.GetString();
-                if (DateTimeOffset.TryParseExact(dateString, _format, CultureInfo.InvariantCulture,
-                    DateTimeStyles.None, out DateTimeOffset result))
+                foreach (var format in _formats)
                 {
-                    return result;
+                    if (DateTimeOffset.TryParseExact(dateString, format, CultureInfo.InvariantCulture,
+                        DateTimeStyles.None, out DateTimeOffset result))
+                    {
+                        return result;
+                    }
                 }
             }
-            throw new JsonException($"Invalid date format. Expected: {_format}");
+            throw new JsonException($"Invalid date format. Expected one of: {string.Join(", ", _formats)}");
         }
 
         public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.ToString(_format));
+            writer.WriteStringValue(value.ToString(_formats[0]));
         }
     }
+
     [AttributeUsage(AttributeTargets.Property)]
     public class JsonDateTimeFormatAttribute : JsonConverterAttribute
     {
-        public string Format { get; }
+        public string[] Formats { get; }
 
-        public JsonDateTimeFormatAttribute(string format)
+        /// <summary>
+        /// 优先序列化格式（Formats 数组第一个元素）。单格式场景下可直接使用此属性。
+        /// </summary>
+        public string Format => Formats[0];
+
+        public JsonDateTimeFormatAttribute(params string[] formats)
         {
-            Format = format;
+            if (formats == null || formats.Length == 0)
+            {
+                throw new ArgumentException("At least one format must be provided.", nameof(formats));
+            }
+            Formats = formats;
         }
 
         public override JsonConverter CreateConverter(Type typeToConvert)
         {
             if (typeToConvert == typeof(DateTimeOffset))
             {
-                return new JsonDateTimeOffsetConverter(Format);
+                return new JsonDateTimeOffsetConverter(Formats);
             }
             else
             {
-                return new JsonDateTimeConverter(Format);
+                return new JsonDateTimeConverter(Formats);
             }
-
         }
     }
 }

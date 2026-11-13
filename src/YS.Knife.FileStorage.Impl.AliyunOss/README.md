@@ -57,7 +57,7 @@ public class DemoService
 
 | 属性 | 说明 |
 | --- | --- |
-| `Endpoint` | OSS 服务端点（必填） |
+| `Endpoint` | OSS 服务端点（必填），支持带协议前缀如 `https://oss-cn-hangzhou.aliyuncs.com` |
 | `BucketName` | Bucket 名称（必填） |
 | `AccessKeyId` | 访问密钥 Id（必填） |
 | `AccessKeySecret` | 访问密钥 Secret（必填） |

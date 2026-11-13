@@ -5,9 +5,9 @@
 ## 主要功能
 
 - 枚举序列化：`CamelCaseJsonStringEnumConverter`（枚举名转 camelCase 字符串）
-- 日期格式化：
-  - `JsonDateTimeConverter` / `JsonDateTimeOffsetConverter`（按指定格式读写）
-  - `JsonDateTimeFormatAttribute`（属性级指定格式，自动匹配 `DateTime` / `DateTimeOffset`）
+- 日期格式化（支持多格式容错）：
+  - `JsonDateTimeConverter` / `JsonDateTimeOffsetConverter`（构造函数接收 `params string[] formats`；反序列化时依次尝试每种格式，序列化时始终使用第一种）
+  - `JsonDateTimeFormatAttribute`（属性级指定格式，自动匹配 `DateTime` / `DateTimeOffset`；支持传多个格式：`[JsonDateTimeFormat("yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss", "yyyy-MM-dd")]`）
 - 序列化方向控制：
   - `JsonIgnoreWhenReadAttribute`：反序列化时忽略（读取后赋默认值），序列化正常输出
   - `JsonIgnoreWhenWriteAttribute`：序列化时输出默认值，反序列化正常读取
@@ -31,6 +31,10 @@ public class UserDto
     // 日期按指定格式序列化
     [JsonDateTimeFormat("yyyy-MM-dd HH:mm:ss")]
     public DateTime CreateTime { get; set; }
+
+    // 多格式容错：反序列化依次尝试以下格式，序列化始终用第一种
+    [JsonDateTimeFormat("yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss", "yyyy-MM-dd")]
+    public DateTime FlexibleTime { get; set; }
 
     // 姓名脱敏：张三 -> 张*
     [JsonNameMask]
