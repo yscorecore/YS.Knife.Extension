@@ -81,8 +81,11 @@ namespace YS.Knife.Function
             return res;
             void Expand(FunctionTreeInfo current)
             {
-                res.Add(current);
-                if (current.SubItems != null)
+                if (current != null)
+                {
+                    res.Add(current);
+                }
+                if (current?.SubItems != null)
                 {
                     foreach (var item in current.SubItems)
                     {
