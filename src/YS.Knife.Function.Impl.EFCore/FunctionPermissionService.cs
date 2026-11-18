@@ -138,6 +138,7 @@ namespace YS.Knife.Function.Impl.EFCore
             string[] GetFunctionCodeChains(string appId, FunctionTreeInfo tree, string functionCode)
             {
                 var res = new List<string>();
+                if (tree == null) return res.ToArray();
                 var treeMap = tree.ExpandTree().ToDictionary(p => p.Code);
                 var code = funcitonCode;
                 while (code != null && treeMap.TryGetValue(code, out var func))
