@@ -106,5 +106,62 @@ namespace YS.Knife.EFCore.UnitTest
             public int[] Values { get; set; }
         }
         #endregion
+
+
+        #region NamingPolicy
+        [Fact]
+        public void Should_Use_Specified_NamingPolicy_When_Serialize_JsonContent()
+        {
+            var model = GetModel<NamingPolicy_Context>();
+            var entity = model.GetEntityTypes().First();
+
+            Convert(nameof(NamingPolicy_Entity.CamelValue), new NamingPolicy_Config { UserName = "foo", UserAge = 18 })
+                .Should().Be("{\"userName\":\"foo\",\"userAge\":18}");
+            Convert(nameof(NamingPolicy_Entity.PascalValue), new LowerCamelCaseConfig { userName = "foo", userAge = 18 })
+                .Should().Be("{\"UserName\":\"foo\",\"UserAge\":18}");
+            Convert(nameof(NamingPolicy_Entity.SnakeValue), new NamingPolicy_Config { UserName = "foo", UserAge = 18 })
+                .Should().Be("{\"user_name\":\"foo\",\"user_age\":18}");
+            Convert(nameof(NamingPolicy_Entity.DefaultValue), new NamingPolicy_Config { UserName = "foo", UserAge = 18 })
+                .Should().Be("{\"UserName\":\"foo\",\"UserAge\":18}");
+
+            string Convert(string propertyName, object value)
+            {
+                return (string)entity.GetProperty(propertyName).GetValueConverter().ConvertToProvider(value);
+            }
+        }
+
+        private class NamingPolicy_Context : BaseContext
+        {
+            public NamingPolicy_Context(DbContextOptions<NamingPolicy_Context> options) : base(options)
+            {
+            }
+            public DbSet<NamingPolicy_Entity> TestEntities { get; set; }
+        }
+
+        private class NamingPolicy_Entity
+        {
+            public int Id { get; set; }
+            [JsonContent(NamingPolicy = JsonPropertyNamingPolicy.CamelCase)]
+            public NamingPolicy_Config CamelValue { get; set; }
+            [JsonContent(NamingPolicy = JsonPropertyNamingPolicy.PascalCase)]
+            public LowerCamelCaseConfig PascalValue { get; set; }
+            [JsonContent(NamingPolicy = JsonPropertyNamingPolicy.SnakeCaseLower)]
+            public NamingPolicy_Config SnakeValue { get; set; }
+            [JsonContent]
+            public NamingPolicy_Config DefaultValue { get; set; }
+        }
+
+        public class NamingPolicy_Config
+        {
+            public string UserName { get; set; }
+            public int UserAge { get; set; }
+        }
+
+        public class LowerCamelCaseConfig
+        {
+            public string userName { get; set; }
+            public int userAge { get; set; }
+        }
+        #endregion
     }
 }

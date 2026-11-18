@@ -15,24 +15,35 @@ namespace Microsoft.EntityFrameworkCore
         public JsonContentAttribute() : base()
         {
         }
+
+        /// <summary>
+        /// JSON 序列化时使用的属性名称命名规则，默认保持属性原名称。
+        /// </summary>
+        public JsonPropertyNamingPolicy NamingPolicy { get; set; } = JsonPropertyNamingPolicy.Default;
+
         public void Apply(PropertyBuilder property)
         {
-            var valueConverterType = typeof(JsonContentConvert<>).MakeGenericType(property.Metadata.PropertyInfo.PropertyType);
-            if (IsDictionary(property.Metadata.PropertyInfo))
+            var propertyInfo = property.Metadata.PropertyInfo;
+            var jsonOptions = CreateJsonSerializerOptions();
+            var valueConverterType = typeof(JsonContentConvert<>).MakeGenericType(propertyInfo.PropertyType);
+            var valueConverter = (ValueConverter)Activator.CreateInstance(valueConverterType, jsonOptions);
+            if (IsDictionary(propertyInfo))
             {
-                var argumentsType = property.Metadata.PropertyInfo.PropertyType.GetGenericArguments();
+                var argumentsType = propertyInfo.PropertyType.GetGenericArguments();
                 var valueComparerType = typeof(DicValueComparer<,>).MakeGenericType(argumentsType[0], argumentsType[1]);
-                property.HasConversion(valueConverterType, valueComparerType);
+                var valueComparer = (ValueComparer)Activator.CreateInstance(valueComparerType, jsonOptions);
+                property.HasConversion(valueConverter, valueComparer);
             }
-            else if (IsList(property.Metadata.PropertyInfo))
+            else if (IsList(propertyInfo))
             {
-                var listItemType = property.Metadata.PropertyInfo.PropertyType.GetGenericArguments().Single();
+                var listItemType = propertyInfo.PropertyType.GetGenericArguments().Single();
                 var valueComparerType = typeof(ListValueComparer<>).MakeGenericType(listItemType);
-                property.HasConversion(valueConverterType, valueComparerType);
+                var valueComparer = (ValueComparer)Activator.CreateInstance(valueComparerType, jsonOptions);
+                property.HasConversion(valueConverter, valueComparer);
             }
             else
             {
-                property.HasConversion(valueConverterType);
+                property.HasConversion(valueConverter);
             }
 
 
@@ -46,36 +57,41 @@ namespace Microsoft.EntityFrameworkCore
             }
         }
 
-        private class JsonContentConvert<T> : ValueConverter<T, string>
+        private JsonSerializerOptions CreateJsonSerializerOptions()
         {
-            static JsonSerializerOptions Options = new JsonSerializerOptions()
+            return new JsonSerializerOptions()
             {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 PropertyNameCaseInsensitive = true,
+                PropertyNamingPolicy = JsonNamingPolicyFactory.Resolve(NamingPolicy),
             };
-            public JsonContentConvert()
+        }
+
+        private class JsonContentConvert<T> : ValueConverter<T, string>
+        {
+            public JsonContentConvert(JsonSerializerOptions options)
            : base(
-               v => JsonSerializer.Serialize<T>(v, Options),
-               v => string.IsNullOrEmpty(v) ? default : JsonSerializer.Deserialize<T>(v, Options)
+               v => JsonSerializer.Serialize<T>(v, options),
+               v => string.IsNullOrEmpty(v) ? default : JsonSerializer.Deserialize<T>(v, options)
                )
             {
             }
         }
         private class ListValueComparer<T> : ValueComparer<List<T>>
         {
-            public ListValueComparer() : base(
+            public ListValueComparer(JsonSerializerOptions options) : base(
                 (c1, c2) => c1.SequenceEqual(c2),
                 c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                c => c.ToJsonText(default).AsJsonObject<List<T>>(default))
+                c => c.ToJsonText(options).AsJsonObject<List<T>>(options))
             {
             }
         }
         private class DicValueComparer<TKey, TValue> : ValueComparer<Dictionary<TKey, TValue>>
         {
-            public DicValueComparer() : base(
+            public DicValueComparer(JsonSerializerOptions options) : base(
                (c1, c2) => c1.OrderBy(t => t.Key).SequenceEqual(c2.OrderBy(t => t.Key)),
                c => c.OrderBy(t => t.Key).Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-               c => c.ToJsonText(default).AsJsonObject<Dictionary<TKey, TValue>>(default))
+               c => c.ToJsonText(options).AsJsonObject<Dictionary<TKey, TValue>>(options))
             {
             }
         }

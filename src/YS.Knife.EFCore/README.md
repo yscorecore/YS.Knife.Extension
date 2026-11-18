@@ -81,9 +81,13 @@ public Dictionary<string, object> Metadata { get; set; }
 [JsonContent]
 public List<string> Tags { get; set; }
 
-[JsonContent]
+[JsonContent(NamingPolicy = JsonPropertyNamingPolicy.CamelCase)]
 public AddressInfo Address { get; set; }
 ```
+
+| 参数 | 说明 |
+|---|---|
+| `NamingPolicy` | JSON 属性名称命名规则，默认 `JsonPropertyNamingPolicy.Default`（保持原名称），可选 `CamelCase`、`PascalCase`、`SnakeCaseLower`、`SnakeCaseUpper`、`KebabCaseLower`、`KebabCaseUpper` |
 
 使用 `System.Text.Json` 进行序列化/反序列化，自动配置 `ValueComparer`。
 
