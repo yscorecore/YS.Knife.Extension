@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 namespace YS.Knife.KeyValue
 {
     [AutoConstructor]

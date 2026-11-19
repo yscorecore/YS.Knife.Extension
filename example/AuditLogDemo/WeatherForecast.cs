@@ -1,4 +1,4 @@
-﻿namespace AuditLogDemo
+﻿﻿namespace AuditLogDemo
 {
     public class WeatherForecast
     {

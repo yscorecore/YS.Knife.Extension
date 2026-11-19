@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Sms
+﻿﻿namespace YS.Knife.Sms
 {
     public interface ISmsService
     {

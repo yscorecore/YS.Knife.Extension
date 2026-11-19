@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.TokenMan
+﻿﻿namespace YS.Knife.TokenMan
 {
     public interface ITokenManager
     {

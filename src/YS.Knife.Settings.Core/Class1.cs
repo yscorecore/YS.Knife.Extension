@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Settings.Core
+﻿﻿namespace YS.Knife.Settings.Core
 {
     public interface ISettingsService
     {

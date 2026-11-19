@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Entity
+﻿﻿namespace YS.Knife.Entity
 {
     public interface IEntity<TKey>
         where TKey : notnull

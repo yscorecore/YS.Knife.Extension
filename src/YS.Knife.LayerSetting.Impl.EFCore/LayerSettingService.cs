@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 using Microsoft.EntityFrameworkCore;
 using YS.Knife.Entity;
 using YS.Knife.LayerSetting.Entity.EFCore;

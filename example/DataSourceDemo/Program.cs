@@ -1,4 +1,4 @@
-﻿using DataSourceDemo.Controllers;
+﻿﻿using DataSourceDemo.Controllers;
 using YS.Knife.AspnetCore.Mvc;
 using YS.Knife.DataSource.AspnetCore;
 using YS.Knife.Hosting;
@@ -31,8 +31,8 @@ namespace DataSourceDemo
             var app = builder.Build();
             if (app.Environment.IsDevelopment())
             {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+                app.UseSwagger();
+                app.UseSwaggerUI();
 
                 app.UseDeveloperExceptionPage();
             }

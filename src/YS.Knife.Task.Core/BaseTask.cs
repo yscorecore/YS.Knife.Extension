@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Tasks
+﻿﻿namespace YS.Knife.Tasks
 {
     public abstract class BaseTask<TArgs> : ITask<TArgs>
     {

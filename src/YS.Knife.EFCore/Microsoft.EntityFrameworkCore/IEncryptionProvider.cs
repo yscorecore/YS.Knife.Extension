@@ -1,4 +1,4 @@
-﻿namespace Microsoft.EntityFrameworkCore
+﻿﻿namespace Microsoft.EntityFrameworkCore
 {
     public interface IEncryptionProvider
     {

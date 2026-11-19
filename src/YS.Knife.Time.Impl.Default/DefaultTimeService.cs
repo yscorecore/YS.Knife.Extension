@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 
 namespace YS.Knife.Time.Impl.Default
 {

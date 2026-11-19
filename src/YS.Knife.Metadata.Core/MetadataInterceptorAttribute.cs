@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Metadata
+﻿﻿namespace YS.Knife.Metadata
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class MetadataInterceptorAttribute : Attribute

@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.QrCode
+﻿﻿namespace YS.Knife.QrCode
 {
     public static class QrCodeServiceExtensions
     {

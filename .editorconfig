@@ -4,6 +4,7 @@
 ###############################
 # All files
 [*]
+end_of_line = lf
 indent_style = space
 # Code files
 [*.{cs,csx,vb,vbx}]

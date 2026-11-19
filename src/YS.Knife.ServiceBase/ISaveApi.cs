@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Service
+﻿﻿namespace YS.Knife.Service
 {
     public interface ISaveApi<TSaveDto>
     {

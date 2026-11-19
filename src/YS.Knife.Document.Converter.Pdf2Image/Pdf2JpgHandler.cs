@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 using PdfiumRaster;
 
 namespace YS.Knife.Document.Converter.Pdf2Image
