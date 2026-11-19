@@ -41,4 +41,4 @@ GET /api/metadata/User
 
 - `YS.Knife.Metadata.Core`：提供 `IMetadataService`、`MetadataInfo` 等抽象定义
 - `FlyTiger`（通过 `YS.Knife.Core` 体系）：提供 `[AutoConstructor]` 源代码生成能力
-- 目标框架：net6.0，`Microsoft.NET.Sdk.Web`（类库形式输出）
+- 目标框架：net8.0 / net9.0 / net10.0，`Microsoft.NET.Sdk.Web`（类库形式输出）

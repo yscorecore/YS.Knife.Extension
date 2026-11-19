@@ -35,6 +35,6 @@ public class AppDbContext : DbContext
 
 ## 依赖说明
 
-- 目标框架：.NET 6（`net6.0`）
+- 目标框架：.NET 8 / .NET 9 / .NET 10（`net8.0` / `net9.0` / `net10.0`）
 - `YS.Knife.EFCore`：提供 `BaseEntity<T>` 等 EF Core 基础设施
 - `Microsoft.EntityFrameworkCore`（经 `YS.Knife.EFCore` 传递）

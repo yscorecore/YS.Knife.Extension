@@ -55,6 +55,6 @@ public class DashboardService
 
 ## 依赖说明
 
-- 目标框架：.NET 6（`net6.0`）
+- 目标框架：.NET 8 / .NET 9 / .NET 10（`net8.0` / `net9.0` / `net10.0`）
 - `FlyTiger`（单例模式、代码生成）
 - 实现层请参考 `YS.Knife.DataItem.Impl.Default`；Web API 层请参考 `YS.Knife.DataItem.Api.AspnetCore`

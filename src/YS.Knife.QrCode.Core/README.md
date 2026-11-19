@@ -50,6 +50,6 @@ public class MyService
 
 ## 依赖说明
 
-本包仅为抽象层，无任何第三方依赖，目标框架 net6.0。具体实现见：
+本包仅为抽象层，无任何第三方依赖，目标框架 net8.0 / net9.0 / net10.0。具体实现见：
 
 - `YS.Knife.QrCode.Impl.QRCoder`：基于 QRCoder 库的实现

@@ -4,17 +4,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <!-- LibreOfficeKit (netstandard2.0) pulls in net10-era BCL packages; their buildTransitive
-         targets emit NETStandardCompat warnings on net6.0 that are expected and harmless. -->
+         targets emit NETStandardCompat warnings that are expected and harmless. -->
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
   <ItemGroup>
     <Using Include="YS.Knife" />
     <ProjectReference Include="..\YS.Knife.DependencyInjection\YS.Knife.DependencyInjection.csproj" />
     <PackageReference Include="LibreOfficeKit" Version="1.1.7" />
-    <!-- 覆盖 LibreOfficeKit 传递的 net10-only 依赖，兼容 net6/net8/net9 runtime -->
-    <PackageReference Include="System.Text.Json" Version="8.0.5">
-      <NoWarn>NU1605</NoWarn>
-    </PackageReference>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>

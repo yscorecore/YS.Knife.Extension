@@ -73,7 +73,7 @@ public class ProductSyncService
 
 ## 依赖说明
 
-- 目标框架：.NET 6（`net6.0`）
+- 目标框架：.NET 8 / .NET 9 / .NET 10（`net8.0` / `net9.0` / `net10.0`）
 - `YS.Knife.CodeMapper.Core`：抽象接口
 - `YS.Knife.CodeMapper.Entity.EFCore`：实体定义（实现内部固定使用 `CodeMapperEntity<Guid>`）
 - `Microsoft.EntityFrameworkCore`、`FlyTiger`、`YS.Knife.Entity`（`IEntityStore<T>`）

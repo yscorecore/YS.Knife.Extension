@@ -46,7 +46,7 @@ public class AppInfoService
 
 ## 依赖说明
 
-- 目标框架：.NET 6（`net6.0`）
+- 目标框架：.NET 8 / .NET 9 / .NET 10（`net8.0` / `net9.0` / `net10.0`）
 - `YS.Knife.Version.Core`：抽象接口与模型
 - `YS.Knife.Core`、`FlyTiger`：服务自动注册
 

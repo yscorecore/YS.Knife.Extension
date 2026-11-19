@@ -51,7 +51,7 @@ services.Configure<AliyunTtsOptions>(opt =>
 
 ## 依赖说明
 
-- 目标框架：.NET 6（`net6.0`）
+- 目标框架：.NET 8 / .NET 9 / .NET 10（`net8.0` / `net9.0` / `net10.0`）
 - `YS.Knife.Tts.Core`：抽象接口
 - `YS.Knife.Extensions.HttpClient` / `YS.Knife.Extensions.DistributedCache` / `YS.Knife.Lock.Core`：HTTP 调用、令牌缓存与分布式锁
 - `YS.Knife.Core`、`FlyTiger`：服务自动注册与代码生成

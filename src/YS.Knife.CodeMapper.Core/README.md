@@ -68,6 +68,6 @@ public partial interface ICodeMapperManagerService<T>
 
 ## 依赖说明
 
-- 目标框架：.NET 6（`net6.0`）
+- 目标框架：.NET 8 / .NET 9 / .NET 10（`net8.0` / `net9.0` / `net10.0`）
 - `YS.Knife.ServiceBase`：提供 `PagedList`、`LimitQueryInfo`、`BaseDto<T>` 等基础类型
 - 实现层请参考 `YS.Knife.CodeMapper.Impl.EFCore`

@@ -16,7 +16,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-          6.0.x
           8.0.x
           9.0.x
           10.0.x
@@ -33,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [net6.0, net8.0, net9.0, net10.0]
+        target: [net8.0, net9.0, net10.0]
 
     steps:
     - name: 01 Checkout Code
@@ -43,7 +42,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-          6.0.x
           8.0.x
           9.0.x
           10.0.x
@@ -79,7 +77,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-          6.0.x
           8.0.x
           9.0.x
           10.0.x

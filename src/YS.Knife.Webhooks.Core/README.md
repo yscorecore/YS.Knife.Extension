@@ -55,6 +55,6 @@ public interface IWebHookDeliveryService
 
 ## 依赖说明
 
-- 目标框架：.NET 6（`net6.0`）
+- 目标框架：.NET 8 / .NET 9 / .NET 10（`net8.0` / `net9.0` / `net10.0`）
 - 无第三方运行时依赖，仅定义抽象契约
 - 实现层请参考 `YS.Knife.Webhooks.Impl.Default`

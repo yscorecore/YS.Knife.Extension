@@ -45,4 +45,4 @@ if (loader.CanLoad(uri))
 
 - `YS.Knife.Resource.Core`：提供 `IResourceLoader` 接口定义
 - `YS.Knife.Core`：提供 `[Service]` 自动注册能力
-- 目标框架：net6.0
+- 目标框架：net8.0 / net9.0 / net10.0

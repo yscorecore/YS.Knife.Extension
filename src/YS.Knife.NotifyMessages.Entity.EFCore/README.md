@@ -40,6 +40,6 @@ var messages = await dbContext.Messages
 ## 依赖说明
 
 - `YS.Knife.EntityBase`：提供 `BaseEntity<T>`、`ISoftDeleteEntity` 等实体基础设施
-- 目标框架：net6.0
+- 目标框架：net8.0 / net9.0 / net10.0
 
 本包仅包含实体定义，持久化与服务实现见 `YS.Knife.NotifyMessages.Impl.EFCore`。
