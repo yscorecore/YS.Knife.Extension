@@ -1,14 +1,23 @@
-﻿
+using YS.Knife.Hosting;
+
 namespace VersionDemo
 {
-    public class Program : YS.Knife.Hosting.KnifeWebHost
+    public class Program
     {
-        public Program(string[] args) : base(args)
-        {
-        }
         public static void Main(string[] args)
         {
-            new Program(args).Run();
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddAllKnifeServices(builder.Configuration);
+            builder.Services.AddControllers();
+
+
+            builder.Services.AddSwaggerGen();
+            var app = builder.Build();
+            app.MapControllers();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+            app.Run();
         }
     }
 }

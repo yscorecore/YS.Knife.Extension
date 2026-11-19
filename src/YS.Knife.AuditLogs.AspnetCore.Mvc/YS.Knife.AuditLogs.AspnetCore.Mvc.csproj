@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
     <PropertyGroup>
         <IsPackable>true</IsPackable>
         <OutputType>Library</OutputType>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+        <ProjectReference Include="..\YS.Knife.DependencyInjection\YS.Knife.DependencyInjection.csproj" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\YS.Knife.AuditLogs.Core\YS.Knife.AuditLogs.Core.csproj" />

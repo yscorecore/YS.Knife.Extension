@@ -1,41 +1,47 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
+using YS.Knife.Hosting;
 
 namespace TagsDemo
 {
-    public class Program : YS.Knife.Hosting.KnifeWebHost
+    public class Program
     {
-        public Program(string[] args) : base(args)
-        {
-        }
         public static void Main(string[] args)
         {
-            new Program(args).Run();
-        }
-        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
-        {
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddAllKnifeServices(builder.Configuration);
 
-            base.OnConfigureCustomService(builder, serviceCollection);
-            serviceCollection.AddDbContext<TagDbContext>((op) =>
+            builder.Services.AddControllers();
+
+            builder.Services.AddSwaggerGen();
+            builder.Services.AddDbContext<TagDbContext>(op =>
             {
-                //op.UseSqlite("Data Source=:memory:").EnableSensitiveDataLogging(true);
                 op.UseSqlite("Data Source=abc.db.tmp").EnableSensitiveDataLogging(true);
                 op.LogTo(Console.WriteLine);
             });
-        }
-        protected override void ConfigureWebApp(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            base.ConfigureWebApp(app, env);
-            var scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
-            using var scope = scopeFactory.CreateScope();
-            using (var context = scope.ServiceProvider.GetService<TagDbContext>())
+
+            var app = builder.Build();
+            if (app.Environment.IsDevelopment())
             {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+                app.UseDeveloperExceptionPage();
+            }
+            app.UseHttpsRedirection();
+            app.UseRouting();
+            app.UseAuthorization();
+            app.MapControllers();
+
+            // 初始化数据库
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<TagDbContext>();
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
-
             }
-        }
 
+            app.Run();
+        }
     }
 }

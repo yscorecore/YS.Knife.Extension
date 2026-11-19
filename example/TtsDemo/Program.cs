@@ -1,21 +1,26 @@
-﻿
+using YS.Knife.Hosting;
 
 namespace TtsDemo
 {
-    public class Program : YS.Knife.Hosting.KnifeWebHost
+    public class Program
     {
-        public Program(string[] args) : base(args)
-        {
-        }
         public static void Main(string[] args)
         {
-            new Program(args).Run();
-        }
-        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
-        {
-            base.OnConfigureCustomService(builder, serviceCollection);
-            serviceCollection.AddDistributedMemoryCache();
-            serviceCollection.AddHttpClient();
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddAllKnifeServices(builder.Configuration);
+
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddHttpClient();
+            builder.Services.AddControllers();
+
+
+            builder.Services.AddSwaggerGen();
+            var app = builder.Build();
+            app.MapControllers();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+            app.Run();
         }
     }
 }

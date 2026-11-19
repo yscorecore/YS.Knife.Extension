@@ -7,4 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\YS.Knife.AI.Impl.Default\YS.Knife.AI.Impl.Default.csproj" />
   </ItemGroup>
+  <ItemGroup>
+      <ProjectReference Include="..\..\src\YS.Knife.Host\YS.Knife.Host.csproj" />
+  </ItemGroup>
 </Project>

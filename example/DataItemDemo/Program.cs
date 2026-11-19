@@ -1,28 +1,29 @@
-﻿using YS.Knife.AspnetCore.Mvc;
+using YS.Knife.AspnetCore.Mvc;
+
+using YS.Knife.Hosting;
 
 namespace DataItemDemo
 {
-    //[ExposeDataItemApi(typeof(IService1), nameof(IService1.GetTaskValue))]
-    public class Program : YS.Knife.Hosting.KnifeWebHost
+    public class Program
     {
-        public Program(string[] args) : base(args)
-        {
-        }
         public static void Main(string[] args)
         {
-            new Program(args).Run();
-        }
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddAllKnifeServices(builder.Configuration);
 
-        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddMvc().ConfigureApplicationPartManager(manager =>
+
+            builder.Services.AddSwaggerGen();
+            builder.Services.AddControllers().ConfigureApplicationPartManager(manager =>
             {
                 manager.FeatureProviders.Add(new GenericControllerFeatureProvider());
             });
-            base.OnConfigureCustomService(builder, serviceCollection);
+
+            var app = builder.Build();
+            app.MapControllers();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+            app.Run();
         }
-
-
-
     }
 }

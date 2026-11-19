@@ -1,11 +1,11 @@
-﻿using System.ComponentModel;
+﻿﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using YS.Knife.Hosting;
 
 namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
 {
-    public class MetadataServiceTest : KnifeWebHost
+    public class MetadataServiceTest : KnifeHost
     {
         [Fact]
         public void ShouldGetMetadataService()

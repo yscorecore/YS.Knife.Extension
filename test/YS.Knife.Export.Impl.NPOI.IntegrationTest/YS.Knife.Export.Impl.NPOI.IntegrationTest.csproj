@@ -3,7 +3,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.7" />
         <PackageReference Include="MiniExcel" Version="1.31.2" />
-        <PackageReference Include="YS.Knife.Hosting" Version="2.0.2" />
+        <ProjectReference Include="..\..\src\YS.Knife.Host\YS.Knife.Host.csproj" />
     </ItemGroup>
 
     <ItemGroup>

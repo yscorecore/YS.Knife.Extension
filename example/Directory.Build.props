@@ -2,4 +2,15 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
+    <!--
+        .NET 11 SDK regression (11.0.100): non-Blazor Microsoft.NET.Sdk.Web projects
+        fail with "The following scoped css bundles do not have matching endpoints:
+        _framework/Microsoft.NET.Sdk.BlazorWeb.HotReload#[.{fingerprint}]!.lib.module.js".
+        Disabling scoped-css / Blazor HotReload validation that the SDK incorrectly
+        runs on every Sdk.Web project (including Library OutputTypes).
+    -->
+    <PropertyGroup>
+        <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
+        <EnableDefaultScopedCssItems>false</EnableDefaultScopedCssItems>
+    </PropertyGroup>
 </Project>

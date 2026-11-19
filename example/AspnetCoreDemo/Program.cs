@@ -1,34 +1,33 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.AspNetCore.Mvc;
 using YS.Knife.AspnetCore.Mvc;
+using YS.Knife.Hosting;
 
 namespace AspnetCoreDemo
 {
-    public class Program : YS.Knife.Hosting.KnifeWebHost
+    public class Program
     {
-        public Program(string[] args) : base(args)
-        {
-        }
         public static void Main(string[] args)
         {
-            new Program(args).Run();
-        }
-        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
-        {
-            serviceCollection.Configure<MvcOptions>(options =>
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddAllKnifeServices(builder.Configuration);
+
+
+            builder.Services.AddSwaggerGen();
+            builder.Services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add<WrapCodeResultAttribute>();
             });
-            serviceCollection.AddMvc().ConfigureApplicationPartManager(manager =>
+            builder.Services.AddControllers().ConfigureApplicationPartManager(manager =>
             {
                 manager.FeatureProviders.Add(new GenericControllerFeatureProvider());
             });
-            base.OnConfigureCustomService(builder, serviceCollection);
 
+            var app = builder.Build();
+            app.MapControllers();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+            app.Run();
         }
-
     }
 }

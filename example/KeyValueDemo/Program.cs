@@ -1,49 +1,56 @@
-﻿
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YS.Knife.AspnetCore.Mvc;
 
+using YS.Knife.Hosting;
+
 namespace KeyValueDemo
 {
-    public class Program : YS.Knife.Hosting.KnifeWebHost
+    public class Program
     {
-        public Program(string[] args) : base(args)
-        {
-        }
         public static void Main(string[] args)
         {
-            new Program(args).Run();
-        }
-        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
-        {
-            serviceCollection.Configure<MvcOptions>(options =>
-            {
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddAllKnifeServices(builder.Configuration);
 
+
+            builder.Services.AddSwaggerGen();
+            builder.Services.Configure<MvcOptions>(options =>
+            {
                 options.Filters.Add<WrapCodeResultAttribute>();
             });
-            serviceCollection.AddMvc().ConfigureApplicationPartManager(manager =>
+            builder.Services.AddControllers().ConfigureApplicationPartManager(manager =>
             {
                 manager.FeatureProviders.Add(new GenericControllerFeatureProvider());
             });
-            base.OnConfigureCustomService(builder, serviceCollection);
-            serviceCollection.AddDbContext<KeyValueContext>((op) =>
+            builder.Services.AddDbContext<KeyValueContext>(op =>
             {
-                //op.UseSqlite("Data Source=:memory:").EnableSensitiveDataLogging(true);
                 op.UseSqlite("Data Source=abc.db.tmp").EnableSensitiveDataLogging(true);
                 op.LogTo(Console.WriteLine);
             });
-        }
-        protected override void ConfigureWebApp(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            base.ConfigureWebApp(app, env);
-            var scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
-            using var scope = scopeFactory.CreateScope();
-            using (var context = scope.ServiceProvider.GetService<KeyValueContext>())
+
+            var app = builder.Build();
+            if (app.Environment.IsDevelopment())
             {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+                app.UseDeveloperExceptionPage();
+            }
+            app.UseHttpsRedirection();
+            app.UseRouting();
+            app.UseAuthorization();
+            app.MapControllers();
+
+            // 初始化数据库
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<KeyValueContext>();
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
-
             }
+
+            app.Run();
         }
     }
 }

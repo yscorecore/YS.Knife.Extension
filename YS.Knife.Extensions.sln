@@ -1,7 +1,6 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.12.12328.396 insiders
+VisualStudioVersion = 18.12.12328.396
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6C7E5914-CD6B-40F1-BFD7-8FB17E3EAE11}"
 	ProjectSection(SolutionItems) = preProject
@@ -478,6 +477,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Sms.Impl.Default", "src\YS.Knife.Sms.Impl.Default\YS.Knife.Sms.Impl.Default.csproj", "{FEF0E92B-C22E-4FED-9E01-51689DC05D96}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Sms.Provider.Submail", "src\YS.Knife.Sms.Provider.Submail\YS.Knife.Sms.Provider.Submail.csproj", "{C8C026B6-ECDA-FB58-DE1A-86400678692A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.DependencyInjection", "src\YS.Knife.DependencyInjection\YS.Knife.DependencyInjection.csproj", "{C6DC2450-2E30-3B60-E5CD-DD02422D839E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Host", "src\YS.Knife.Host\YS.Knife.Host.csproj", "{42154598-A74B-9548-2E74-F70E7F259252}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2649,6 +2652,30 @@ Global
 		{C8C026B6-ECDA-FB58-DE1A-86400678692A}.Release|x64.Build.0 = Release|Any CPU
 		{C8C026B6-ECDA-FB58-DE1A-86400678692A}.Release|x86.ActiveCfg = Release|Any CPU
 		{C8C026B6-ECDA-FB58-DE1A-86400678692A}.Release|x86.Build.0 = Release|Any CPU
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E}.Debug|x64.Build.0 = Debug|Any CPU
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E}.Debug|x86.Build.0 = Debug|Any CPU
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E}.Release|x64.ActiveCfg = Release|Any CPU
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E}.Release|x64.Build.0 = Release|Any CPU
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E}.Release|x86.ActiveCfg = Release|Any CPU
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E}.Release|x86.Build.0 = Release|Any CPU
+		{42154598-A74B-9548-2E74-F70E7F259252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42154598-A74B-9548-2E74-F70E7F259252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42154598-A74B-9548-2E74-F70E7F259252}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{42154598-A74B-9548-2E74-F70E7F259252}.Debug|x64.Build.0 = Debug|Any CPU
+		{42154598-A74B-9548-2E74-F70E7F259252}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{42154598-A74B-9548-2E74-F70E7F259252}.Debug|x86.Build.0 = Debug|Any CPU
+		{42154598-A74B-9548-2E74-F70E7F259252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42154598-A74B-9548-2E74-F70E7F259252}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42154598-A74B-9548-2E74-F70E7F259252}.Release|x64.ActiveCfg = Release|Any CPU
+		{42154598-A74B-9548-2E74-F70E7F259252}.Release|x64.Build.0 = Release|Any CPU
+		{42154598-A74B-9548-2E74-F70E7F259252}.Release|x86.ActiveCfg = Release|Any CPU
+		{42154598-A74B-9548-2E74-F70E7F259252}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2882,6 +2909,8 @@ Global
 		{BB145B04-30AA-4946-B741-725204AE686B} = {80D280D8-7261-45AC-ABA2-627FB81E88D2}
 		{FEF0E92B-C22E-4FED-9E01-51689DC05D96} = {9122636E-4EB3-4BBE-B36C-05BA3DE45EE6}
 		{C8C026B6-ECDA-FB58-DE1A-86400678692A} = {9122636E-4EB3-4BBE-B36C-05BA3DE45EE6}
+		{C6DC2450-2E30-3B60-E5CD-DD02422D839E} = {6C7E5914-CD6B-40F1-BFD7-8FB17E3EAE11}
+		{42154598-A74B-9548-2E74-F70E7F259252} = {6C7E5914-CD6B-40F1-BFD7-8FB17E3EAE11}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB11BB21-3F5D-42D6-8737-F19C0666F1F8}

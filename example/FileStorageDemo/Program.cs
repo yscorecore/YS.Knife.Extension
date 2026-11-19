@@ -1,26 +1,37 @@
-﻿namespace FileStorageDemo
+using Microsoft.AspNetCore.StaticFiles;
+
+using YS.Knife.Hosting;
+
+namespace FileStorageDemo
 {
     [YS.Knife.ExposeApi(typeof(YS.Knife.FileStorage.IFileUploadWebService))]
-    public class Program : YS.Knife.Hosting.KnifeWebHost
+    public class Program
     {
-        public Program(string[] args) : base(args)
-        {
-        }
         public static void Main(string[] args)
         {
-            new Program(args).Run();
-        }
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddAllKnifeServices(builder.Configuration);
+            builder.Services.AddControllers();
 
-        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
-        {
-            base.OnConfigureCustomService(builder, serviceCollection);
 
-        }
-        protected override void ConfigureWebApp(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+            builder.Services.AddSwaggerGen();
+            var app = builder.Build();
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
             app.UseDefaultFiles();
             app.UseStaticFiles(new StaticFileOptions());
-            base.ConfigureWebApp(app, env);
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            app.UseHttpsRedirection();
+            app.UseRouting();
+            app.UseAuthorization();
+            app.MapControllers();
+            app.Run();
         }
     }
 }

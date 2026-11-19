@@ -2,7 +2,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\YS.Knife.Resource.Core\YS.Knife.Resource.Core.csproj" />
-        <PackageReference Include="YS.Knife.Core" Version="2.0.2" />
+        <ProjectReference Include="..\YS.Knife.DependencyInjection\YS.Knife.DependencyInjection.csproj" />
     </ItemGroup> 
 
 </Project>

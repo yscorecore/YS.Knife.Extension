@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\YS.Knife.Lock.Impl.Redis\YS.Knife.Lock.Impl.Redis.csproj" />
@@ -6,6 +6,9 @@
     </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+      <ProjectReference Include="..\..\src\YS.Knife.Host\YS.Knife.Host.csproj" />
   </ItemGroup>
 
 </Project>

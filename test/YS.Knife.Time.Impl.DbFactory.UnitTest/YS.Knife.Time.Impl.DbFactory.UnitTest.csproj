@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 
   <PropertyGroup>
@@ -19,4 +19,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\test\YS.Knife.Time.Core.UnitTest\YS.Knife.Time.Core.UnitTest.csproj" />
     </ItemGroup>
+  <ItemGroup>
+      <ProjectReference Include="..\..\src\YS.Knife.Host\YS.Knife.Host.csproj" />
+  </ItemGroup>
 </Project>

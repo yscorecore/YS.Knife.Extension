@@ -2,4 +2,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\YS.Knife.Extensions.Validation\YS.Knife.Extensions.Validation.csproj" />
   </ItemGroup>
+  <ItemGroup>
+      <ProjectReference Include="..\..\src\YS.Knife.Host\YS.Knife.Host.csproj" />
+  </ItemGroup>
 </Project>

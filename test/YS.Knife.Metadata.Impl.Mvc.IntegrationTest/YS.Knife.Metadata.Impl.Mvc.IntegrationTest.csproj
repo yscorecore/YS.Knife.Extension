@@ -1,12 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.36" />
-        <PackageReference Include="YS.Knife.Hosting.Web" Version="2.0.2" />
-    </ItemGroup>
+</ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\YS.Knife.Metadata.Impl.Mvc\YS.Knife.Metadata.Impl.Mvc.csproj" />
     </ItemGroup>
+  <ItemGroup>
+      <ProjectReference Include="..\..\src\YS.Knife.Host\YS.Knife.Host.csproj" />
+  </ItemGroup>
 
 </Project>

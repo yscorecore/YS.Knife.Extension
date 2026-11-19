@@ -1,20 +1,16 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+
+using YS.Knife.Hosting;
 
 namespace JobDemo
 {
     [YS.Knife.ExposeApi(typeof(IDemoJobService))]
-    public class Program : YS.Knife.Hosting.KnifeWebHost
+    public class Program
     {
         private static readonly MemoryStorage Storage = new();
-
-        public Program(string[] args) : base(args)
-        {
-        }
 
         public static void Main(string[] args)
         {
@@ -26,19 +22,26 @@ namespace JobDemo
                 Queues = new[] { "critical", "default" },
             }, Storage);
 
-            new Program(args).Run();
-        }
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddAllKnifeServices(builder.Configuration);
 
-        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
-        {
-            base.OnConfigureCustomService(builder, serviceCollection);
-            serviceCollection.AddSingleton<JobStorage>(Storage);
-            serviceCollection.AddSingleton<HelloJob>();
+            builder.Services.AddSingleton<JobStorage>(Storage);
+            builder.Services.AddSingleton<HelloJob>();
+
+            builder.Services.AddSwaggerGen();
             // 让 JobPriority 等枚举在请求/响应中使用字符串名称（如 "Critical"），便于演示。
-            serviceCollection.Configure<JsonOptions>(options =>
+            builder.Services.Configure<JsonOptions>(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
+            builder.Services.AddControllers();
+
+            var app = builder.Build();
+            app.MapControllers();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+            app.Run();
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using YS.Knife;
 
+using YS.Knife.Hosting;
+
 namespace ExposeApiDemo
 {
     [ExposeApi(
@@ -13,7 +15,8 @@ namespace ExposeApiDemo
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddMvc();
+            builder.Services.AddAllKnifeServices(builder.Configuration);
+            builder.Services.AddControllers();
             builder.Services.AddScoped<FileService>();
             // Add Swagger services with explicit configuration
             builder.Services.AddSwaggerGen(c =>
