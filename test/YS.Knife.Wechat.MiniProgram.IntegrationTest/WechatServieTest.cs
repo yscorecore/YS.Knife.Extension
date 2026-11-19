@@ -20,7 +20,7 @@ namespace YS.Knife.Wechat.MiniProgram.IntegrationTest
             var service = this.GetService<IWechatService>();
             var imgStream = await service.GetUnlimited("abc");
             var buffer = new byte[imgStream.Length];
-            imgStream.Read(buffer, 0, buffer.Length);
+            imgStream.ReadExactly(buffer);
             buffer.Length.Should().BeGreaterThan(200);
         }
     }

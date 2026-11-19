@@ -1,6 +1,6 @@
+using YS.Knife.Hosting;
 using YS.Knife.Metadata;
 using YS.Knife.Tasks;
-using YS.Knife.Hosting;
 
 namespace TaskDemo
 {

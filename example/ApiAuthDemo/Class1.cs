@@ -1,4 +1,4 @@
-namespace ApiAuthDemo
+﻿namespace ApiAuthDemo
 {
     public class Class1
     {

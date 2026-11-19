@@ -59,7 +59,7 @@ namespace YS.Knife.Document.Converter.Xlsx2Pdf.IntegrationTest
 
             // A real PDF always starts with the "%PDF-" magic bytes.
             var header = new byte[5];
-            result.Stream.Read(header, 0, header.Length);
+            result.Stream.ReadExactly(header);
             System.Text.Encoding.ASCII.GetString(header).Should().Be("%PDF-");
 
             _output.WriteLine($"PDF output: {result.Length} bytes, file: {result.FileName}");

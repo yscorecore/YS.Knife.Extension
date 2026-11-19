@@ -1,8 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using YS.Knife.Metadata;
-
 using YS.Knife.Hosting;
+using YS.Knife.Metadata;
 
 namespace MetadataDemo
 {
