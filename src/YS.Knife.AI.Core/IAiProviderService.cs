@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.AI.Core
+namespace YS.Knife.AI.Core
 {
     public interface IAiProviderService
     {

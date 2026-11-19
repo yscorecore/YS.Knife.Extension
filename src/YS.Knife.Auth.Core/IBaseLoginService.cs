@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Auth
+namespace YS.Knife.Auth
 {
     /// <summary>
     /// 登录基础服务（匿名可访问）：返回登录页渲染与后续流程所需的信息。

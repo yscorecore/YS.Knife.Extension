@@ -1,4 +1,4 @@
-﻿﻿using BarcodeStandard;
+using BarcodeStandard;
 using SkiaSharp;
 
 namespace YS.Knife.BarCode.Impl.BarcodeLib

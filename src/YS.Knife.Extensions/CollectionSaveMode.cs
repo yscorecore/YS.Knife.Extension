@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife
+namespace YS.Knife
 {
     public enum CollectionSaveMode
     {

@@ -1,4 +1,4 @@
-﻿﻿using YS.Knife.DataItem;
+using YS.Knife.DataItem;
 
 namespace YS.Knife.Time
 {

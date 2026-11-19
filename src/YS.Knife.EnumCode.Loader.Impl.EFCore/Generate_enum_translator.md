@@ -1,4 +1,4 @@
-﻿﻿CREATE OR REPLACE PROCEDURE generate_enum_translator()
+CREATE OR REPLACE PROCEDURE generate_enum_translator()
 LANGUAGE plpgsql AS $$
 DECLARE
     mapping_pairs TEXT;

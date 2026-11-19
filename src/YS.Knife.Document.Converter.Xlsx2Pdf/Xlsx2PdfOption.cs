@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Document.Converter.Xlsx2Pdf
+namespace YS.Knife.Document.Converter.Xlsx2Pdf
 {
     /// <summary>
     /// Options controlling how a spreadsheet is rendered into a PDF by LibreOffice.

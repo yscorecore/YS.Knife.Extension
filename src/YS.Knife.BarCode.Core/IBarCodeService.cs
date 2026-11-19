@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.BarCode
+namespace YS.Knife.BarCode
 {
     public interface IBarCodeService
     {

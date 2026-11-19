@@ -1,4 +1,4 @@
-﻿﻿
+
 using System.ComponentModel.DataAnnotations;
 
 namespace YS.Knife.Time.Impl.EFDatabaseFacade

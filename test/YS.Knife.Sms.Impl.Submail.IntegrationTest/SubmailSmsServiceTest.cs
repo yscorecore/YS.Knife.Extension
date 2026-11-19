@@ -1,4 +1,4 @@
-﻿﻿using Xunit.Abstractions;
+using Xunit.Abstractions;
 using YS.Knife.Hosting;
 
 namespace YS.Knife.Sms.Impl.Submail.IntegrationTest

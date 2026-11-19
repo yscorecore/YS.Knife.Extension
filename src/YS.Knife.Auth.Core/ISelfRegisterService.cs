@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Auth
+namespace YS.Knife.Auth
 {
     /// <summary>
     /// 自助注册服务（匿名可访问）。

@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.DataItem.Api.AspnetCore.Internal
+namespace YS.Knife.DataItem.Api.AspnetCore.Internal
 {
 
     internal class NullObject

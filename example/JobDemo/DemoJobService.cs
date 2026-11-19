@@ -1,4 +1,4 @@
-﻿﻿using Hangfire;
+using Hangfire;
 using YS.Knife.Job;
 
 namespace JobDemo

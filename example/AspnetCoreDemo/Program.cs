@@ -1,4 +1,4 @@
-﻿﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using YS.Knife.AspnetCore.Mvc;
 using YS.Knife.Hosting;
 

@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.AuditLogs.AspnetCore.Mvc.Enrichers
+namespace YS.Knife.AuditLogs.AspnetCore.Mvc.Enrichers
 {
     [Service]
     [AutoConstructor]

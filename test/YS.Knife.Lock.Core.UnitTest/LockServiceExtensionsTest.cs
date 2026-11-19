@@ -1,4 +1,4 @@
-﻿﻿using Moq;
+using Moq;
 using YS.Knife.Lock;
 using YS.Knife.Testing;
 

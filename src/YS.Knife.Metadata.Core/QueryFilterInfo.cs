@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.Metadata
+namespace YS.Knife.Metadata
 {
     public record QueryFilterInfo
     {

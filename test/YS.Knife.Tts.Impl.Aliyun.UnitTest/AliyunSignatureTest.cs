@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.Tts.Impl.Aliyun.UnitTest
+namespace YS.Knife.Tts.Impl.Aliyun.UnitTest
 {
     public class AliyunSignatureTest
     {

@@ -1,4 +1,4 @@
-﻿﻿namespace TagsDemo
+namespace TagsDemo
 {
     public class WeatherForecast
     {

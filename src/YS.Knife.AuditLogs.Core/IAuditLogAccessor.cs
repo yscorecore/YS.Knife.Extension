@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.AuditLogs
+namespace YS.Knife.AuditLogs
 {
     public interface IAuditLogAccessor
     {

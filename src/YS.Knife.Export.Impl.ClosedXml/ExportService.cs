@@ -1,4 +1,4 @@
-﻿﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.Export.Impl.ClosedXml

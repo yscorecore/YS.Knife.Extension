@@ -1,4 +1,4 @@
-﻿﻿using FlyTiger;
+using FlyTiger;
 using Microsoft.AspNetCore.Mvc;
 
 namespace YS.Knife.Metadata.Api

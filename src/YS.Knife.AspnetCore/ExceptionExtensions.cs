@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.AspnetCore
+namespace YS.Knife.AspnetCore
 {
     internal static class ExceptionExtensions
     {

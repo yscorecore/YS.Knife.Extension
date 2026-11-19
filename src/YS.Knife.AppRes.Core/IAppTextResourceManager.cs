@@ -1,4 +1,4 @@
-﻿﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using YS.Knife.Service;
 using static YS.Knife.AppRes.IAppTextResourceManager;
 

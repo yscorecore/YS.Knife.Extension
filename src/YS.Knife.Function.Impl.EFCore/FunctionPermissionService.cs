@@ -1,4 +1,4 @@
-﻿﻿using System.Text.Json;
+using System.Text.Json;
 using YS.Knife.LogicRoles;
 
 namespace YS.Knife.Function.Impl.EFCore

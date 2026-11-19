@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Auth
+namespace YS.Knife.Auth
 {
     /// <summary>
     /// 登录页所需的登录信息。

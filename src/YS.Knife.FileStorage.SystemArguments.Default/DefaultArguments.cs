@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.FileStorage.SystemArgument.Default
+namespace YS.Knife.FileStorage.SystemArgument.Default
 {
     [DictionaryKey("now")]
     [Service(Lifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton)]

@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Auth
+namespace YS.Knife.Auth
 {
     public sealed record TokenInfo(
         string TokenType,

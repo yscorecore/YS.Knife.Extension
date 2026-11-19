@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using YS.Knife.Entity;
 using YS.Knife.LongJob.Entity.EFCore;
 using static YS.Knife.LongJob.ILongJobStatusManager;

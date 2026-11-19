@@ -1,6 +1,6 @@
 @TtsDemo_HostAddress = http://localhost:5240
 
-GET {{TtsDemo_HostAddress}}/tts?text=ÄãËù²¦´òµÄµç»°ÒÑ¹Ø»ú
+GET {{TtsDemo_HostAddress}}/tts?text=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµç»°ï¿½Ñ¹Ø»ï¿½
 Accept: application/json
 
 ###

@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Document.Converter.Xlsx2Pdf
+namespace YS.Knife.Document.Converter.Xlsx2Pdf
 {
     /// <summary>
     /// Converts spreadsheet documents (.xlsx and friends) into PDF using LibreOffice.

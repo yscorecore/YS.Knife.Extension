@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.Operations
+namespace YS.Knife.Operations
 {
     public record struct Operation
     {

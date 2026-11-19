@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Auth
+namespace YS.Knife.Auth
 {
     /// <summary>
     /// 基于 Cookie 的登出服务（需要已登录）。

@@ -1,4 +1,4 @@
-﻿﻿namespace JobDemo
+namespace JobDemo
 {
     public class HelloJob
     {

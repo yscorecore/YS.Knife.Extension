@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife
+namespace YS.Knife
 {
     /// <summary>
     /// 标注在状态枚举字段上，声明允许从哪些状态流转到该状态；未标注的状态不限制来源。

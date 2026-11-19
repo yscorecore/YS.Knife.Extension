@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.AuditLogs.AspnetCore.Mvc
+namespace YS.Knife.AuditLogs.AspnetCore.Mvc
 {
     public class AuditLogKeys
     {

@@ -1,4 +1,4 @@
-﻿﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Distributed;
 using YS.Knife.Import.Abstractions;
 
 namespace YS.Knife.Import.Impl.Base

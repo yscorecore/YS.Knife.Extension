@@ -1,4 +1,4 @@
-﻿﻿using System;
+using System;
 using static YS.Knife.EnumCode.IEnumCodeService;
 namespace YS.Knife.EnumCode.Impl.Default
 {

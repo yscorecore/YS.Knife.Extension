@@ -1,4 +1,4 @@
-﻿﻿
+
 namespace YS.Knife.Metadata
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]

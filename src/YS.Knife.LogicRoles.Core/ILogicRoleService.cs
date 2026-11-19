@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.LogicRoles
+namespace YS.Knife.LogicRoles
 {
     public interface ILogicRoleService
     {

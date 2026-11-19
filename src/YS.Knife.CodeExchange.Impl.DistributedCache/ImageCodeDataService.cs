@@ -1,4 +1,4 @@
-﻿﻿using System.Text.Json;
+using System.Text.Json;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using static YS.Knife.CodeExchange.IImageCodeDataReceiver;

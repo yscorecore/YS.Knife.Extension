@@ -1,4 +1,4 @@
-﻿using LibreOfficeKit;
+using LibreOfficeKit;
 using LibreOfficeKit.Enums;
 
 namespace YS.Knife.Document.Converter.Xlsx2Pdf

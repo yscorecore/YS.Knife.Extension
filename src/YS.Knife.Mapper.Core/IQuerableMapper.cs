@@ -1,4 +1,4 @@
-﻿﻿namespace YS.Knife.Mapper
+namespace YS.Knife.Mapper
 {
     public interface IQuerableMapper
     {
