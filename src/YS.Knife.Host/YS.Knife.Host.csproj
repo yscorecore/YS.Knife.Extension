@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\YS.Knife.DependencyInjection\YS.Knife.DependencyInjection.csproj" />
+    <ProjectReference Include="..\YS.Knife.Extensions\YS.Knife.Extensions.csproj" />
   </ItemGroup>
 
 </Project>
