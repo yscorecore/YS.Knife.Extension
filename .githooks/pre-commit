@@ -2,67 +2,67 @@
 #
 # pre-commit: 自动标准化 BOM、换行符和编码
 #
-#   - 调用 scripts/normalize-text.ps1
+#   - 调用 scripts/normalize-text.ps1，让 ps1 自己从 git 读 staged 文件
 #   - 如果 ps1 脚本修改了文件，自动 git add 回去
-#   - 如果 ps1 不存在或 PowerShell 不可用，静默跳过（不阻塞 commit）
+#   - 不存在或 PowerShell 不可用则静默跳过（不阻塞 commit）
 #
-# 安装： git config core.hooksPath .githooks
-# 绕过： git commit --no-verify
+# 首次安装：git config core.hooksPath .githooks
+# 绕过单次：git commit --no-verify
 
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 SCRIPT="$REPO_ROOT/scripts/normalize-text.ps1"
 
-# 脚本不存在？跳过
-if [ ! -f "$SCRIPT" ]; then
-    exit 0
-fi
+[ -f "$SCRIPT" ] || exit 0
 
 # 找 pwsh 或 powershell
+PS_BIN=""
 if command -v pwsh &>/dev/null; then
     PS_BIN="pwsh"
 elif command -v powershell &>/dev/null; then
     PS_BIN="powershell"
 else
-    echo "[pre-commit] No PowerShell found, skipping normalize-text hook."
     exit 0
 fi
 
 echo "[pre-commit] Normalizing line endings and BOM..."
 
-# 收集 staged 的文件路径（相对 repo root）
-mapfile -t STAGED_FILES < <(git diff --cached --name-only --diff-filter=ACMRT)
+# 让 ps1 从 git 直接读 staged 文件列表（避免 bash→ps 参数转义问题）
+# 传 repo root 让它自己做 git -C $REPO_ROOT diff --cached
+export REPO_ROOT
 
-if [ ${#STAGED_FILES[@]} -eq 0 ]; then
-    exit 0
-fi
+# —— 让 PowerShell 直接收集 staged 路径 ——
+TMP_BASH_LIST="$(mktemp)"
+trap 'rm -f "$TMP_BASH_LIST"' EXIT
 
-# 把路径用管道拼起来传给 PowerShell
-PATH_LIST=""
-for f in "${STAGED_FILES[@]}"; do
-    abs="$REPO_ROOT/$f"
-    if [ -f "$abs" ]; then
-        PATH_LIST+="|$abs"
+git -C "$REPO_ROOT" diff --cached --name-only --diff-filter=ACMRT \
+    | while IFS= read -r relpath; do
+        abs="$REPO_ROOT/$relpath"
+        [ -f "$abs" ] && echo "$abs"
+      done > "$TMP_BASH_LIST" || true
+
+# 没 staged 文本文件？退出
+[ -s "$TMP_BASH_LIST" ] || exit 0
+
+# —— 传给 PowerShell 一个路径一个参数 ——
+FIXED=""
+while IFS= read -r path; do
+    [[ -z "$path" ]] && continue
+    OUTPUT="$($PS_BIN -NoLogo -NoProfile -ExecutionPolicy Bypass \
+        -File "$SCRIPT" -Paths "$path" 2>&1 || true)"
+    echo "$OUTPUT"
+    if echo "$OUTPUT" | grep -q "FIXED:"; then
+        FIXED+="|$path"
     fi
-done
-PATH_LIST="${PATH_LIST#|}"  # 去掉开头的管道符
+done < "$TMP_BASH_LIST"
 
-if [ -z "$PATH_LIST" ]; then
-    exit 0
-fi
-
-# 执行标准化
-OUTPUT="$($PS_BIN -NoLogo -NoProfile -ExecutionPolicy Bypass \
-    -File "$SCRIPT" -Paths "$PATH_LIST" 2>&1 || true)"
-
-echo "$OUTPUT"
-
-# 检查有没有 FIXED 输出（说明脚本改了文件）
-if echo "$OUTPUT" | grep -q "FIXED:"; then
+# —— 如果有修改过的文件，重新 git add ——
+if [ -n "$FIXED" ]; then
     echo "[pre-commit] Re-staging normalized files..."
-    # 重新 add 所有 staged 文件（包括被修改的）
-    git add "${STAGED_FILES[@]}"
+    echo "${FIXED#|}" | tr '|' '\n' | while IFS= read -r p; do
+        [ -n "$p" ] && git add "$p"
+    done
 fi
 
 exit 0
