@@ -3,10 +3,11 @@
     "MixinDemo": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "swagger/index.html",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:53542;http://localhost:53543"
+      "applicationUrl": "https://localhost:61969;http://localhost:61970"
     }
   }
 }

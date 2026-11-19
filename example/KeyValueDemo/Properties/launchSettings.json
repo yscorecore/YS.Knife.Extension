@@ -3,11 +3,11 @@
     "KeyValueDemo": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "swagger/index.html",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_ENTITYKEYTYPE": "guid"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:52586;http://localhost:52587"
+      "applicationUrl": "https://localhost:61969;http://localhost:61970"
     }
   }
 }
