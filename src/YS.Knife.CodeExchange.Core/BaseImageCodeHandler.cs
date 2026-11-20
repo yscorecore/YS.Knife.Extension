@@ -1,4 +1,4 @@
-using static YS.Knife.CodeExchange.IImageCodeHandler;
+﻿using static YS.Knife.CodeExchange.IImageCodeHandler;
 
 namespace YS.Knife.CodeExchange
 {

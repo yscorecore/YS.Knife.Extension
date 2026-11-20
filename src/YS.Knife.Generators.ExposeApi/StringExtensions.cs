@@ -1,4 +1,4 @@
-namespace FlyTiger
+﻿namespace FlyTiger
 {
     internal static class StringExtensions
     {

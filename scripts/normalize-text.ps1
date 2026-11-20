@@ -94,8 +94,15 @@ function Normalize-File([string]$path) {
     $wantBom = Should-UseBom $ext
 
     # —— 只在内容真的变了时才写回 ——
-    $enc = [System.Text.UTF8Encoding]::new($wantBom)
-    $newBytes = $enc.GetBytes($text)
+    # 注意：UTF8Encoding(bool) 的 encoderShouldEmitUTF8Identifier 只影响 GetPreamble()，
+    # 不会让 GetBytes() 自动写入 BOM，因此这里手动拼接 BOM 字节。
+    $enc = [System.Text.UTF8Encoding]::new($false)
+    $textBytes = $enc.GetBytes($text)
+    if ($wantBom) {
+        $newBytes = [System.Text.Encoding]::UTF8.GetPreamble() + $textBytes
+    } else {
+        $newBytes = $textBytes
+    }
 
     if ($newBytes.Length -eq $bytes.Length) {
         $same = $true

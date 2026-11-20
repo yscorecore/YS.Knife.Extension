@@ -1,4 +1,4 @@
-namespace YS.Knife.Tasks
+﻿namespace YS.Knife.Tasks
 {
     public record class TaskExecuteResult(bool Success, string Message)
     {

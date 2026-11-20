@@ -1,4 +1,4 @@
-using YS.Knife.Hosting;
+﻿using YS.Knife.Hosting;
 
 namespace YS.Knife.BarCode.Impl.Barcodelib.IntegrationTest
 {

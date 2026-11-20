@@ -1,4 +1,4 @@
-using YS.Lock;
+﻿using YS.Lock;
 
 namespace YS.Knife.Lock.Impl.Redis.UnitTest
 {

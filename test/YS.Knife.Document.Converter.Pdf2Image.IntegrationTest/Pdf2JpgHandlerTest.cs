@@ -1,4 +1,4 @@
-using YS.Knife.Document;
+﻿using YS.Knife.Document;
 using YS.Knife.Hosting;
 
 namespace YS.Knife.Document.Converter.Pdf2Image.IntegrationTest

@@ -1,4 +1,4 @@
-namespace YS.Knife.WebHooks
+﻿namespace YS.Knife.WebHooks
 {
     public record WebhookEvent<T>(string EventId,
         string EventType,

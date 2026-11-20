@@ -1,4 +1,4 @@
-namespace YS.Knife.Auth
+﻿namespace YS.Knife.Auth
 {
     /// <summary>
     /// 手机号绑定服务（需要已登录）。短信验证码登录依赖已确认的手机号。

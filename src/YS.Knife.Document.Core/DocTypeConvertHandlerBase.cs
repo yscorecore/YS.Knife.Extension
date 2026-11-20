@@ -1,4 +1,4 @@
-namespace YS.Knife.Document
+﻿namespace YS.Knife.Document
 {
     public abstract class DocTypeConvertHandlerBase<TOptions> : IDocTypeConvertHandler
         where TOptions : class, new()

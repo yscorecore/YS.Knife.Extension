@@ -1,4 +1,4 @@
-using YS.Knife.Service;
+﻿using YS.Knife.Service;
 
 namespace YS.Knife.NotifyMessages
 {

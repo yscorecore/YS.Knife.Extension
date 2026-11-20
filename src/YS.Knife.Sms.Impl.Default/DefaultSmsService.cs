@@ -1,4 +1,4 @@
-namespace YS.Knife.Sms.Impl.Default
+﻿namespace YS.Knife.Sms.Impl.Default
 {
     [AutoConstructor]
     [Service]

@@ -1,4 +1,4 @@
-namespace JobDemo
+﻿namespace JobDemo
 {
     /// <summary>
     /// 一个前两次执行失败、第三次才成功的任务，用于演示 IJobService 的自动重试能力。

@@ -1,4 +1,4 @@
-namespace YS.Knife.Tts
+﻿namespace YS.Knife.Tts
 {
     public interface ITextSpeechService
     {

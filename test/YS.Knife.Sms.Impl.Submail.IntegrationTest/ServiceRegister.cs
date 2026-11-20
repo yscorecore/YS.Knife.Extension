@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using YS.Knife;
 
 namespace YS.Knife.Sms.Impl.Submail.IntegrationTest

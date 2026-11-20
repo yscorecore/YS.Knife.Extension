@@ -1,3 +1,3 @@
-using YS.Knife;
+﻿using YS.Knife;
 
 [assembly: Tag("asm-tag", "asm-value")]

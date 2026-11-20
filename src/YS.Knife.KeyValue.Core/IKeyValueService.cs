@@ -1,4 +1,4 @@
-namespace YS.Knife.KeyValue
+﻿namespace YS.Knife.KeyValue
 {
     public interface IKeyValueService
     {

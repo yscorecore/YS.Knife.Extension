@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="[2.*,99.9.0)" />
   </ItemGroup>

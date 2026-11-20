@@ -1,4 +1,4 @@
-namespace YS.Knife.Auth
+﻿namespace YS.Knife.Auth
 {
     /// <summary>
     /// 基于 Token（JWT）的登录服务（匿名可访问）。

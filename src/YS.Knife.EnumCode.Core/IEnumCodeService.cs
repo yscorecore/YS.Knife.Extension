@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using YS.Knife.Operations;
 
 namespace YS.Knife.EnumCode

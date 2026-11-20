@@ -1,4 +1,4 @@
-namespace YS.Knife.CodeExchange
+﻿namespace YS.Knife.CodeExchange
 {
     public enum ImageCodeDataKind
     {

@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Text;
 
 namespace YS.Knife.Document.Converter.Pdf2Image.IntegrationTest

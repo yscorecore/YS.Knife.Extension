@@ -1,4 +1,4 @@
-using System.CommandLine;
+﻿using System.CommandLine;
 using YS.Knife.Cli.Commands;
 
 var rootCommand = new RootCommand("YS.Knife CLI Tool");

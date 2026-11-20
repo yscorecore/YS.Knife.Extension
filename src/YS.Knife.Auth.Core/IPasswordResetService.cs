@@ -1,4 +1,4 @@
-namespace YS.Knife.Auth
+﻿namespace YS.Knife.Auth
 {
     /// <summary>
     /// 密码重置服务（匿名可访问）。

@@ -1,4 +1,4 @@
-namespace YS.Knife.Document.Converter.Xlsx2Pdf
+﻿namespace YS.Knife.Document.Converter.Xlsx2Pdf
 {
     /// <summary>
     /// PDF/A compliance levels supported by the exporter. Kept as a project-local enum so the

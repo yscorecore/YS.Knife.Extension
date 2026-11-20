@@ -1,4 +1,4 @@
-namespace YS.Knife.Metadata
+﻿namespace YS.Knife.Metadata
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class QueryFilterAttribute : Attribute

@@ -1,4 +1,4 @@
-namespace YS.Knife.FileStorage.Impl.Local
+﻿namespace YS.Knife.FileStorage.Impl.Local
 {
     [Options]
     public class UploadOptions

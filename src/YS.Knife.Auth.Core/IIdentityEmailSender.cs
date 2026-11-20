@@ -1,4 +1,4 @@
-namespace YS.Knife.Auth
+﻿namespace YS.Knife.Auth
 {
     /// <summary>
     /// 认证邮件发送抽象。由宿主应用实现并注册（可配合 YS.Knife.Core 的 [Service] 自动注入），

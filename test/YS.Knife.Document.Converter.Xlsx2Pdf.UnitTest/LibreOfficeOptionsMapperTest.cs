@@ -1,4 +1,4 @@
-namespace YS.Knife.Document.Converter.Xlsx2Pdf.UnitTest
+﻿namespace YS.Knife.Document.Converter.Xlsx2Pdf.UnitTest
 {
     /// <summary>
     /// Pure unit tests for <see cref="LibreOfficeOptionsMapper"/>. The mapper is a deterministic

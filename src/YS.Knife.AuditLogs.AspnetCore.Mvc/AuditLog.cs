@@ -1,4 +1,4 @@
-namespace YS.Knife.AuditLogs
+﻿namespace YS.Knife.AuditLogs
 {
     internal record AuditLog : IAuditLog
     {

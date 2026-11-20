@@ -1,4 +1,4 @@
-namespace YS.Knife.AI.Providers.OpenAI
+﻿namespace YS.Knife.AI.Providers.OpenAI
 {
 
 }

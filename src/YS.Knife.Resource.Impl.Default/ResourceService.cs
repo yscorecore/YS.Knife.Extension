@@ -1,4 +1,4 @@
-namespace YS.Knife.Resource
+﻿namespace YS.Knife.Resource
 {
     [Service]
     [AutoConstructor]

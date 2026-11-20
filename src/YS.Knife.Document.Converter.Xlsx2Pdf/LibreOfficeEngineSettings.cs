@@ -1,4 +1,4 @@
-namespace YS.Knife.Document.Converter.Xlsx2Pdf
+﻿namespace YS.Knife.Document.Converter.Xlsx2Pdf
 {
     /// <summary>
     /// Worker-pool tuning for <see cref="LibreOfficeEngine"/>. Values are read from environment

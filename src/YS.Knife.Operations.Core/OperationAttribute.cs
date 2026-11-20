@@ -1,4 +1,4 @@
-namespace YS.Knife.Operations
+﻿namespace YS.Knife.Operations
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class OperationAttribute : Attribute

@@ -1,4 +1,4 @@
-using AppResDemo.Model;
+﻿using AppResDemo.Model;
 using Microsoft.EntityFrameworkCore;
 using YS.Knife.AppRes;
 using YS.Knife.AppRes.Impl.EFCore;

@@ -1,4 +1,4 @@
-using YS.Knife.Query;
+﻿using YS.Knife.Query;
 
 namespace YS.Knife.Service
 {

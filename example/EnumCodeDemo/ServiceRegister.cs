@@ -1,4 +1,4 @@
-using YS.Knife.EnumCode.Impl.Default;
+﻿using YS.Knife.EnumCode.Impl.Default;
 
 namespace EnumCodeDemo
 {

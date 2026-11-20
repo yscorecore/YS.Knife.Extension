@@ -1,4 +1,4 @@
-namespace YS.Knife.Auth
+﻿namespace YS.Knife.Auth
 {
     /// <summary>
     /// 短信验证码登录（匿名可访问）。验证码通过 <see cref="SendLoginCode"/> 下发，

@@ -1,4 +1,4 @@
-namespace YS.Knife.Function.Files
+﻿namespace YS.Knife.Function.Files
 {
     public class ActionInfo
     {

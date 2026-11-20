@@ -1,4 +1,4 @@
-namespace YS.Knife.Extensions.UnitTest
+﻿namespace YS.Knife.Extensions.UnitTest
 {
     public class FromStatusAttributeTest
     {

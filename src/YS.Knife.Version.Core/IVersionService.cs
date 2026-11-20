@@ -1,4 +1,4 @@
-namespace YS.Knife.Version
+﻿namespace YS.Knife.Version
 {
     public interface IVersionService
     {

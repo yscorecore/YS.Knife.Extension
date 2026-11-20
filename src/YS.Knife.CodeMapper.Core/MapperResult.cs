@@ -1,4 +1,4 @@
-namespace YS.Knife.CodeMapper
+﻿namespace YS.Knife.CodeMapper
 {
     public record MapperResult<T>(
         T Data,
