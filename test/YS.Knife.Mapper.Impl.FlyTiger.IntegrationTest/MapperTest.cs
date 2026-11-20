@@ -1,6 +1,5 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace YS.Knife.Mapper.Impl.FlyTiger.IntegrationTest
 {
@@ -10,9 +9,9 @@ namespace YS.Knife.Mapper.Impl.FlyTiger.IntegrationTest
 #pragma warning restore FT50000 // The mapper is not being used
     public class MapperTest : YS.Knife.Hosting.KnifeHost
     {
-        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
+        protected override void OnConfigureCustomService(IServiceCollection serviceCollection)
         {
-            base.OnConfigureCustomService(builder, serviceCollection);
+            base.OnConfigureCustomService(serviceCollection);
             serviceCollection.AddFlyTigerMapper(typeof(MapperTest).Assembly);
         }
 

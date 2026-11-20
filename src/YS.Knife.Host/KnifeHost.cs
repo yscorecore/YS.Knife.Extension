@@ -41,7 +41,7 @@ namespace YS.Knife.Hosting
 
         public KnifeHost(string[] args)
         {
-            this.host = CreateHostBuilder(args ?? Array.Empty<string>()).Build();
+            this.host = CreateHost(args ?? Array.Empty<string>());
         }
 
 
@@ -53,7 +53,7 @@ namespace YS.Knife.Hosting
             return host.Services.GetService(serviceType);
         }
 
-        public T GetService<T>()
+        public T? GetService<T>()
         {
             return host.Services.GetService<T>();
         }
@@ -61,35 +61,30 @@ namespace YS.Knife.Hosting
 
 
 
-        protected virtual IHostBuilder CreateHostBuilder(string[] args)
+        protected virtual IHost CreateHost(string[] args)
         {
-            return Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(OnConfigureLogging)
-                .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>
-                {
-                    this.OnConfigureAppConfiguration(hostBuilderContext, configurationBuilder);
-                    this.InjectInternalConfigurations(hostBuilderContext, configurationBuilder);
-                })
-                .ConfigureServices((builder, serviceCollection) =>
-                {
-                    serviceCollection.AddAllKnifeServices(builder.Configuration, ShouldFilterType);
+            var builder = Host.CreateApplicationBuilder(args);
 
-                    this.OnConfigureCustomService(builder, serviceCollection);
-                    this.OnConfigureInternalServices(builder, serviceCollection);
-                    this.InjectInternalServices(builder, serviceCollection);
-                });
+            this.OnConfigureLogging(builder.Logging);
+            this.OnConfigureAppConfiguration(builder.Configuration);
+            this.InjectInternalConfigurations(builder.Configuration);
+
+            builder.Services.AddAllKnifeServices(builder.Configuration, ShouldFilterType);
+            this.OnConfigureCustomService(builder.Services);
+            this.OnConfigureInternalServices(builder.Services);
+            this.InjectInternalServices(builder.Services);
+
+            return builder.Build();
         }
 
 
-        protected virtual void OnConfigureInternalServices(HostBuilderContext builder,
-            IServiceCollection serviceCollection)
+        protected virtual void OnConfigureInternalServices(IServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton(typeof(KnifeHost), this);
             serviceCollection.AddSingleton(typeof(IServiceCollection), serviceCollection);
         }
 
-        protected virtual void OnConfigureCustomService(HostBuilderContext builder,
-            IServiceCollection serviceCollection)
+        protected virtual void OnConfigureCustomService(IServiceCollection serviceCollection)
         {
         }
 
@@ -98,7 +93,7 @@ namespace YS.Knife.Hosting
             return false;
         }
 
-        private void InjectInternalServices(HostBuilderContext builder, IServiceCollection serviceCollection)
+        private void InjectInternalServices(IServiceCollection serviceCollection)
         {
             var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
                                BindingFlags.Static;
@@ -122,9 +117,9 @@ namespace YS.Knife.Hosting
             }
         }
 
-        private void InjectInternalConfigurations(HostBuilderContext _, IConfigurationBuilder configurationBuilder)
+        private void InjectInternalConfigurations(IConfigurationBuilder configurationBuilder)
         {
-            Dictionary<string, string> configurationData = new Dictionary<string, string>();
+            Dictionary<string, string?> configurationData = new Dictionary<string, string?>();
             const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
                                               BindingFlags.Static;
 
@@ -149,7 +144,7 @@ namespace YS.Knife.Hosting
 
 
 
-        private void AppendConfigurationDataValue(Dictionary<string, string> data, string? key, object? value)
+        private void AppendConfigurationDataValue(Dictionary<string, string?> data, string? key, object? value)
         {
             if (string.IsNullOrWhiteSpace(key)) return;
             if (value is IDictionary dic)
@@ -164,12 +159,11 @@ namespace YS.Knife.Hosting
             data[key] = $"{value}";
         }
 
-        protected virtual void OnConfigureLogging(HostBuilderContext context, ILoggingBuilder loggingBuilder)
+        protected virtual void OnConfigureLogging(ILoggingBuilder loggingBuilder)
         {
         }
 
-        protected virtual void OnConfigureAppConfiguration(HostBuilderContext hostBuilderContext,
-            IConfigurationBuilder configurationBuilder)
+        protected virtual void OnConfigureAppConfiguration(IConfigurationBuilder configurationBuilder)
         {
         }
 
@@ -183,7 +177,7 @@ namespace YS.Knife.Hosting
 
         private void PrintDebugInfo()
         {
-            var hostEnv = this.host.Services.GetService<IHostEnvironment>();
+            var hostEnv = this.host.Services.GetRequiredService<IHostEnvironment>();
             if (hostEnv.IsDevelopment())
             {
                 using var loggerFactory = LoggerFactory.Create(builder =>

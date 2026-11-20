@@ -1,7 +1,6 @@
 ﻿using Hangfire;
 using Hangfire.MemoryStorage;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using YS.Knife.Hosting;
 
 namespace YS.Knife.Job.Impl.Hangfire.UnitTest
@@ -16,9 +15,9 @@ namespace YS.Knife.Job.Impl.Hangfire.UnitTest
             jobService = this.GetService<IJobService>();
         }
 
-        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
+        protected override void OnConfigureCustomService(IServiceCollection serviceCollection)
         {
-            base.OnConfigureCustomService(builder, serviceCollection);
+            base.OnConfigureCustomService(serviceCollection);
             serviceCollection.AddSingleton(storage);
         }
 

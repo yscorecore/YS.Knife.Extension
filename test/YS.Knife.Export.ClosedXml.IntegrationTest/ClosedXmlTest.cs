@@ -1,6 +1,5 @@
 ﻿using System.Runtime.Serialization;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using MiniExcelLibs;
 using MiniExcelLibs.Attributes;
 using YS.Knife.Hosting;
@@ -98,9 +97,9 @@ namespace YS.Knife.Export.ClosedXml.IntegrationTest
 
         }
 
-        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
+        protected override void OnConfigureCustomService(IServiceCollection serviceCollection)
         {
-            base.OnConfigureCustomService(builder, serviceCollection);
+            base.OnConfigureCustomService(serviceCollection);
             serviceCollection.AddDistributedMemoryCache();
         }
         public record UserInfo
