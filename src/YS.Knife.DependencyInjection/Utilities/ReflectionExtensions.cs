@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace YS.Knife
@@ -15,7 +16,7 @@ namespace YS.Knife
 
             foreach (var assembly in appDomain.GetAllAssembliesIgnoreSystem())
             {
-                foreach (var type in assembly.GetTypes())
+                foreach (var type in assembly.GetLoadableTypes())
                 {
                     if (type.IsClass
                         && !type.IsAbstract
@@ -35,7 +36,7 @@ namespace YS.Knife
             var customFilter = filter ?? (type => true);
             foreach (var assembly in appDomain.GetAllAssembliesIgnoreSystem())
             {
-                foreach (var type in assembly.GetTypes())
+                foreach (var type in assembly.GetLoadableTypes())
                 {
                     if (type.IsClass
                         && !type.IsAbstract
@@ -56,7 +57,7 @@ namespace YS.Knife
             var customFilter = filter ?? (type => true);
             foreach (var assembly in appDomain.GetAllAssembliesIgnoreSystem())
             {
-                foreach (var type in assembly.GetTypes())
+                foreach (var type in assembly.GetLoadableTypes())
                 {
                     if (type.IsClass
                         && !type.IsAbstract
@@ -74,6 +75,21 @@ namespace YS.Knife
         {
             var companyAttr = assembly.GetCustomAttribute<AssemblyCompanyAttribute>();
             return companyAttr?.Company == "Microsoft Corporation";
+        }
+
+        private static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
+        {
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                // 某些程序集可能引用了缺失的可选依赖（例如 NPOI 的 SkiaSharp 被标记为
+                // exclude=Runtime），导致 GetTypes() 抛异常；这里跳过无法加载的类型，
+                // 避免整次扫描崩溃。
+                return ex.Types.Where(type => type != null);
+            }
         }
 
         private static IEnumerable<Assembly> GetAllAssembliesIgnoreSystem(this AppDomain appDomain)
