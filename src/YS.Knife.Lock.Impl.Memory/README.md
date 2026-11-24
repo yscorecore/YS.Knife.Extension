@@ -11,7 +11,7 @@
 
 ## 快速开始
 
-引用本包后无需手动注册，`MemoryLockService` 会自动注册为 `ILockService` 的实现（依赖 `YS.Knife.Core` 的服务自动注册机制）：
+引用本包后无需手动注册，`MemoryLockService` 会自动注册为 `ILockService` 的实现（依赖 `YS.Knife.DependencyInjection的服务自动注册机制）：
 
 ```csharp
 public class MyService
@@ -46,7 +46,8 @@ public class MyService
 ## 依赖说明
 
 - `YS.Knife.Lock.Core`：提供 `ILockService` 接口及扩展方法
-- `YS.Knife.Core`：提供 `[Service]` / `IServiceRegister` 自动注册能力
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]` / `IServiceRegister` 自动注册能力。
 - `Microsoft.Extensions.Caching.Memory`（6.* ~ 9.9.0）
 
 注意：内存锁仅在当前进程内有效，多实例部署请改用 `YS.Knife.Lock.Impl.Redis`。

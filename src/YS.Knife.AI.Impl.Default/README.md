@@ -48,4 +48,5 @@ public class InvoiceService
 
 - `YS.Knife.AI.Core`：`IAiService`、`IAiProviderService`、`AiInputData` 抽象。
 - `YS.Knife.Extensions`：JSON 反序列化等扩展。
-- `YS.Knife.Core`（2.0.2）：`[Service]`、`[AutoConstructor]`、`[CodeExceptions]`。
+- `YS.Knife.DependencyInjection`：`[Service]` 特性，通过 YS.Knife 自动注册服务。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：`[AutoConstructor]`、`[CodeExceptions]` 等源码生成器特性。

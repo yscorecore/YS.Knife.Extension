@@ -54,4 +54,4 @@ public class LoginService
 
 - `YS.Knife.TokenMan.Core`：AccessToken 缓存抽象。
 - `YS.Knife.Extensions.HttpClient`：`GetAsObject` / `PostAsObject` / `SendAsResponse` 等 HTTP 扩展。
-- `Microsoft.Extensions.Http`（6.x+）、`YS.Knife.Core`（2.0.2）。
+- `Microsoft.Extensions.Http`（6.x+）、`YS.Knife.DependencyInjection。

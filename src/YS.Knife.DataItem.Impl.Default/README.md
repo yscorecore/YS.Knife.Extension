@@ -40,5 +40,5 @@ public class DataItemController : ControllerBase
 ## 依赖说明
 
 - `YS.Knife.DataItem.Core`：提供 `IDataItemService`、`DataItemEntry`、`DataItemAttribute`、`AssemblyDataItemEntryFinder` 等抽象与扫描机制。
-- `YS.Knife.Extensions`、`YS.Knife.Core`（`[Service]`、`[AutoConstructor]`、`[Logger]`）。
+- `YS.Knife.Extensions`、`YS.Knife.DependencyInjection（`[Service]`、`[AutoConstructor]`、`[Logger]`）。
 - `Microsoft.AspNetCore.Mvc.Core`（2.2.0 ~ 9.0.0）：Web 参数绑定能力。

@@ -77,5 +77,6 @@ public class MyService
 ## 依赖说明
 
 - `YS.Knife.Lock.Core`：提供 `ILockService` 接口及扩展方法
-- `YS.Knife.Core`：提供 `[Service]` / `[Options]` 自动注册能力
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]` / `[Options]` 自动注册能力。
 - `StackExchange.Redis`（2.*）

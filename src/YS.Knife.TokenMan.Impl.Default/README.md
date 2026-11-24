@@ -32,4 +32,5 @@ var token = await tokenManager.GetToken<MyToken>(
 - `YS.Knife.TokenMan.Core`：`ITokenManager` 抽象。
 - `YS.Knife.Extensions.DistributedCache`：`GetObjectAsync` / `SetObjectAsync` JSON 缓存扩展。
 - `YS.Knife.Lock.Core`：`ILockService` 分布式锁抽象。
-- `YS.Knife.Core`（2.0.2）：`[Service]`、`[AutoConstructor]`。
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：2.0.2）：`[Service]`、`[AutoConstructor]`。

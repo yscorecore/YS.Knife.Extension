@@ -45,6 +45,7 @@ public partial class MyImportService : BaseImportService
 
 ## 依赖
 
-- `YS.Knife.Core`：`[Options]`、`[AutoConstructor]`、`[CodeExceptions]` 等特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：`[Options]`、`[AutoConstructor]`、`[CodeExceptions]` 等特性。
 - `YS.Knife.Extensions.DistributedCache`（项目引用）：`GetObjectAsync` / `SetObjectAsync` 缓存扩展
 - `YS.Knife.Import.Core`（项目引用）：抽象接口层

@@ -34,4 +34,5 @@
 
 - `YS.Knife.AuditLogs.Core`：提供 `IAuditLogWriter`、`IAuditLog` 抽象。
 - `YS.Knife.Extensions`：提供 `ToJsonText` 等 JSON 扩展方法。
-- `YS.Knife.Core`：提供 `[Service]`、`[AutoConstructor]` 特性。
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]`、`[AutoConstructor]` 特性。

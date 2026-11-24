@@ -69,5 +69,6 @@ builder.Services.AddControllers()
 
 ## 依赖
 
-- `YS.Knife.Core`（提供 `[AutoConstructor]`、`[Service]` 等源生成器）
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[AutoConstructor]`、`[Service]` 等源生成器）。
 - 目标框架：.NET 6+（`Microsoft.NET.Sdk.Web`）

@@ -7,7 +7,7 @@
 - 实现 `YS.Knife.KeyValue.Core` 中定义的 `IKeyValueService` 接口
 - 通过 `IDistributedCache` 存取任意可 JSON 序列化的对象（依赖 `YS.Knife.Extensions.DistributedCache` 提供的 `GetObjectAsync` / `SetObjectAsync` 扩展）
 - 支持自定义 JSON 序列化选项（`KeyValueOptions.JsonSerializerOptions`）
-- 自动服务注册（基于 `YS.Knife.Core` 的 `[Service]` 特性），注入 `IDistributedCache` 后即可使用
+- 自动服务注册（基于 `YS.Knife.DependencyInjection的 `[Service]` 特性），注入 `IDistributedCache` 后即可使用
 
 ## 快速开始
 
@@ -57,6 +57,7 @@ services.Configure<KeyValueOptions>(options =>
 
 - `YS.Knife.KeyValue.Core`：提供 `IKeyValueService` 接口定义
 - `YS.Knife.Extensions.DistributedCache`：提供 `IDistributedCache` 的对象读写扩展方法
-- `YS.Knife.Core`：提供 `[Service]` / `[AutoConstructor]` / `[Options]` 自动注册能力
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]` / `[AutoConstructor]` / `[Options]` 自动注册能力。
 
 运行时需要一个实际的 `IDistributedCache` 实现（如 `Microsoft.Extensions.Caching.StackExchangeRedis`）。

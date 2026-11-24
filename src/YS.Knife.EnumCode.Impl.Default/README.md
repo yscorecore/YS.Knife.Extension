@@ -52,4 +52,5 @@ var all = await enumCodeService.GetAllEnumCode();
 
 - `YS.Knife.EnumCode.Core`：`IEnumCodeService`、`ICodeLoader`、`AssemblyEnumCodes`、`CodeInfo`。
 - `YS.Knife.Extensions`：命名风格转换等工具。
-- `YS.Knife.Core`（2.0.2）：`[Service]`、`[AutoConstructor]`、`[Options]`。
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：2.0.2）：`[Service]`、`[AutoConstructor]`、`[Options]`。

@@ -35,6 +35,7 @@ public class MyService
 ## 依赖说明
 
 - `YS.Knife.Sms.Core`：`ISmsService`、`ISmsProvider`、`SmsInfo` 抽象
-- `YS.Knife.Core`：`[Service]`、`[AutoConstructor]` 源生成特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：`[Service]`、`[AutoConstructor]` 源生成特性。
 
 目标框架 .NET 6+。

@@ -52,7 +52,8 @@ public class MyService
 ## 依赖说明
 
 - `YS.Knife.Time.Core`：提供 `ITimeService` 抽象
-- `YS.Knife.Core`：提供 `[Service]`、`[AutoConstructor]`、`[Options]` 源生成特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]`、`[AutoConstructor]`、`[Options]` 源生成特性。
 - `StackExchange.Redis`（2.*）
 
 仓库内的 `YS.Knife.Time.Impl.Redis.UnitTest` 项目附带 docker-compose，可用于本地集成测试。

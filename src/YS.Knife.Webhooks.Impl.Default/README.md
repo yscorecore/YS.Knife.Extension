@@ -62,5 +62,5 @@ public class NotifyService
 
 - 目标框架：.NET 8 / .NET 9 / .NET 10（`net8.0` / `net9.0` / `net10.0`）
 - `YS.Knife.Webhooks.Core`：抽象接口与模型
-- `YS.Knife.Extensions`、`YS.Knife.Core`、`FlyTiger`：HTTP 扩展与服务自动注册
+- `YS.Knife.Extensions`、`YS.Knife.DependencyInjection、`FlyTiger`：HTTP 扩展与服务自动注册
 - `System.Net.Http`（HttpClient）、`Microsoft.Extensions.Logging`

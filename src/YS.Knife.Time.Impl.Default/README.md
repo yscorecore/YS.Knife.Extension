@@ -40,4 +40,5 @@ public class MyService
 ## 依赖说明
 
 - `YS.Knife.Time.Core`：提供 `ITimeService` 抽象
-- `YS.Knife.Core`：提供 `[Service]` 自动服务注册特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]` 自动服务注册特性。

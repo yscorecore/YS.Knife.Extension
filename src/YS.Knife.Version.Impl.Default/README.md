@@ -48,6 +48,7 @@ public class AppInfoService
 
 - 目标框架：.NET 8 / .NET 9 / .NET 10（`net8.0` / `net9.0` / `net10.0`）
 - `YS.Knife.Version.Core`：抽象接口与模型
-- `YS.Knife.Core`、`FlyTiger`：服务自动注册
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：、`FlyTiger`：服务自动注册。
 
 > 注意：实现基于入口程序集，若需要在类库或测试环境中使用，请确保入口程序集包含相应的版本元数据。

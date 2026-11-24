@@ -47,5 +47,6 @@ public class SettingInitializer
 - `YS.Knife.LayerSetting.Core`：提供 `ILayerSettingService`、`ILayerSettingManagerService`、`SettingInfo` 等抽象。
 - `YS.Knife.LayerSetting.Entity.EFCore`：提供 `SettingEntity` / `SettingPropertyEntity` 实体。
 - `YS.Knife.LogicRoles.Core`：提供 `ILogicRoleService` 逻辑角色服务。
-- `YS.Knife.Core`：`[Service]`、`[AutoConstructor]`、`[Options]`、`[Mapper]` 源生成特性。
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：`[Service]`、`[AutoConstructor]`、`[Options]`、`[Mapper]` 源生成特性。
 - 运行时需配置包含上述实体的 `DbContext` 并注册 `IEntityStore<>`。

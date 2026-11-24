@@ -51,4 +51,5 @@ public class UserController : ControllerBase
 
 - `YS.Knife.AuditLogs.Core`：审计日志核心抽象（`IAuditLog`、`IAuditLogWriter`、Enricher 接口等）。
 - `YS.Knife.Operations.Core`：提供 `Operation` 元数据解析（`GetOperation()`）。
-- `YS.Knife.Core`：服务自动注册（内部 `ServiceRegister` 注册 `IAuditLogAccessor` 并配置默认忽略的参数类型）。
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：服务自动注册（内部 `ServiceRegister` 注册 `IAuditLogAccessor` 并配置默认忽略的参数类型）。

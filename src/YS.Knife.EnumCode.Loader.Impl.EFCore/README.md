@@ -52,5 +52,6 @@ public class EnumConsumer
 
 - `YS.Knife.EnumCode.Core`：提供 `ICodeLoader`、`IEnumCodeService.CodeInfo`、`AssemblyEnumCodes` 等抽象。
 - `YS.Knife.EnumCode.Loader.Entity.EFCore`：提供 `EnumCodeEntity<Guid>` 实体定义。
-- `YS.Knife.Core`：提供 `[Service]`、`[AutoConstructor]`、`[Options]`、`[Mapper]` 等源生成特性。
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]`、`[AutoConstructor]`、`[Options]`、`[Mapper]` 等源生成特性。
 - 运行时需要在上下文中配置包含 `EnumCodeEntity<Guid>` 的 EF Core `DbContext`，并注册对应的 `IEntityStore<>`。

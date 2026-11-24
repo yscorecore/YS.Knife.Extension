@@ -37,5 +37,6 @@ public class EnvArgumentProvider : ISystemArgProvider
 
 ## 依赖
 
-- `YS.Knife.Core`：`[Service]`、`[DictionaryKey]` 特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：`[Service]`、`[DictionaryKey]` 特性。
 - `YS.Knife.FileStorage.Core`（项目引用）：定义 `ISystemArgProvider` 接口

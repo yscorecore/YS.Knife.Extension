@@ -52,6 +52,7 @@ public class MyService
 ## 依赖说明
 
 - 项目引用：`YS.Knife.FileManager.Core`（接口与 DTO）、`YS.Knife.FileManager.Entity.EFCore`（实体）、`YS.Knife.EFCore`、`YS.Knife.EntityBase`、`YS.Knife.LogicRoles.Core`
-- `YS.Knife.Core`：`[AutoConstructor]`、`[Service]`、`[Mapper]`、`[Options]`、`[CodeExceptions]` 等源生成特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：`[AutoConstructor]`、`[Service]`、`[Mapper]`、`[Options]`、`[CodeExceptions]` 等源生成特性。
 
 目标框架：.NET 6.0。

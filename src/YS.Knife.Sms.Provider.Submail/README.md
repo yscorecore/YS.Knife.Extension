@@ -71,6 +71,7 @@ await provider.SendSms("13800000000", "your-project-id",
 - `YS.Knife.Sms.Core`：短信抽象接口（`ISmsProvider`、`SmsInfo`）
 - `YS.Knife.Extensions.HttpClient`：提供 `HttpClient.PostAsObject` 扩展
 - `YS.Knife.Extensions`：提供 `ToJsonText` 等扩展
-- `YS.Knife.Core`：提供 `[Service]`、`[AutoConstructor]`、`[Options]` 源生成特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]`、`[AutoConstructor]`、`[Options]` 源生成特性。
 
 目标框架 .NET 6+。

@@ -48,6 +48,7 @@ public class UploadService
 ## 依赖说明
 
 - 项目引用 `YS.Knife.FileStorage.Core`：`IFileCategoryProvider` 接口与 `FileCategory` 模型
-- `YS.Knife.Core`：`[Service]`、`[AutoConstructor]`、`[Options]` 等源生成特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：`[Service]`、`[AutoConstructor]`、`[Options]` 等源生成特性。
 
 目标框架：.NET 6.0。

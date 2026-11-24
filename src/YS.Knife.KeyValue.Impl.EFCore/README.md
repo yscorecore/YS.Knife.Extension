@@ -71,4 +71,4 @@ services.Configure<KeyValueOptions>(opt =>
 - `YS.Knife.KeyValue.Core`：抽象接口
 - `YS.Knife.KeyValue.Default`：分组服务（一并引用以支持 `IKeyValueService<TGroup>`）
 - `YS.Knife.KeyValue.Entity.EFCore`：实体定义（实现内部固定使用 `KeyValueEntity<Guid>`）
-- `Microsoft.EntityFrameworkCore`、`YS.Knife.Core`、`FlyTiger`
+- `Microsoft.EntityFrameworkCore`、`YS.Knife.DependencyInjection、`FlyTiger`

@@ -66,5 +66,6 @@ public class TenantColumnInterceptor : IMetadataInterceptor
 ## 依赖说明
 
 - `YS.Knife.Metadata.Core`：抽象与模型。
-- `YS.Knife.Core`（2.0.2）：`[Service]`、`[AutoConstructor]`、`IServiceRegister` 等。
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：源代码生成器（`[AutoConstructor]`、`[Mapper]` 等特性）。
 - 依赖 ASP.NET Core MVC（`IModelMetadataProvider`、Http.Json 的 `JsonOptions`），需在 Web 项目中使用。

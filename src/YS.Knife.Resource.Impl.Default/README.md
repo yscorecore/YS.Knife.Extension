@@ -31,7 +31,7 @@ public partial class ResourceService : IResourceService
 
 ## 使用示例
 
-注册服务（引用 `YS.Knife.Core` 的服务扫描即可自动注册），并至少引用一个加载器实现（如 `YS.Knife.Resource.FileResourceLoader`）：
+注册服务（引用 `YS.Knife.DependencyInjection的服务扫描即可自动注册），并至少引用一个加载器实现（如 `YS.Knife.Resource.FileResourceLoader`）：
 
 ```csharp
 public class MyService
@@ -54,6 +54,7 @@ public class MyService
 ## 依赖说明
 
 - `YS.Knife.Resource.Core`：提供 `IResourceService` / `IResourceLoader` 抽象
-- `YS.Knife.Core`：提供 `[Service]`、`[AutoConstructor]`、`[CodeExceptions]` 等源生成特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]`、`[AutoConstructor]`、`[CodeExceptions]` 等源生成特性。
 
 注意：本包本身不包含任何具体加载器，需搭配 `YS.Knife.Resource.FileResourceLoader`、`YS.Knife.Resource.AssemblyResourceLoader` 等加载器包使用。

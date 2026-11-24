@@ -70,5 +70,6 @@ public class DemoService
 ## 依赖
 
 - `Minio`（6.0.2）：Minio .NET 客户端
-- `YS.Knife.Core`：`[Service]`、`[Options]`、`[AutoConstructor]` 等特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：`[Service]`、`[Options]`、`[AutoConstructor]` 等特性。
 - `YS.Knife.FileStorage.Core`（项目引用）：抽象接口层

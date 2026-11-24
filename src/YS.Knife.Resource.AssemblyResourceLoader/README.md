@@ -44,5 +44,6 @@ if (loader.CanLoad(uri))
 ## 依赖说明
 
 - `YS.Knife.Resource.Core`：提供 `IResourceLoader` 接口定义
-- `YS.Knife.Core`：提供 `[Service]` 自动注册能力
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]` 自动注册能力。
 - 目标框架：net8.0 / net9.0 / net10.0

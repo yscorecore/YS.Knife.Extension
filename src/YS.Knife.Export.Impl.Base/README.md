@@ -62,7 +62,8 @@ public class ExcelExportService : BaseExportService
 
 ## 依赖
 
-- `YS.Knife.Core`（`[AutoConstructor]`、`[Options]`、`[CodeExceptions]` 等源生成器）
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：`[AutoConstructor]`、`[Options]`、`[CodeExceptions]` 等源生成器）。
 - `Microsoft.Extensions.Caching.Distributed`
 - 项目引用：`YS.Knife.Export.Core`、`YS.Knife.Extensions.DistributedCache`
 - 目标框架：.NET 6+

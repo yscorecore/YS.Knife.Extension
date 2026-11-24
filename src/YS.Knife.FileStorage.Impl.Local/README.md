@@ -54,5 +54,6 @@ public class MyService
 ## 依赖说明
 
 - `YS.Knife.FileStorage.Core`：提供 `IFileStorageService`、`FileObject` 等抽象。
-- `YS.Knife.Core`（2.0.2）：提供 `[Service]`、`[AutoConstructor]`、`[Options]` 等源生成器。
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：2.0.2）：提供 `[Service]`、`[AutoConstructor]`、`[Options]` 等源生成器。
 - 依赖 `IWebHostEnvironment` 与 `IHttpContextAccessor`，适用于 ASP.NET Core Web 项目。

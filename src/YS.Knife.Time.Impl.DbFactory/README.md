@@ -53,6 +53,7 @@ public class MyService
 - `YS.Knife.Time.Core`：提供 `ITimeService` 抽象
 - `YS.Knife.Data`：提供 `IDbConnectionFactory` 数据库连接工厂
 - `YS.Knife.Extensions.DbConnection`：提供 `ExecuteScalarAsync` 扩展方法
-- `YS.Knife.Core`：提供 `[Service]`、`[AutoConstructor]`、`[Options]` 源生成特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]`、`[AutoConstructor]`、`[Options]` 源生成特性。
 
 运行时需要求容器中已注册可用的 `IDbConnectionFactory`。

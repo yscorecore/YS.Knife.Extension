@@ -5,7 +5,7 @@
 ## 主要功能
 
 - `BarCodeService`：实现 `IBarCodeService`，使用 Code128 编码生成黑底白字（黑条白底）条形码，输出 JPEG 格式图片流。
-- 通过 `[Service]` 特性（YS.Knife.Core 源生成器）自动注册到依赖注入容器，无需手动注册。
+- 通过 `[Service]` 特性（YS.Knife.DependencyInjection）自动注册到依赖注入容器，无需手动注册。
 
 ## 快速开始
 
@@ -39,5 +39,6 @@ public class GoodsController : ControllerBase
 
 - `BarcodeLib` 3.1.3
 - `SkiaSharp`（BarcodeStandard 依赖）
-- `YS.Knife.Core`（`[AutoConstructor]`、`[Service]` 源生成器）
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：`[AutoConstructor]`、`[Service]` 源生成器。
 - 项目引用：`YS.Knife.BarCode.Core`

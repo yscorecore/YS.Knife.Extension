@@ -85,6 +85,7 @@ services.AddHangfireServer(options =>
 ## 依赖说明
 
 - `YS.Knife.Job.Core`：提供 `IJobService`、`RetryPolicy`、`JobPriority`
-- `YS.Knife.Core`：提供 `[Service]` / `IServiceRegister` 自动注册能力
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]` / `IServiceRegister` 自动注册能力。
 - `Hangfire.Core`（1.8.*）：任务调度核心
 - Hangfire 存储实现（如 `Hangfire.MemoryStorage`、`Hangfire.SqlServer`），由宿主项目引用

@@ -49,4 +49,5 @@ public class VisionService
 
 - `OpenAI`（2.11.0）：官方 OpenAI .NET SDK。
 - `YS.Knife.AI.Core`：提供 `IAiProviderService`、`AiInputData`、`AiDataType` 等抽象。
-- `YS.Knife.Core`：提供 `[Service]`、`[DictionaryKey]`、`[Options]`、`[CodeExceptions]` 等源生成特性。
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]`、`[DictionaryKey]`、`[Options]`、`[CodeExceptions]` 等源生成特性。

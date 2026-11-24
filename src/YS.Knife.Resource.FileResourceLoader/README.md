@@ -43,6 +43,7 @@ public class MyService
 ## 依赖说明
 
 - `YS.Knife.Resource.Core`：提供 `IResourceLoader` 抽象
-- `YS.Knife.Core`：提供 `[Service]` 自动服务注册特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]` 自动服务注册特性。
 
 通常与 `YS.Knife.Resource.Impl.Default` 一起引用，由默认资源服务按优先级调度。

@@ -56,5 +56,6 @@ public class TenantConfigService
 
 - 目标框架：.NET 8 / .NET 9 / .NET 10（`net8.0` / `net9.0` / `net10.0`）
 - `YS.Knife.KeyValue.Core`：抽象接口 `IKeyValueService` / `IKeyValueService<T>` / `KeyValueGroup`
-- `YS.Knife.Core`、`FlyTiger`：服务自动注册与构造器生成
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：、`FlyTiger`：服务自动注册与构造器生成。
 - 实际的持久化由底层 `IKeyValueService` 实现提供（如 `YS.Knife.KeyValue.Impl.EFCore`）

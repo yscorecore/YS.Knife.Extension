@@ -64,7 +64,6 @@ namespace YS.Knife.Hosting
         protected virtual IHost CreateHost(string[] args)
         {
             var builder = Host.CreateApplicationBuilder(args);
-
             this.OnConfigureLogging(builder.Logging);
             this.OnConfigureAppConfiguration(builder.Configuration);
             this.InjectInternalConfigurations(builder.Configuration);

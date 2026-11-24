@@ -41,7 +41,8 @@ public class MyService
 ## 依赖说明
 
 - `ClosedXML` (0.102.1)：Excel 文件读写
-- `YS.Knife.Core`：提供 `[AutoConstructor]`、`[Service]` 等源生成特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[AutoConstructor]`、`[Service]` 等源生成特性。
 - 项目引用 `YS.Knife.Export.Impl.Base`：导出流程基类与 `EntityMetadata` 等模型
 
 目标框架：.NET 6.0。

@@ -54,5 +54,5 @@ await http.PostAsJsonAsync($"/export/append-data?token={token}", new EntityData
 ## 依赖
 
 - 项目引用：`YS.Knife.Export.Core`
-- `YS.Knife.Core`（`[AutoConstructor]` 源生成器，间接依赖）
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：`[AutoConstructor]` 源生成器，间接依赖）。
 - 目标框架：.NET 6+（`Microsoft.NET.Sdk.Web`）

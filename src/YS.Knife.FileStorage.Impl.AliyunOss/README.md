@@ -68,5 +68,6 @@ public class DemoService
 ## 依赖
 
 - `Aliyun.OSS.SDK.NetCore`（2.13.0）：阿里云 OSS 官方 SDK
-- `YS.Knife.Core`：`[Service]`、`[Options]` 等自动注册特性
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：`[Service]`、`[Options]` 等自动注册特性。
 - `YS.Knife.FileStorage.Core`（项目引用）：抽象接口层

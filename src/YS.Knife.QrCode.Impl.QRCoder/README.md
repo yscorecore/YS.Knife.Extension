@@ -41,6 +41,7 @@ public class MyService
 ## 依赖说明
 
 - `YS.Knife.QrCode.Core`：提供 `IQrCodeService` 接口及扩展方法
-- `YS.Knife.Core`：提供 `[Service]` / `[AutoConstructor]` 自动注册能力
+- `YS.Knife.DependencyInjection`：服务自动注册（`[Service]` 特性）。
+- `FlyTiger`（Source Generator，由构建系统隐式引入）：提供 `[Service]` / `[AutoConstructor]` 自动注册能力。
 - `QRCoder`（1.6.0）
 - 目标框架：net8.0 / net9.0 / net10.0
