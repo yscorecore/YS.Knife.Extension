@@ -29,12 +29,25 @@ namespace YS.Knife.Function.Impl.EFCore
                    .ToListAsync();
             return res.BuildTree(appId);
         }
-        public Task<PagedList<FunctionInfo>> GetApps(LimitQueryInfo req, CancellationToken cancellationToken = default)
+        public async Task<PagedList<FunctionInfo>> GetApps(LimitQueryInfo req, CancellationToken cancellationToken = default)
         {
-            return functionEntityStore.Current
+            var res = await functionEntityStore.Current
                    .Where(p => p.Code == p.AppId && string.IsNullOrEmpty(p.ParentCode))
                    .To<FunctionInfo>()
                    .QueryPageAsync(req, cancellationToken);
+            res.Items.ForEach(t =>
+            {
+                if (t.Config != null)
+                {
+                    var roleProviders = FunctionPermissionService.GetRoleProviders(t);
+                    var providerArray = roleProviders
+                        .SelectMany(p => p.Providers.ConcatItems(FunctionPermissionService.PIPE))
+                        .SkipLast(1)
+                        .ToArray();
+                    t.Config["roleProviders"] = providerArray;
+                }
+            });
+            return res;
         }
 
         public async Task<List<FunctionInfo>> LoadFromFile(StreamBody file, CancellationToken cancellationToken)

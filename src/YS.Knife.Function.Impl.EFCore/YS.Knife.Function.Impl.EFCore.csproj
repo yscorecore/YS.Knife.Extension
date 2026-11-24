@@ -10,5 +10,8 @@
     <ItemGroup>
         <Using Include="YS.Knife" />
         <ProjectReference Include="..\YS.Knife.DependencyInjection\YS.Knife.DependencyInjection.csproj" />
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>YS.Knife.Function.Core.UnitTest</_Parameter1>
+        </AssemblyAttribute>
     </ItemGroup>
 </Project>

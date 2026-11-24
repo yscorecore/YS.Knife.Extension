@@ -94,5 +94,15 @@ namespace YS.Knife.Function
                 }
             }
         }
+        public static FunctionTreeInfo? MergeTree(this IEnumerable<FunctionTreeInfo> functionTrees, string appId)
+        {
+            var nodes = (functionTrees ?? Array.Empty<FunctionTreeInfo>())
+                .SelectMany(p => p.ExpandTree())
+                .GroupBy(p => p.Code)
+                .Select(p => p.First() with { SubItems = null })
+                .ToList();
+            return nodes.BuildTree(appId);
+
+        }
     }
 }

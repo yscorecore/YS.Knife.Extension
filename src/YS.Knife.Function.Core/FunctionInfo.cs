@@ -24,4 +24,18 @@ namespace YS.Knife.Function
         public int Sequence { get; set; }
 
     }
+    public record FunctionAppInfo : FunctionInfo
+    {
+    }
+
+    public record RoleProviderInfo
+    {
+        public string[] Providers { get; set; } = null!;
+        public LayerValuePolicy Policy { get; set; }
+    }
+    public enum LayerValuePolicy
+    {
+        Cover = 0,
+        Merge = 1
+    }
 }
