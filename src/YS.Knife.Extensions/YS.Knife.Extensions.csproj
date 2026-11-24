@@ -1,5 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-
+  <ItemGroup>
+    <!-- FlyTiger's MapperGenerator emits internal helper types (FlyTiger.EFCoreQueryableExtensions,
+         FlyTiger.MapperAttribute, ...) into every project. Exposing them through InternalsVisibleTo
+         to YS.Knife.Extensions.UnitTest collides with the test project's own generated copies and
+         causes CS0121 ambiguous calls in FlyTiger.MapperExtensions.g.cs. This library has no internal
+         members of its own, so the friend access is unnecessary. -->
+    <AssemblyAttribute Remove="System.Runtime.CompilerServices.InternalsVisibleToAttribute" />
+  </ItemGroup>
 
 </Project>
