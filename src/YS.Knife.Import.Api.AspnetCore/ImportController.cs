@@ -13,7 +13,7 @@ namespace YS.Knife.Import.Api.AspnetCore
 
         [HttpPost]
         [Route("begin")]
-        public Task<ImportToken> BeginImport([Required][FromForm] IFormFile file)
+        public Task<ImportToken> BeginImport([Required] IFormFile file)
         {
             using var stream = file.OpenReadStream();
             return importService.BeginImport(stream, file.FileName);
