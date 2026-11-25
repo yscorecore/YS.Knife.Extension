@@ -20,8 +20,10 @@ namespace YS.Knife.Hosting
         public static void AddAllKnifeServices(this IServiceCollection services, IConfiguration configuration, Func<Type, bool>? typeFilter)
         {
             _ = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            var serviceProvider = services.BuildServiceProvider();
-            var loggerFactory = serviceProvider.GetService<ILoggerFactory>() ?? new LoggerFactory();
+            using var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole();
+            });
             var logger = loggerFactory.CreateLogger("Knife");
             var options = configuration.GetConfigOrNew<KnifeOptions>();
 
