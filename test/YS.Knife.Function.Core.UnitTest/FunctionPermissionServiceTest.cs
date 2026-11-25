@@ -56,7 +56,7 @@ public class FunctionPermissionServiceTest
             Code = "app",
             Config = new Dictionary<string, object>
             {
-                ["providers"] = new[]
+                ["roles"] = new[]
                 {
                     new RoleProviderInfo { Providers = new[] { "dept" }, Policy = LayerValuePolicy.Merge }
                 }
