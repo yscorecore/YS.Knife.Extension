@@ -17,7 +17,7 @@ namespace YS.Knife.Function.Impl.EFCore
         {
             if (appInfo.Config != null)
             {
-                if (appInfo.Config.TryGetValue("providers", out var res1) || appInfo.Config.TryGetValue("Providers", out res1))
+                if (appInfo.Config.TryGetValue("roles", out var res1) || appInfo.Config.TryGetValue("Roles", out res1))
                 {
                     return NormalizeRoleProviders(res1.AsJsonObject<RoleProviderInfo[]>(ILayerService.JsonOptions));
 
