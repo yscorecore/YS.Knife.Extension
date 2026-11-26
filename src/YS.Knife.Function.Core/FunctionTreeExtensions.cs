@@ -98,6 +98,7 @@ namespace YS.Knife.Function
         {
             var nodes = (functionTrees ?? Array.Empty<FunctionTreeInfo>())
                 .SelectMany(p => p.ExpandTree())
+                .OrderBy(p => p.Sequence)
                 .GroupBy(p => p.Code)
                 .Select(p => p.First() with { SubItems = null })
                 .ToList();

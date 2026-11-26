@@ -42,6 +42,19 @@ public class FunctionTreeExtensionsTest
     }
 
     [Fact]
+    public void MergeTree_ShouldOrderSiblingsBySequence()
+    {
+        var first = Tree("app", Tree("module",
+            new FunctionTreeInfo { Code = "read", Name = "read", Sequence = 2 },
+            new FunctionTreeInfo { Code = "write", Name = "write", Sequence = 1 }));
+
+        var result = new[] { first }.MergeTree("app");
+
+        result!.SubItems.Should().ContainSingle();
+        result.SubItems[0].SubItems!.Select(p => p.Code).Should().Equal("write", "read");
+    }
+
+    [Fact]
     public void MergeTree_WithNoTrees_ShouldReturnNull()
     {
         Array.Empty<FunctionTreeInfo>().MergeTree("app").Should().BeNull();
