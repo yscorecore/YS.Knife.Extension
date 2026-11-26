@@ -203,6 +203,10 @@ namespace YS.Knife.Metadata.Impl.Mvc
             {
                 return (true, GetTypeCode(type!.GetElementType()), type!.GetElementType());
             }
+            if (type == typeof(Guid))
+            {
+                return (false, "guid", type);
+            }
             if (Type.GetTypeCode(type) != TypeCode.Object)
             {
                 return (false, GetTypeCode(type), type);

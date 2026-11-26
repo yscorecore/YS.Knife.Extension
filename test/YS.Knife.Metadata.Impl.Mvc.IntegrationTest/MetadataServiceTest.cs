@@ -394,6 +394,36 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
         {
             public DateTime? Name { get; set; }
         }
+        [Fact]
+        public async Task Should_GetGuidType_Meta()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetGuidType_Meta");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.IsArray.Should().BeFalse();
+            firstColumn.DataTypeName.Should().Be("guid");
+        }
+        [Metadata("GetGuidType_Meta")]
+        internal class GetGuidType_Meta
+        {
+            public Guid Name { get; set; }
+        }
+        [Fact]
+        public async Task Should_GetNullableGuidType_Meta()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetNullableGuidType_Meta");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.IsArray.Should().BeFalse();
+            firstColumn.DataTypeName.Should().Be("guid");
+        }
+        [Metadata("GetNullableGuidType_Meta")]
+        internal class GetNullableGuidType_Meta
+        {
+            public Guid? Name { get; set; }
+        }
         #endregion
 
         #region Required
