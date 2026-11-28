@@ -105,12 +105,14 @@ namespace YS.Knife.Metadata.Impl.Mvc
                 Description = GetDescription(p),
                 IsArray = isArray,
                 DataTypeName = typeCode,
+                DataKind = GetDataKind(p),
                 DisplayOrder = p.Order,
                 DataSource = GetEditorSource(p, type),
                 BindTo = GetBindToSource(p),
                 QueryFilter = GetQueryFilterInfo(p),
                 Tags = BuildTags(p),
                 Prompt = GetPrompt(p),
+                Unit = GetUnit(p),
             };
         }
         private DataSourceInfo GetEditorSource(DefaultModelMetadata metadata, Type itemType)
@@ -173,6 +175,14 @@ namespace YS.Knife.Metadata.Impl.Mvc
         private static string GetPrompt(DefaultModelMetadata metadata)
         {
             return metadata.Attributes.PropertyAttributes.OfType<DisplayAttribute>().FirstOrDefault()?.Prompt;
+        }
+        private static string GetDataKind(DefaultModelMetadata metadata)
+        {
+            return metadata.Attributes.PropertyAttributes.OfType<DataTypeAttribute>().FirstOrDefault()?.GetDataTypeName()?.ToLowerInvariant();
+        }
+        private static string GetUnit(DefaultModelMetadata metadata)
+        {
+            return metadata.Attributes.PropertyAttributes.OfType<UnitAttribute>().FirstOrDefault()?.Unit;
         }
         private static string GetDescription(DefaultModelMetadata metadata)
         {

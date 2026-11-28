@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using YS.Knife.Hosting;
+using YS.Knife;
 
 namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
 {
@@ -504,6 +505,68 @@ namespace YS.Knife.Metadata.Impl.Mvc.IntegrationTest
         internal class GetDictionaryWithEnumValue_Meta
         {
             public Dictionary<string, AuditLevel> SupportAuditflows { get; set; }
+        }
+        #endregion
+
+        #region DataKind
+        [Fact]
+        public async Task Should_GetDataKind_From_DataTypeAttribute()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetDataKind_From_DataTypeAttribute");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.DataKind.Should().Be("emailaddress");
+        }
+        [Metadata("GetDataKind_From_DataTypeAttribute")]
+        internal class User_GetDataKind_From_DataTypeAttribute
+        {
+            [DataType(DataType.EmailAddress)]
+            public string Email { get; set; }
+        }
+        [Fact]
+        public async Task Should_GetDataKind_Null_When_NoDataTypeAttribute()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetDataKind_Null_When_NoDataTypeAttribute");
+            info.Columns.First().DataKind.Should().BeNull();
+        }
+        [Metadata("GetDataKind_Null_When_NoDataTypeAttribute")]
+        internal class User_GetDataKind_Null_When_NoDataTypeAttribute
+        {
+            public string Name { get; set; }
+        }
+        #endregion
+
+        #region Unit
+        [Fact]
+        public async Task Should_GetUnit_From_UnitAttribute()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetUnit_From_UnitAttribute");
+            info.Columns.Count.Should().Be(1);
+            var firstColumn = info.Columns.First();
+            firstColumn.Unit.Should().Be("kg");
+            firstColumn.Tags.Should().ContainKey(UnitAttribute.TagKey);
+            firstColumn.Tags[UnitAttribute.TagKey].Should().Be("kg");
+        }
+        [Metadata("GetUnit_From_UnitAttribute")]
+        internal class User_GetUnit_From_UnitAttribute
+        {
+            [Unit("kg")]
+            public decimal Weight { get; set; }
+        }
+        [Fact]
+        public async Task Should_GetUnit_Null_When_NoUnitAttribute()
+        {
+            var service = this.GetService<IMetadataService>();
+            var info = await service.GetMetadataInfo("GetUnit_Null_When_NoUnitAttribute");
+            info.Columns.First().Unit.Should().BeNull();
+        }
+        [Metadata("GetUnit_Null_When_NoUnitAttribute")]
+        internal class User_GetUnit_Null_When_NoUnitAttribute
+        {
+            public string Name { get; set; }
         }
         #endregion
 
